@@ -1,0 +1,9 @@
+.env
+
+# Database
+database/data/
+
+# IDE
+.idea/
+.vscode/
+*.iml
