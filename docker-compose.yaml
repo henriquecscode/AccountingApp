@@ -1,0 +1,26 @@
+services:
+  postgres: # Database server hostname
+    image: postgres:18.1
+    container_name: my-app-postgres
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./database/data:/var/lib/postgresql
+      # - ./database/init:/docker-entrypoint-initdb.d  # Optional: auto-run init scripts
+    restart: unless-stopped
+
+  pgadmin:
+    image: dpage/pgadmin4:9.10.0
+    container_name: my-app-pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD}
+    ports:
+      - "5050:80"
+    depends_on:
+      - postgres
+    restart: unless-stopped
