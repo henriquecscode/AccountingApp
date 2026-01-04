@@ -22,7 +22,7 @@ public class AppUserSession {
     @JoinColumn(name = "user_id", nullable = false)
     private AppUser user;
 
-    @Column(name = "device_id", unique = true)
+    @Column(name = "device_id")
     private String deviceId;
 
     @Column(name = "device_name")

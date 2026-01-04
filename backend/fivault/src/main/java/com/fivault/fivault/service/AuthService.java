@@ -3,20 +3,18 @@ package com.fivault.fivault.service;
 import com.fivault.fivault.database.model.AppUser;
 import com.fivault.fivault.database.model.AppUserSession;
 import com.fivault.fivault.dto.ActiveDeviceDTO;
-import com.fivault.fivault.dto.response.AuthResponse;
-import com.fivault.fivault.exception.SignupException;
-import com.fivault.fivault.exception.UserAlreadyExistsException;
 import com.fivault.fivault.repository.AppUserRepository;
 import com.fivault.fivault.repository.AppUserSessionRepository;
+import com.fivault.fivault.service.exception.ErrorCode;
 import com.fivault.fivault.service.impl.PasswordService;
 import com.fivault.fivault.service.impl.TokenHashService;
-import com.fivault.fivault.service.model.SignUpResponse;
+import com.fivault.fivault.service.output.Output;
+import com.fivault.fivault.service.output.SignInResult;
+import com.fivault.fivault.service.output.SignUpResult;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.dao.DataAccessException;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import com.fivault.fivault.util.DeviceFingerprint;
 import com.fivault.fivault.util.RandomUtil;
@@ -49,18 +47,18 @@ public class AuthService {
     }
 
     @Transactional(rollbackOn = Exception.class)
-    public SignUpResponse signUp(String email, String password, HttpServletRequest httpRequest) {
+    public Output<SignUpResult> signUp(String email, String password, HttpServletRequest httpRequest) {
             // Validate input
             if (email == null || email.isBlank()) {
-                throw new IllegalArgumentException("Email is required");
+                return Output.failure(ErrorCode.VALIDATION_INVALID_INPUT);
             }
             if (password == null || password.isBlank()) {
-                throw new IllegalArgumentException("Password must be at least 8 characters");
+                return Output.failure(ErrorCode.VALIDATION_INVALID_INPUT);
             }
 
             // Check if user exists
             if (userRepository.existsByEmail(email.toLowerCase())) {
-                throw new IllegalArgumentException("Email already registered");
+                return Output.failure(ErrorCode.AUTH_USER_EXISTS);
             }
 
             // Create new user
@@ -77,45 +75,23 @@ public class AuthService {
 
             user = userRepository.save(user);
 
-            // Generate device info
-            String deviceId = deviceFingerprint.generateDeviceId(httpRequest);
-            String deviceName = deviceFingerprint.extractDeviceName(httpRequest.getHeader("User-Agent"));
+        var result = getCreateSession(httpRequest, user);
 
-            // Generate plain refresh token (this goes to the user)
-            String refreshToken = RandomUtil.randomBase64Url(64);
-
-            // Create and save refresh token in database (hashed)
-            createAppUserSession(user, deviceId, deviceName, refreshToken, httpRequest);
-
-            // Generate JWT token
-            String jwtToken = jwtService.generateToken(user.getEmail(), user.getAppUserId());
-
-            return new SignUpResponse(jwtToken, refreshToken, deviceName);
-
-//        catch (UserAlreadyExistsException e) {
-//            // Expected business exception - rethrow
-//            logger.warn("Signup attempt with existing email: {}", email);
-//            throw e;
-//        } catch (DataIntegrityViolationException e) {
-//            // Database constraint violation
-//            logger.error("Data integrity violation during signup: {}", e.getMessage());
-//            throw new SignupException("Unable to create account due to data conflict", e);
-//
-//        } catch (DataAccessException e) {
-//            // General database errors
-//            logger.error("Database error during signup: {}", e.getMessage(), e);
-//            throw new SignupException("Unable to create account due to system error", e);
-//
-//        } catch (Exception e) {
-//            // Unexpected errors
-//            logger.error("Unexpected error during signup: {}", e.getMessage(), e);
-//            throw new SignupException("An unexpected error occurred during signup", e);
-//        }
+        return Output.success(new SignUpResult(result.jwtToken(), result.refreshToken(), result.deviceName()));
     }
 
+    public Output<SignInResult> signIn(String email, String password, HttpServletRequest httpRequest) {
+        AppUser user = userRepository.findByEmail(email);
+                String hashedPassword = user.getPasswordHash();
+            boolean success = passwordService.verifyPassword(password, hashedPassword);
 
-    public AuthResponse signIn(String email, String password, HttpServletRequest httpRequest) {
-        return null;
+            if(!success){
+                return Output.failure(ErrorCode.AUTH_INVALID_CREDENTIALS);
+            }
+            var result = getCreateSession(httpRequest, user);
+
+            return Output.success(new SignInResult(result.jwtToken, result.refreshToken()));
+
     }
 
     public String refreshAccessToken(String s, HttpServletRequest httpRequest) {
@@ -136,8 +112,7 @@ public class AuthService {
     }
 
     private AppUserSession createAppUserSession(AppUser user, String deviceId,
-                                                String deviceName, String plainToken,
-                                                HttpServletRequest request) {
+                                                String deviceName, String plainToken, String ipAddress, String userAgent) {
         AppUserSession token = new AppUserSession();
 
         // Generate salt and hash the token before storing
@@ -149,12 +124,32 @@ public class AuthService {
         token.setUser(user);
         token.setDeviceId(deviceId);
         token.setDeviceName(deviceName);
-        token.setIpAddress(request.getRemoteAddr());
-        token.setUserAgent(request.getHeader("User-Agent"));
+        token.setIpAddress(ipAddress);
+        token.setUserAgent(userAgent);
         token.setExpiresAt(LocalDateTime.now().plusDays(7));
         token.setLastUsedAt(LocalDateTime.now());
         token.setRevoked(false);
         return appUserSessionRepository.save(token);
+    }
+
+    private record UserSessionAuthCredentials(String deviceName, String refreshToken, String jwtToken) {
+    }
+
+    private UserSessionAuthCredentials getCreateSession(HttpServletRequest httpRequest, AppUser user) {
+        // Generate device info
+        String deviceId = deviceFingerprint.generateDeviceId(httpRequest);
+        String deviceName = deviceFingerprint.extractDeviceName(httpRequest.getHeader("User-Agent"));
+
+        // Generate plain refresh token (this goes to the user)
+        String refreshToken = RandomUtil.randomBase64Url(64);
+
+        // Create and save refresh token in database (hashed)
+        createAppUserSession(user, deviceId, deviceName, refreshToken, httpRequest.getRemoteAddr(), httpRequest.getHeader("User-Agent"));
+
+        // Generate JWT token
+        String jwtToken = jwtService.generateToken(user.getEmail(), user.getAppUserId());
+        UserSessionAuthCredentials result = new UserSessionAuthCredentials(deviceName, refreshToken, jwtToken);
+        return result;
     }
 
 }

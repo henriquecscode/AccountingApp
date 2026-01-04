@@ -1,4 +1,4 @@
-package com.fivault.fivault.dto.request;
+package com.fivault.fivault.controller.request;
 
 public record RefreshRequest(String refreshToken) {}
 

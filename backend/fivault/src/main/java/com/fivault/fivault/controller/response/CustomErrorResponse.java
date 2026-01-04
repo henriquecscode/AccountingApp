@@ -1,4 +1,4 @@
-package com.fivault.fivault.dto.response;
+package com.fivault.fivault.controller.response;
 
 public record CustomErrorResponse(String message) {}
 

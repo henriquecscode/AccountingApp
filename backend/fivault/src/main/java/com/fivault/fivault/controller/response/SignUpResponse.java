@@ -1,6 +1,6 @@
-package com.fivault.fivault.dto.response;
+package com.fivault.fivault.controller.response;
 
-public record AuthResponse(
+public record SignUpResponse(
         String accessToken,
         String message,
         String deviceName

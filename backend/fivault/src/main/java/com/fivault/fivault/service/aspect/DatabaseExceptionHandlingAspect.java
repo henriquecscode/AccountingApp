@@ -1,8 +1,8 @@
-package com.fivault.fivault.aspect;
+package com.fivault.fivault.service.aspect;
 
 
-import com.fivault.fivault.exception.CustomException;
-import com.fivault.fivault.exception.ErrorCode;
+import com.fivault.fivault.service.exception.CustomException;
+import com.fivault.fivault.service.exception.ErrorCode;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;

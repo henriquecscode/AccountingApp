@@ -1,4 +1,4 @@
-package com.fivault.fivault.exception;
+package com.fivault.fivault.service.exception;
 
 
 import org.springframework.http.HttpStatus;
@@ -33,9 +33,5 @@ public class CustomException extends RuntimeException {
 
     public String getCode() {
         return errorCode.getCode();
-    }
-
-    public HttpStatus getHttpStatus() {
-        return errorCode.getHttpStatus();
     }
 }

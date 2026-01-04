@@ -1,23 +1,24 @@
 package com.fivault.fivault.controller;
 
-import com.fivault.fivault.dto.*;
-import com.fivault.fivault.dto.request.RefreshRequest;
-import com.fivault.fivault.dto.request.SignInRequest;
-import com.fivault.fivault.dto.request.SignUpRequest;
-import com.fivault.fivault.dto.response.AuthResponse;
-import com.fivault.fivault.dto.response.BasicResponse;
-import com.fivault.fivault.dto.response.TokenVerificationResponse;
+import com.fivault.fivault.controller.request.RefreshRequest;
+import com.fivault.fivault.controller.request.SignInRequest;
+import com.fivault.fivault.controller.request.SignUpRequest;
+import com.fivault.fivault.controller.response.SignUpResponse;
+import com.fivault.fivault.controller.response.BasicResponse;
 import com.fivault.fivault.service.AuthService;
 import com.fivault.fivault.service.JwtService;
-import com.fivault.fivault.service.model.SignUpResponse;
+import com.fivault.fivault.service.exception.ErrorCode;
+import com.fivault.fivault.service.output.Output;
+import com.fivault.fivault.service.output.SignUpResult;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.fivault.fivault.util.CookieUtil;
 
-import java.util.List;
+import java.time.Instant;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -35,12 +36,12 @@ public class AuthController {
     }
 
     @GetMapping("/try-authenticated")
-    public String hi(){
+    public String hi() {
         return "Authenticated";
     }
 
     @GetMapping("/try-not-authenticated")
-    public String hiNotauth(){
+    public String hiNotauth() {
         return "Not Authenticated";
     }
 
@@ -50,24 +51,55 @@ public class AuthController {
      * Body: { "email": "user@example.com", "password": "password123" }
      */
     @PostMapping("/signup")
-    public ResponseEntity<BasicResponse<AuthResponse>> signUp(
+    public ResponseEntity<BasicResponse<SignUpResponse>> signUp(
             @RequestBody SignUpRequest request,
             HttpServletRequest httpRequest,
             HttpServletResponse httpResponse
     ) {
-            SignUpResponse signUpResponse = authService.signUp(
-                    request.email(),
-                    request.password(),
-                    httpRequest
-            );
+        Output<SignUpResult> output = authService.signUp(
+                request.email(),
+                request.password(),
+                httpRequest
+        );
 
-            // Create and add refresh token cookie
-            httpResponse.addCookie(
-                    cookieUtil.createRefreshTokenCookie(signUpResponse.refreshToken())
+        if (output.isFailure()) {
+            HttpStatus status = null;
+            String detail = null;
+
+
+            var errorCode = output.getErrorCode().get();
+            if (errorCode.equals(ErrorCode.AUTH_USER_EXISTS)) {
+                status = HttpStatus.INTERNAL_SERVER_ERROR;
+                detail = errorCode.getCode();
+            } else if (errorCode.equals(ErrorCode.VALIDATION_INVALID_INPUT)) {
+                status = HttpStatus.BAD_REQUEST;
+                detail = errorCode.getCode();
+            } else {
+                status = HttpStatus.INTERNAL_SERVER_ERROR;
+                detail = errorCode.getCode();
+            }
+
+            ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(
+                    status,
+                    detail
             );
-            return ResponseEntity.status(HttpStatus.CREATED).body(
-                    new BasicResponse<>(new AuthResponse(signUpResponse.accessToken(), null, signUpResponse.deviceName()))
-            );
+            problemDetail.setTitle(status.getReasonPhrase());
+            problemDetail.setProperty("errorCode", detail);
+            problemDetail.setProperty("timestamp", Instant.now());
+            problemDetail.setProperty("path", httpRequest.getRequestURI());
+            return ResponseEntity
+                    .status(status.value())
+                    .body(BasicResponse.failure(problemDetail));
+        }
+
+        SignUpResult result = output.getData().get();
+        // Create and add refresh token cookie
+        httpResponse.addCookie(
+                cookieUtil.createRefreshTokenCookie(result.refreshToken())
+        );
+        return ResponseEntity.status(HttpStatus.CREATED).body(
+                BasicResponse.success(new SignUpResponse(result.accessToken(), null, result.deviceName()))
+        );
     }
 
     /**
@@ -76,27 +108,30 @@ public class AuthController {
      * Body: { "email": "user@example.com", "password": "password123" }
      */
     @PostMapping("/signin")
-    public ResponseEntity<AuthResponse> signIn(
+    public ResponseEntity<BasicResponse<SignUpResponse>> signIn(
             @RequestBody SignInRequest request,
-            HttpServletRequest httpRequest
+            HttpServletRequest httpRequest,
+            HttpServletResponse httpResponse
     ) {
-        try {
-            AuthResponse response = authService.signIn(
-                    request.email(),
-                    request.password(),
-                    httpRequest
+
+        var output = authService.signIn(
+                request.email(),
+                request.password(),
+                httpRequest
+        );
+
+        if (output.isFailure()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
+                    BasicResponse.failure(null)
             );
-            return ResponseEntity.ok(response);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(new AuthResponse(null, e.getMessage(), null));
-        } catch (IllegalStateException e) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                    .body(new AuthResponse(null, e.getMessage(), null));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(new AuthResponse(null, e.getMessage(), null));
         }
+
+        var result = output.getData().get();
+        httpResponse.addCookie(
+                cookieUtil.createRefreshTokenCookie(result.refreshToken())
+        );
+        return ResponseEntity.ok(BasicResponse.success(new SignUpResponse(result.accessToken(), null, null)));
+
     }
 
     /**
@@ -105,7 +140,7 @@ public class AuthController {
      * Body: { "refreshToken": "your-refresh-token" }
      */
     @PostMapping("/refresh")
-    public ResponseEntity<AuthResponse> refreshToken(
+    public ResponseEntity<SignUpResponse> refreshToken(
             @RequestBody RefreshRequest request,
             HttpServletRequest httpRequest) {
         try {
@@ -114,13 +149,13 @@ public class AuthController {
                     httpRequest
             );
             return ResponseEntity.ok(
-                    new AuthResponse(newAccessToken,  "Token refreshed successfully", null)
+                    new SignUpResponse(newAccessToken, "Token refreshed successfully", null)
             );
         } catch (IllegalArgumentException e) {
             // Invalid or expired refresh token
             return ResponseEntity
                     .status(HttpStatus.UNAUTHORIZED)
-                    .body(new AuthResponse( null, e.getMessage(), null));
+                    .body(new SignUpResponse(null, e.getMessage(), null));
         }
     }
 
@@ -130,10 +165,10 @@ public class AuthController {
      * Body: { "refreshToken": "your-refresh-token" }
      */
     @PostMapping("/logout")
-    public ResponseEntity<AuthResponse> logout(@RequestBody RefreshRequest request) {
+    public ResponseEntity<SignUpResponse> logout(@RequestBody RefreshRequest request) {
         authService.logout(request.refreshToken());
         return ResponseEntity.ok(
-                new AuthResponse( null, "Logged out successfully", null)
+                new SignUpResponse(null, "Logged out successfully", null)
         );
     }
 
@@ -142,111 +177,101 @@ public class AuthController {
      * POST /api/auth/logout-all
      * Headers: Authorization: Bearer <access-token>
      */
-    @PostMapping("/logout-all")
-    public ResponseEntity<AuthResponse> logoutAllDevices(
-            @RequestHeader("Authorization") String authHeader) {
-        try {
-            // Extract token from "Bearer <token>"
-            String token = extractTokenFromHeader(authHeader);
-            Long userId = jwtService.extractUserId(token);
-
-            authService.logoutAllDevices(userId);
-            return ResponseEntity.ok(
-                    new AuthResponse( null, "Logged out from all devices successfully", null)
-            );
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity
-                    .status(HttpStatus.UNAUTHORIZED)
-                    .body(new AuthResponse( null, "Invalid token", null));
-        }
-    }
+//    @PostMapping("/logout-all")
+//    public ResponseEntity<SignUpResponse> logoutAllDevices(
+//            @RequestHeader("Authorization") String authHeader) {
+//        try {
+//            // Extract token from "Bearer <token>"
+//            String token = extractTokenFromHeader(authHeader);
+//            Long userId = jwtService.extractUserId(token);
+//
+//            authService.logoutAllDevices(userId);
+//            return ResponseEntity.ok(
+//                    new SignUpResponse( null, "Logged out from all devices successfully", null)
+//            );
+//        } catch (IllegalArgumentException e) {
+//            return ResponseEntity
+//                    .status(HttpStatus.UNAUTHORIZED)
+//                    .body(new SignUpResponse( null, "Invalid token", null));
+//        }
+//    }
 
     /**
      * Get list of active devices/sessions for current user
      * GET /api/auth/devices
      * Headers: Authorization: Bearer <access-token>
      */
-    @GetMapping("/devices")
-    public ResponseEntity<BasicResponse<List<ActiveDeviceDTO>>> getActiveDevices(
-            @RequestHeader("Authorization") String authHeader) {
-        try {
-            String token = extractTokenFromHeader(authHeader);
-            Long userId = jwtService.extractUserId(token);
+//    @GetMapping("/devices")
+//    public ResponseEntity<BasicResponse<List<ActiveDeviceDTO>>> getActiveDevices(
+//            @RequestHeader("Authorization") String authHeader) {
+//        try {
+//            String token = extractTokenFromHeader(authHeader);
+//            Long userId = jwtService.extractUserId(token);
+//
+//            List<ActiveDeviceDTO> devices = authService.getActiveDevices(userId);
+//            return ResponseEntity.ok(new BasicResponse<>(devices));
+//        } catch (IllegalArgumentException e) {
+//            return ResponseEntity
+//                    .status(HttpStatus.UNAUTHORIZED)
+//                    .body(new BasicResponse<>(false, null, "Unauthorized", null));
+//        }
+//    }
+//
+//    /**
+//     * Logout a specific device
+//     * DELETE /api/auth/devices/{deviceId}
+//     * Headers: Authorization: Bearer <access-token>
+//     */
+//    @DeleteMapping("/devices/{deviceId}")
+//    public ResponseEntity<SignUpResponse> logoutDevice(
+//            @RequestHeader("Authorization") String authHeader,
+//            @PathVariable String deviceId) {
+//        try {
+//            String token = extractTokenFromHeader(authHeader);
+//            Long userId = jwtService.extractUserId(token);
+//
+//            authService.logoutDevice(userId, deviceId);
+//            return ResponseEntity.ok(
+//                    new SignUpResponse( null, "Device logged out successfully", null)
+//            );
+//        } catch (IllegalArgumentException e) {
+//            return ResponseEntity
+//                    .status(HttpStatus.UNAUTHORIZED)
+//                    .body(new SignUpResponse( null, "Invalid token", null));
+//        }
+//    }
+//
+//    /**
+//     * Verify if access token is valid (optional endpoint for frontend)
+//     * GET /api/auth/verify
+//     * Headers: Authorization: Bearer <access-token>
+//     */
+//    @GetMapping("/verify")
+//    public ResponseEntity<?> verifyToken(
+//            @RequestHeader("Authorization") String authHeader) {
+//        try {
+//            String token = extractTokenFromHeader(authHeader);
+//
+//            if (jwtService.isTokenValid(token)) {
+//                Long userId = jwtService.extractUserId(token);
+//                String email = jwtService.extractEmail(token);
+//
+//                return ResponseEntity.ok(new TokenVerificationResponse(
+//                        true,
+//                        userId,
+//                        email,
+//                        "Token is valid"
+//                ));
+//            } else {
+//                return ResponseEntity
+//                        .status(HttpStatus.UNAUTHORIZED)
+//                        .body(new TokenVerificationResponse(false, null, null, "Token is invalid"));
+//            }
+//        } catch (Exception e) {
+//            return ResponseEntity
+//                    .status(HttpStatus.UNAUTHORIZED)
+//                    .body(new TokenVerificationResponse(false, null, null, "Token is invalid"));
+//        }
+//    }
 
-            List<ActiveDeviceDTO> devices = authService.getActiveDevices(userId);
-            return ResponseEntity.ok(new BasicResponse<>(devices));
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity
-                    .status(HttpStatus.UNAUTHORIZED)
-                    .body(new BasicResponse<>(false, null, "Unauthorized", null));
-        }
-    }
-
-    /**
-     * Logout a specific device
-     * DELETE /api/auth/devices/{deviceId}
-     * Headers: Authorization: Bearer <access-token>
-     */
-    @DeleteMapping("/devices/{deviceId}")
-    public ResponseEntity<AuthResponse> logoutDevice(
-            @RequestHeader("Authorization") String authHeader,
-            @PathVariable String deviceId) {
-        try {
-            String token = extractTokenFromHeader(authHeader);
-            Long userId = jwtService.extractUserId(token);
-
-            authService.logoutDevice(userId, deviceId);
-            return ResponseEntity.ok(
-                    new AuthResponse( null, "Device logged out successfully", null)
-            );
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity
-                    .status(HttpStatus.UNAUTHORIZED)
-                    .body(new AuthResponse( null, "Invalid token", null));
-        }
-    }
-
-    /**
-     * Verify if access token is valid (optional endpoint for frontend)
-     * GET /api/auth/verify
-     * Headers: Authorization: Bearer <access-token>
-     */
-    @GetMapping("/verify")
-    public ResponseEntity<?> verifyToken(
-            @RequestHeader("Authorization") String authHeader) {
-        try {
-            String token = extractTokenFromHeader(authHeader);
-
-            if (jwtService.isTokenValid(token)) {
-                Long userId = jwtService.extractUserId(token);
-                String email = jwtService.extractEmail(token);
-
-                return ResponseEntity.ok(new TokenVerificationResponse(
-                        true,
-                        userId,
-                        email,
-                        "Token is valid"
-                ));
-            } else {
-                return ResponseEntity
-                        .status(HttpStatus.UNAUTHORIZED)
-                        .body(new TokenVerificationResponse(false, null, null, "Token is invalid"));
-            }
-        } catch (Exception e) {
-            return ResponseEntity
-                    .status(HttpStatus.UNAUTHORIZED)
-                    .body(new TokenVerificationResponse(false, null, null, "Token is invalid"));
-        }
-    }
-
-    /**
-     * Helper method to extract JWT token from Authorization header
-     * Handles "Bearer <token>" format
-     */
-    private String extractTokenFromHeader(String authHeader) {
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            throw new IllegalArgumentException("Invalid Authorization header format");
-        }
-        return authHeader.substring(7); // Remove "Bearer " prefix
-    }
 }
