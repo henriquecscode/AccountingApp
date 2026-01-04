@@ -48,9 +48,8 @@ public class AuthService {
         this.deviceFingerprint = deviceFingerprint;
     }
 
-    @Transactional
+    @Transactional(rollbackOn = Exception.class)
     public SignUpResponse signUp(String email, String password, HttpServletRequest httpRequest) {
-        try {
             // Validate input
             if (email == null || email.isBlank()) {
                 throw new IllegalArgumentException("Email is required");
@@ -92,25 +91,26 @@ public class AuthService {
             String jwtToken = jwtService.generateToken(user.getEmail(), user.getAppUserId());
 
             return new SignUpResponse(jwtToken, refreshToken, deviceName);
-        } catch (UserAlreadyExistsException e) {
-            // Expected business exception - rethrow
-            logger.warn("Signup attempt with existing email: {}", email);
-            throw e;
-        } catch (DataIntegrityViolationException e) {
-            // Database constraint violation
-            logger.error("Data integrity violation during signup: {}", e.getMessage());
-            throw new SignupException("Unable to create account due to data conflict", e);
 
-        } catch (DataAccessException e) {
-            // General database errors
-            logger.error("Database error during signup: {}", e.getMessage(), e);
-            throw new SignupException("Unable to create account due to system error", e);
-
-        } catch (Exception e) {
-            // Unexpected errors
-            logger.error("Unexpected error during signup: {}", e.getMessage(), e);
-            throw new SignupException("An unexpected error occurred during signup", e);
-        }
+//        catch (UserAlreadyExistsException e) {
+//            // Expected business exception - rethrow
+//            logger.warn("Signup attempt with existing email: {}", email);
+//            throw e;
+//        } catch (DataIntegrityViolationException e) {
+//            // Database constraint violation
+//            logger.error("Data integrity violation during signup: {}", e.getMessage());
+//            throw new SignupException("Unable to create account due to data conflict", e);
+//
+//        } catch (DataAccessException e) {
+//            // General database errors
+//            logger.error("Database error during signup: {}", e.getMessage(), e);
+//            throw new SignupException("Unable to create account due to system error", e);
+//
+//        } catch (Exception e) {
+//            // Unexpected errors
+//            logger.error("Unexpected error during signup: {}", e.getMessage(), e);
+//            throw new SignupException("An unexpected error occurred during signup", e);
+//        }
     }
 
 

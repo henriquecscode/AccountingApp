@@ -55,7 +55,6 @@ public class AuthController {
             HttpServletRequest httpRequest,
             HttpServletResponse httpResponse
     ) {
-        try {
             SignUpResponse signUpResponse = authService.signUp(
                     request.email(),
                     request.password(),
@@ -69,13 +68,6 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.CREATED).body(
                     new BasicResponse<>(new AuthResponse(signUpResponse.accessToken(), null, signUpResponse.deviceName()))
             );
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(new BasicResponse<>(false, null, null, null));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(new BasicResponse<>(false, null, null, null));
-        }
     }
 
     /**
