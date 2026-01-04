@@ -1,8 +1,7 @@
-package com.fivault.fivault.dto;
+package com.fivault.fivault.dto.response;
 
 public record AuthResponse(
         String accessToken,
-        String refreshToken,
         String message,
         String deviceName
 ) {}
