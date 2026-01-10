@@ -1,35 +1,118 @@
-import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+// signup.component.ts
+import { ChangeDetectorRef, Component } from '@angular/core';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
+import { CommonModule } from '@angular/common';
 import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-signup',
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [ReactiveFormsModule, RouterLink, CommonModule],
   templateUrl: './signup.html',
   styleUrl: './signup.scss',
   standalone: true
 })
 export class Signup {
   signupForm: FormGroup;
+  submitted = false;
+  backendError = '';
+  showPassword = false;
+  showConfirmPassword = false;
 
   constructor(
     private authservice: AuthService,
     private router: Router,
-    private fb: FormBuilder) {
+    private fb: FormBuilder,
+    private cdr: ChangeDetectorRef
+  ) {
     this.signupForm = this.fb.group({
-      email: ['', Validators.required],
-      password: ['', Validators.required],
+      email: ['', [Validators.required]],
+      password: ['', [
+        Validators.required,
+        Validators.minLength(8),
+        this.passwordStrengthValidator
+      ]],
       confirmPassword: ['', Validators.required]
-    })
+    }, {
+      validators: this.passwordMatchValidator  // Form-level validator
+    });
+  }
+
+  // Custom validator for password strength
+  passwordStrengthValidator(control: AbstractControl): ValidationErrors | null {
+    const value = control.value;
+    if (!value) return null;
+
+    const hasNumber = /[0-9]/.test(value);
+    const hasUpper = /[A-Z]/.test(value);
+    const hasLower = /[a-z]/.test(value);
+    const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(value);
+
+    const valid = hasNumber && hasUpper && hasLower && hasSpecial;
+
+    if (!valid) {
+      return {
+        passwordStrength: {
+          hasNumber,
+          hasUpper,
+          hasLower,
+          hasSpecial
+        }
+      };
+    }
+
+    return null;
+  }
+
+  // Custom validator for password match
+  passwordMatchValidator(control: AbstractControl): ValidationErrors | null {
+    const password = control.get('password');
+    const confirmPassword = control.get('confirmPassword');
+
+    if (!password || !confirmPassword) return null;
+
+    if (confirmPassword.value === '') return null;
+
+    return password.value === confirmPassword.value
+      ? null
+      : { passwordMismatch: true };
+  }
+
+  // Getters for easy access in template
+  get email() {
+    return this.signupForm.get('email');
+  }
+
+  get password() {
+    return this.signupForm.get('password');
+  }
+
+  get confirmPassword() {
+    return this.signupForm.get('confirmPassword');
+  }
+
+  togglePasswordVisibility() {
+    this.showPassword = !this.showPassword;
+  }
+
+  toggleConfirmPasswordVisibility() {
+    this.showConfirmPassword = !this.showConfirmPassword;
   }
 
   onSubmit() {
+    this.submitted = true;
+    this.backendError = '';
+
     if (this.signupForm.invalid) {
+      // Mark all fields as touched to show errors
+      // Object.keys(this.signupForm.controls).forEach(key => {
+      //   this.signupForm.get(key)?.markAsTouched();
+      // });
+      this.signupForm.markAllAsTouched();
       return;
     }
 
-    const { email, password, confirmPassword } = this.signupForm.value;
+    const { email, password } = this.signupForm.value;
 
     this.authservice.signup(email, password).subscribe({
       next: (response) => {
@@ -38,7 +121,18 @@ export class Signup {
       },
       error: (err) => {
         console.log("Signup error", err);
+
+        // Handle backend errors
+        if (err.status === 409) {
+          this.backendError = 'This email is already registered';
+        } else if (err.error?.message) {
+          this.backendError = err.error.message;
+        } else {
+          this.backendError = 'Signup failed. Please try again.';
+        }
+
+        this.cdr.detectChanges();
       }
-    })
+    });
   }
 }
