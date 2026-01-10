@@ -75,4 +75,8 @@ public class PasswordService {
             throw new RuntimeException("Invalid pepper key for HMAC", e);
         }
     }
+
+    public boolean testPasswordStrength(String password) {
+        return true;
+    }
 }

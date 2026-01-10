@@ -60,6 +60,11 @@ public class AuthService {
             return Output.failure(ErrorCode.AUTH_USER_EXISTS);
         }
 
+        boolean strongPassword = passwordService.testPasswordStrength(password);
+
+        if (!strongPassword) {
+            return Output.failure(ErrorCode.AUTH_WEAK_PASSWORD);
+        }
         // Create new user
         AppUser user = new AppUser();
         user.setEmail(email.toLowerCase());

@@ -5,6 +5,12 @@ import { Observable, tap } from 'rxjs';
 
 
 
+interface SignUpResponse {
+  accessToken: string;
+  message: string;
+  deviceName: string;
+  // No refreshToken in response since it's in cookie
+}
 interface AuthResponse {
   accessToken: string;
   message: string;
@@ -26,6 +32,16 @@ export class AuthService {
     this.accessToken = localStorage.getItem(this.ACCESS_TOKEN_KEY);
   }
 
+  signup(email: string, password: string): Observable<SignUpResponse> {
+    return this.http.post<SignUpResponse>('/auth/signup', {
+      email: email,
+      password: password
+    }).pipe(
+      tap(response => {
+        this.storeAccessToken(response.accessToken);
+      })
+    );
+  }
   login(username: string, password: string): Observable<AuthResponse> {
     return this.http.post<AuthResponse>('/auth/login',
       {
