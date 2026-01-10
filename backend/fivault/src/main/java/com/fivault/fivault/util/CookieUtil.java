@@ -2,6 +2,7 @@ package com.fivault.fivault.util;
 
 import jakarta.servlet.http.Cookie;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -9,6 +10,9 @@ public class CookieUtil {
 
     @Value("${app.cookie.secure:true}")
     private boolean secure;
+
+    @Value("${app.cookie.same-site:Strict}")
+    private String   sameSitePolicy;
 
     @Value("${app.cookie.domain:}")
     private String domain;
@@ -21,19 +25,33 @@ public class CookieUtil {
      * @param token The refresh token value
      * @return Configured cookie ready to add to response
      */
-    public Cookie createRefreshTokenCookie(String token) {
-        Cookie cookie = new Cookie("refreshToken", token);
-        cookie.setHttpOnly(true);
-        cookie.setSecure(secure);  // From config
-        cookie.setPath("/");
-        cookie.setMaxAge(refreshTokenMaxAge);
-        cookie.setAttribute("SameSite", "Strict");
+    public ResponseCookie createRefreshTokenCookie(String token) {
+
+        ResponseCookie.ResponseCookieBuilder builder = ResponseCookie.from("refreshToken", token)
+                .httpOnly(true)
+                .secure(secure)  // From config
+                .path("/")
+                .maxAge(refreshTokenMaxAge)
+                .sameSite(sameSitePolicy);  // "Lax", "Strict", or "None"
 
         if (!domain.isEmpty()) {
-            cookie.setDomain(domain);
+            builder.domain(domain);
         }
 
-        return cookie;
+        return builder.build();
+
+//        Cookie cookie = new Cookie("refreshToken", token);
+//        cookie.setHttpOnly(true);
+//        cookie.setSecure(secure);  // From config
+//        cookie.setPath("/");
+//        cookie.setMaxAge(refreshTokenMaxAge);
+//        cookie.setAttribute("SameSite", sameSitePolicy);
+//
+//        if (!domain.isEmpty()) {
+//            cookie.setDomain(domain);
+//        }
+//
+//        return cookie;
     }
 
     /**

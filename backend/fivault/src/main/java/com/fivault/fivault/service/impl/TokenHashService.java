@@ -18,21 +18,19 @@ public class TokenHashService {
 
     /**
      * Hash a token using SHA-256 with salt
+     *
      * @param plainToken The plain text token
-     * @param salt The salt (unique per token)
      * @return Base64-encoded hash of (salt + token)
      */
 
-    public String hashData(String plainToken, String salt) {
+    public String hashData(String plainToken) {
         try {
-            // Combine salt and token
-            String combined = salt + plainToken;
 
             // Get SHA-256 instance
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
 
             // Hash the combined string
-            byte[] hashBytes = digest.digest(combined.getBytes(StandardCharsets.UTF_8));
+            byte[] hashBytes = digest.digest(plainToken.getBytes(StandardCharsets.UTF_8));
 
             // Encode to Base64 for storage
             return Base64.getEncoder().encodeToString(hashBytes);
@@ -44,14 +42,14 @@ public class TokenHashService {
 
     /**
      * Verify a plain token against a stored hash
+     *
      * @param plainToken The token from the user's request
-     * @param salt The salt used when creating the hash
      * @param storedHash The hash stored in the database
      * @return true if the token is valid
      */
-    public boolean verifyData(String plainToken, String salt, String storedHash) {
+    public boolean verifyData(String plainToken, String storedHash) {
         // Hash the provided token with the same salt
-        String computedHash = hashData(plainToken, salt);
+        String computedHash = hashData(plainToken);
 
         // Compare with stored hash (constant-time comparison to prevent timing attacks)
         return MessageDigest.isEqual(

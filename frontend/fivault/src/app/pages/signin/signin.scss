@@ -1,0 +1,12 @@
+@use "variables" as vars;
+.card {
+  border-radius: 0.5rem;
+}
+
+.card-title {
+  font-weight: 600;
+}
+
+body {
+  background-color: vars.$main-bg; // default page background
+}

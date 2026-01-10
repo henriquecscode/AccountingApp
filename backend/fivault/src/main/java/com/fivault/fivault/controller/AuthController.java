@@ -3,6 +3,7 @@ package com.fivault.fivault.controller;
 import com.fivault.fivault.controller.request.RefreshRequest;
 import com.fivault.fivault.controller.request.SignInRequest;
 import com.fivault.fivault.controller.request.SignUpRequest;
+import com.fivault.fivault.controller.response.RefreshResponse;
 import com.fivault.fivault.controller.response.SignUpResponse;
 import com.fivault.fivault.controller.response.BasicResponse;
 import com.fivault.fivault.service.AuthService;
@@ -12,9 +13,7 @@ import com.fivault.fivault.service.output.Output;
 import com.fivault.fivault.service.output.SignUpResult;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ProblemDetail;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import com.fivault.fivault.util.CookieUtil;
 
@@ -36,8 +35,8 @@ public class AuthController {
     }
 
     @GetMapping("/try-authenticated")
-    public String hi() {
-        return "Authenticated";
+    public ResponseEntity<BasicResponse<String>> hi() {
+        return ResponseEntity.ok(BasicResponse.success("Authenticated"));
     }
 
     @GetMapping("/try-not-authenticated")
@@ -94,9 +93,11 @@ public class AuthController {
 
         SignUpResult result = output.getData().get();
         // Create and add refresh token cookie
-        httpResponse.addCookie(
-                cookieUtil.createRefreshTokenCookie(result.refreshToken())
-        );
+        ResponseCookie cookie = cookieUtil.createRefreshTokenCookie(result.refreshToken());
+        httpResponse.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+//        httpResponse.addCookie(
+//                cookieUtil.createRefreshTokenCookie(result.refreshToken())
+//        );
         return ResponseEntity.status(HttpStatus.CREATED).body(
                 BasicResponse.success(new SignUpResponse(result.accessToken(), null, result.deviceName()))
         );
@@ -121,15 +122,22 @@ public class AuthController {
         );
 
         if (output.isFailure()) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
-                    BasicResponse.failure(null)
+            HttpStatus status = HttpStatus.UNAUTHORIZED;
+            ProblemDetail problem = ProblemDetail.forStatusAndDetail(
+                    status,
+                    null
+            );
+            return ResponseEntity.status(status).body(
+                    BasicResponse.failure(problem)
             );
         }
 
         var result = output.getData().get();
-        httpResponse.addCookie(
-                cookieUtil.createRefreshTokenCookie(result.refreshToken())
-        );
+        ResponseCookie cookie = cookieUtil.createRefreshTokenCookie(result.refreshToken());
+        httpResponse.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+//        httpResponse.addCookie(
+//                cookieUtil.createRefreshTokenCookie(result.refreshToken())
+//        );
         return ResponseEntity.ok(BasicResponse.success(new SignUpResponse(result.accessToken(), null, null)));
 
     }
@@ -140,23 +148,36 @@ public class AuthController {
      * Body: { "refreshToken": "your-refresh-token" }
      */
     @PostMapping("/refresh")
-    public ResponseEntity<SignUpResponse> refreshToken(
+    public ResponseEntity<BasicResponse<RefreshResponse>> refreshToken(
             @RequestBody RefreshRequest request,
-            HttpServletRequest httpRequest) {
-        try {
-            String newAccessToken = authService.refreshAccessToken(
-                    request.refreshToken(),
-                    httpRequest
+            HttpServletRequest httpRequest,
+            HttpServletResponse httpResponse
+    ) {
+
+        String refreshToken = cookieUtil.getRefreshTokenFromCookies(httpRequest.getCookies());
+        var output = authService.refreshAccessToken(
+                refreshToken,
+                httpRequest
+        );
+
+        if (output.isFailure()) {
+            HttpStatus status = HttpStatus.UNAUTHORIZED;
+            ProblemDetail problem = ProblemDetail.forStatusAndDetail(
+                    status,
+                    null
             );
-            return ResponseEntity.ok(
-                    new SignUpResponse(newAccessToken, "Token refreshed successfully", null)
+            return ResponseEntity.status(status).body(
+                    BasicResponse.failure(problem)
             );
-        } catch (IllegalArgumentException e) {
-            // Invalid or expired refresh token
-            return ResponseEntity
-                    .status(HttpStatus.UNAUTHORIZED)
-                    .body(new SignUpResponse(null, e.getMessage(), null));
         }
+        var result = output.getData().get();
+        ResponseCookie cookie = cookieUtil.createRefreshTokenCookie(result.refreshToken());
+        httpResponse.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+
+        return ResponseEntity.ok(BasicResponse.success(
+                new RefreshResponse(result.accessToken()))
+        );
+
     }
 
     /**

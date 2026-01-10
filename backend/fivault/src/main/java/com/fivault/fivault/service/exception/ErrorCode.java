@@ -13,6 +13,7 @@ public enum ErrorCode {
     // Authentication errors
     AUTH_USER_EXISTS("AUTH_001", "User already exists", ErrorCategory.AUTHENTICATION),
     AUTH_INVALID_CREDENTIALS("AUTH_002", "Invalid credentials", ErrorCategory.AUTHENTICATION),
+    AUTH_INVALID_SESSION("AUTH_004", "Invalid session", ErrorCategory.AUTHENTICATION),
     AUTH_WEAK_PASSWORD("AUTH_003", "Password does not meet requirements", ErrorCategory.AUTHENTICATION),
 
     // Validation errors

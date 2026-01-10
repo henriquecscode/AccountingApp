@@ -15,9 +15,6 @@ public class AppUserSession {
     @Column(nullable = false, unique = true, length = 512)
     private String tokenHash;  // Store hash, not plain token
 
-    @Column(nullable = false)
-    private String tokenSalt;  // Unique per token
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private AppUser user;
@@ -65,14 +62,6 @@ public class AppUserSession {
 
     public void setTokenHash(String tokenHash) {
         this.tokenHash = tokenHash;
-    }
-
-    public String getTokenSalt() {
-        return tokenSalt;
-    }
-
-    public void setTokenSalt(String tokenSalt) {
-        this.tokenSalt = tokenSalt;
     }
 
     public AppUser getUser() {

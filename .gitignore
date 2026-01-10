@@ -7,3 +7,5 @@ database/data/
 .idea/
 .vscode/
 *.iml
+backend/fivault.zip
+frontend/fivault/src/environments/environment.prod.ts

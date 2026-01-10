@@ -9,18 +9,21 @@ import com.fivault.fivault.service.exception.ErrorCode;
 import com.fivault.fivault.service.impl.PasswordService;
 import com.fivault.fivault.service.impl.TokenHashService;
 import com.fivault.fivault.service.output.Output;
+import com.fivault.fivault.service.output.RefreshSessionResult;
 import com.fivault.fivault.service.output.SignInResult;
 import com.fivault.fivault.service.output.SignUpResult;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import com.fivault.fivault.util.DeviceFingerprint;
 import com.fivault.fivault.util.RandomUtil;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class AuthService {
@@ -48,32 +51,32 @@ public class AuthService {
 
     @Transactional(rollbackOn = Exception.class)
     public Output<SignUpResult> signUp(String email, String password, HttpServletRequest httpRequest) {
-            // Validate input
-            if (email == null || email.isBlank()) {
-                return Output.failure(ErrorCode.VALIDATION_INVALID_INPUT);
-            }
-            if (password == null || password.isBlank()) {
-                return Output.failure(ErrorCode.VALIDATION_INVALID_INPUT);
-            }
+        // Validate input
+        if (email == null || email.isBlank()) {
+            return Output.failure(ErrorCode.VALIDATION_INVALID_INPUT);
+        }
+        if (password == null || password.isBlank()) {
+            return Output.failure(ErrorCode.VALIDATION_INVALID_INPUT);
+        }
 
-            // Check if user exists
-            if (userRepository.existsByEmail(email.toLowerCase())) {
-                return Output.failure(ErrorCode.AUTH_USER_EXISTS);
-            }
+        // Check if user exists
+        if (userRepository.existsByEmail(email.toLowerCase())) {
+            return Output.failure(ErrorCode.AUTH_USER_EXISTS);
+        }
 
-            // Create new user
-            AppUser user = new AppUser();
-            user.setEmail(email.toLowerCase());
+        // Create new user
+        AppUser user = new AppUser();
+        user.setEmail(email.toLowerCase());
 
-            // Generate salt and hash password
-            String hashedPassword = passwordService.hashPassword(password);
+        // Generate salt and hash password
+        String hashedPassword = passwordService.hashPassword(password);
 
-            user.setPasswordHash(hashedPassword);
-            user.setActive(true);
-            user.setEmailVerified(false);
-            user.setFailedLoginAttempts(0);
+        user.setPasswordHash(hashedPassword);
+        user.setActive(true);
+        user.setEmailVerified(false);
+        user.setFailedLoginAttempts(0);
 
-            user = userRepository.save(user);
+        user = userRepository.save(user);
 
         var result = getCreateSession(httpRequest, user);
 
@@ -81,21 +84,31 @@ public class AuthService {
     }
 
     public Output<SignInResult> signIn(String email, String password, HttpServletRequest httpRequest) {
-        AppUser user = userRepository.findByEmail(email);
-                String hashedPassword = user.getPasswordHash();
-            boolean success = passwordService.verifyPassword(password, hashedPassword);
+        Optional<AppUser> optionalAppUser = userRepository.findByEmail(email);
+        if (optionalAppUser.isEmpty()) {
+            return Output.failure(ErrorCode.AUTH_INVALID_CREDENTIALS);
+        }
+        AppUser user = optionalAppUser.get();
+        String hashedPassword = user.getPasswordHash();
+        boolean success = passwordService.verifyPassword(password, hashedPassword);
 
-            if(!success){
-                return Output.failure(ErrorCode.AUTH_INVALID_CREDENTIALS);
-            }
-            var result = getCreateSession(httpRequest, user);
+        if (!success) {
+            return Output.failure(ErrorCode.AUTH_INVALID_CREDENTIALS);
+        }
+        var result = getCreateSession(httpRequest, user);
 
-            return Output.success(new SignInResult(result.jwtToken, result.refreshToken()));
-
+        return Output.success(new SignInResult(result.jwtToken, result.refreshToken()));
     }
 
-    public String refreshAccessToken(String s, HttpServletRequest httpRequest) {
-        return null;
+    public Output<RefreshSessionResult> refreshAccessToken(String token, HttpServletRequest httpRequest) {
+        // First validate refresh token
+        AppUser appUser = fetchAppUserSession(token);
+        if (appUser == null) {
+            return Output.failure(ErrorCode.AUTH_INVALID_SESSION);
+        }
+        var result = getCreateSession(httpRequest, appUser);
+
+        return Output.success(new RefreshSessionResult(result.jwtToken, result.refreshToken()));
     }
 
     public void logout(String s) {
@@ -116,11 +129,9 @@ public class AuthService {
         AppUserSession token = new AppUserSession();
 
         // Generate salt and hash the token before storing
-        String tokenSalt = tokenHashService.generateSalt();
-        String tokenHash = tokenHashService.hashData(plainToken, tokenSalt);
+        String tokenHash = tokenHashService.hashData(plainToken);
 
         token.setTokenHash(tokenHash);
-        token.setTokenSalt(tokenSalt);
         token.setUser(user);
         token.setDeviceId(deviceId);
         token.setDeviceName(deviceName);
@@ -150,6 +161,22 @@ public class AuthService {
         String jwtToken = jwtService.generateToken(user.getEmail(), user.getAppUserId());
         UserSessionAuthCredentials result = new UserSessionAuthCredentials(deviceName, refreshToken, jwtToken);
         return result;
+    }
+
+    private AppUser fetchAppUserSession(String token) {
+
+        String hashToken = tokenHashService.hashData(token);
+        Optional<AppUserSessionRepository.SessionInfo> sessionInfoOptional = appUserSessionRepository.findByTokenHash(hashToken);
+        if (sessionInfoOptional.isEmpty()) {
+            return null;
+        }
+        var sessionInfo = sessionInfoOptional.get();
+        var now = LocalDateTime.now();
+        if (now.isAfter(sessionInfo.getExpiresAt())) {
+            return null;
+        }
+        return sessionInfo.getUser();
+
     }
 
 }

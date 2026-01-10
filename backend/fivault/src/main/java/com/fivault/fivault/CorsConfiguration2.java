@@ -6,7 +6,7 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
-public class CorsConfiguration implements WebMvcConfigurer {
+public class CorsConfiguration2 /*implements WebMvcConfigurer*/ {
 
     @Value("${cors.allowed.origins}")
     private String allowedOrigins;
@@ -14,7 +14,7 @@ public class CorsConfiguration implements WebMvcConfigurer {
     @Value("${cors.allowed.origin-patterns}")
     private String allowedOriginPattersn;
 
-    @Override
+    //@Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/api/**")
                 .allowedOrigins(allowedOrigins.split(","))  // Your Angular app
