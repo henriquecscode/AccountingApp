@@ -1,3 +1,4 @@
+DROP INDEX idx_token_hash_covering;
 CREATE INDEX idx_token_hash_covering
-ON app_user_sessions(token_hash)
+ON app_user_sessions(token_hash, revoked)
 INCLUDE (user_id, expires_at);

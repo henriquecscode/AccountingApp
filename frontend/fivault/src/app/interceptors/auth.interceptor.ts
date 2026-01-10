@@ -54,19 +54,23 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 };
 
 function isAuthenticationRequest(req: HttpRequest<any>) {
-  return isRefreshRequest(req) || isSignInRequest(req) || isSignUpRequest(req);
+  return isRefreshRequest(req) || isLogInRequest(req) || isSignUpRequest(req);
 }
 
 function isRefreshRequest(req: HttpRequest<any>) {
   return req.url.includes('/auth/refresh')
 }
 
-function isSignInRequest(req: HttpRequest<any>) {
-  return req.url.includes('/auth/signin')
+function isLogInRequest(req: HttpRequest<any>) {
+  return req.url.includes('/auth/login')
 }
 
 function isSignUpRequest(req: HttpRequest<any>) {
   return req.url.includes('/auth/signup')
+}
+
+function isLogoutRequest(req: HttpRequest<any>) {
+  return req.url.includes('/auth/logout')
 }
 
 

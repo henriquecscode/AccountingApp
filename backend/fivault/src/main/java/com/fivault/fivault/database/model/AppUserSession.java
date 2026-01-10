@@ -2,6 +2,7 @@ package com.fivault.fivault.database.model;
 
 import jakarta.persistence.*;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 
 @Entity
@@ -134,5 +135,9 @@ public class AppUserSession {
 
     public void setRevoked(Boolean revoked) {
         this.revoked = revoked;
+    }
+
+    public boolean isExpired() {
+        return LocalDateTime.now().isAfter(getExpiresAt());
     }
 }

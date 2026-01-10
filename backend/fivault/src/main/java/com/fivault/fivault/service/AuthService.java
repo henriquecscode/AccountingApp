@@ -8,15 +8,11 @@ import com.fivault.fivault.repository.AppUserSessionRepository;
 import com.fivault.fivault.service.exception.ErrorCode;
 import com.fivault.fivault.service.impl.PasswordService;
 import com.fivault.fivault.service.impl.TokenHashService;
-import com.fivault.fivault.service.output.Output;
-import com.fivault.fivault.service.output.RefreshSessionResult;
-import com.fivault.fivault.service.output.SignInResult;
-import com.fivault.fivault.service.output.SignUpResult;
+import com.fivault.fivault.service.output.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import com.fivault.fivault.util.DeviceFingerprint;
 import com.fivault.fivault.util.RandomUtil;
@@ -83,7 +79,7 @@ public class AuthService {
         return Output.success(new SignUpResult(result.jwtToken(), result.refreshToken(), result.deviceName()));
     }
 
-    public Output<SignInResult> signIn(String email, String password, HttpServletRequest httpRequest) {
+    public Output<LogInResult> logIn(String email, String password, HttpServletRequest httpRequest) {
         Optional<AppUser> optionalAppUser = userRepository.findByEmail(email);
         if (optionalAppUser.isEmpty()) {
             return Output.failure(ErrorCode.AUTH_INVALID_CREDENTIALS);
@@ -97,21 +93,36 @@ public class AuthService {
         }
         var result = getCreateSession(httpRequest, user);
 
-        return Output.success(new SignInResult(result.jwtToken, result.refreshToken()));
+        return Output.success(new LogInResult(result.jwtToken, result.refreshToken()));
     }
 
     public Output<RefreshSessionResult> refreshAccessToken(String token, HttpServletRequest httpRequest) {
         // First validate refresh token
-        AppUser appUser = fetchAppUserSession(token);
+        AppUserSession appUserSession = fetchAppUserSession(token);
+        if (appUserSession == null) {
+            return Output.failure(ErrorCode.AUTH_INVALID_SESSION);
+        }
+        AppUser appUser = appUserSession.getUser();
         if (appUser == null) {
             return Output.failure(ErrorCode.AUTH_INVALID_SESSION);
         }
+        appUserSession.setRevoked(true);
         var result = getCreateSession(httpRequest, appUser);
 
         return Output.success(new RefreshSessionResult(result.jwtToken, result.refreshToken()));
     }
 
-    public void logout(String s) {
+    public Output<LogoutResult> logout(String token) {
+        AppUserSession appUserSession = fetchAppUserSession(token);
+        if (appUserSession == null) {
+            return Output.failure(ErrorCode.AUTH_INVALID_SESSION);
+        }
+        AppUser appUser = appUserSession.getUser();
+        if (appUser == null) {
+            return Output.failure(ErrorCode.AUTH_INVALID_SESSION);
+        }
+        appUserSession.setRevoked(true);
+        return Output.success(new LogoutResult());
     }
 
     public void logoutAllDevices(Long userId) {
@@ -163,19 +174,18 @@ public class AuthService {
         return result;
     }
 
-    private AppUser fetchAppUserSession(String token) {
+    private AppUserSession fetchAppUserSession(String token) {
 
         String hashToken = tokenHashService.hashData(token);
-        Optional<AppUserSessionRepository.SessionInfo> sessionInfoOptional = appUserSessionRepository.findByTokenHash(hashToken);
+        Optional<AppUserSession> sessionInfoOptional = appUserSessionRepository.findByTokenHashAndRevokedFalse(hashToken);
         if (sessionInfoOptional.isEmpty()) {
             return null;
         }
-        var sessionInfo = sessionInfoOptional.get();
-        var now = LocalDateTime.now();
-        if (now.isAfter(sessionInfo.getExpiresAt())) {
+        AppUserSession appUserSession = sessionInfoOptional.get();
+        if (appUserSession.isExpired()) {
             return null;
         }
-        return sessionInfo.getUser();
+        return appUserSession;
 
     }
 

@@ -1,8 +1,9 @@
 package com.fivault.fivault.controller;
 
 import com.fivault.fivault.controller.request.RefreshRequest;
-import com.fivault.fivault.controller.request.SignInRequest;
+import com.fivault.fivault.controller.request.LogInRequest;
 import com.fivault.fivault.controller.request.SignUpRequest;
+import com.fivault.fivault.controller.response.LogoutResponse;
 import com.fivault.fivault.controller.response.RefreshResponse;
 import com.fivault.fivault.controller.response.SignUpResponse;
 import com.fivault.fivault.controller.response.BasicResponse;
@@ -105,17 +106,17 @@ public class AuthController {
 
     /**
      * Sign in an existing user
-     * POST /api/auth/signin
+     * POST /api/auth/login
      * Body: { "email": "user@example.com", "password": "password123" }
      */
-    @PostMapping("/signin")
-    public ResponseEntity<BasicResponse<SignUpResponse>> signIn(
-            @RequestBody SignInRequest request,
+    @PostMapping("/login")
+    public ResponseEntity<BasicResponse<SignUpResponse>> logIn(
+            @RequestBody LogInRequest request,
             HttpServletRequest httpRequest,
             HttpServletResponse httpResponse
     ) {
 
-        var output = authService.signIn(
+        var output = authService.logIn(
                 request.email(),
                 request.password(),
                 httpRequest
@@ -183,13 +184,33 @@ public class AuthController {
     /**
      * Logout from current device
      * POST /api/auth/logout
-     * Body: { "refreshToken": "your-refresh-token" }
      */
     @PostMapping("/logout")
-    public ResponseEntity<SignUpResponse> logout(@RequestBody RefreshRequest request) {
-        authService.logout(request.refreshToken());
-        return ResponseEntity.ok(
-                new SignUpResponse(null, "Logged out successfully", null)
+    public ResponseEntity<BasicResponse<LogoutResponse>> logout(
+            @RequestBody RefreshRequest request,
+            HttpServletRequest httpRequest,
+            HttpServletResponse httpResponse
+    ) {
+        String refreshToken = cookieUtil.getRefreshTokenFromCookies(httpRequest.getCookies());
+        var output = authService.logout(
+                refreshToken
+        );
+
+        if (output.isFailure()) {
+            HttpStatus status = HttpStatus.UNAUTHORIZED;
+            ProblemDetail problem = ProblemDetail.forStatusAndDetail(
+                    status,
+                    null
+            );
+            return ResponseEntity.status(status).body(
+                    BasicResponse.failure(problem)
+            );
+        }
+        ResponseCookie cookie = cookieUtil.createDeleteRefreshTokenCookie();
+        httpResponse.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+
+        return ResponseEntity.ok(BasicResponse.success(
+                new LogoutResponse())
         );
     }
 

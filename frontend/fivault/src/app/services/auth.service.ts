@@ -25,8 +25,8 @@ export class AuthService {
     this.accessToken = localStorage.getItem(this.ACCESS_TOKEN_KEY);
   }
 
-  signin(username: string, password: string): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>('/auth/signin',
+  login(username: string, password: string): Observable<AuthResponse> {
+    return this.http.post<AuthResponse>('/auth/login',
       {
         email: username,
         password: password

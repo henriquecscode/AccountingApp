@@ -5,13 +5,13 @@ import { RouterLink } from '@angular/router';
 import { lastValueFrom, Observable } from 'rxjs';
 
 @Component({
-  selector: 'app-signin',
+  selector: 'app-login',
   imports: [ReactiveFormsModule, RouterLink],
-  templateUrl: './signin.html',
-  styleUrl: './signin.scss',
+  templateUrl: './login.html',
+  styleUrl: './login.scss',
   standalone: true
 })
-export class Signin {
+export class Login {
 
   loginForm: FormGroup;
   polling: Boolean = true;
@@ -32,7 +32,7 @@ export class Signin {
 
     const { username, password } = this.loginForm.value;
 
-    this.authService.signin(username, password).subscribe({
+    this.authService.login(username, password).subscribe({
       next: (response) => {
         console.log('Login success', response);
         this.startTryingAuthentication();
