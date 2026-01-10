@@ -1,0 +1,51 @@
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-5 col-lg-4">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h3 class="card-title text-center mb-4">Sign In</h3>
+
+                    <form [formGroup]="signupForm" (ngSubmit)="onSubmit()" novalidate>
+                        <!-- Email -->
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="text" class="form-control" id="email" formControlName="email"
+                                placeholder="Enter email">
+                        </div>
+
+                        <!-- Username -->
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Username</label>
+                            <input type="text" class="form-control" id="username" formControlName="username"
+                                placeholder="Enter username">
+                        </div>
+
+                        <!-- Password -->
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="password" formControlName="password"
+                                placeholder="Password">
+                        </div>
+
+                        <!-- Again Password -->
+                        <div class="mb-3">
+                            <label for="confirmPassword" class="form-label">Confirm Password</label>
+                            <input type="confirmPassword" class="form-control" id="confirmPassword"
+                                formControlName="confirmPassword" placeholder="confirmPassword">
+                        </div>
+
+                        <!-- Submit button -->
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">Sign up</button>
+                        </div>
+
+                        <!-- Optional links -->
+                        <div class="text-center mt-3">
+                            <a routerLink="/login">Already have an account? Login</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

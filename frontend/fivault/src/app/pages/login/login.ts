@@ -49,7 +49,7 @@ export class Login {
     if (!this.polling) { return; }
 
     let response: String = await lastValueFrom(this.authService.tryAuthentication())
-    console.log(response);  
+    console.log(response);
 
 
 
@@ -59,10 +59,10 @@ export class Login {
   }
 
   private delayfunc(ms: number): Promise<void> {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
 
-  ngOnDestroy(){
+  ngOnDestroy() {
     this.polling = false;
   }
 
