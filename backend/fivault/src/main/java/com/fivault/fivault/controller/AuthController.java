@@ -69,7 +69,7 @@ public class AuthController {
 
             var errorCode = output.getErrorCode().get();
             if (errorCode.equals(ErrorCode.AUTH_USER_EXISTS)) {
-                status = HttpStatus.INTERNAL_SERVER_ERROR;
+                status = HttpStatus.CONFLICT;
                 detail = errorCode.getCode();
             } else if (errorCode.equals(ErrorCode.VALIDATION_INVALID_INPUT)) {
                 status = HttpStatus.BAD_REQUEST;
