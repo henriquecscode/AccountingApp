@@ -11,6 +11,7 @@ interface AuthResponse {
   deviceName: string;
   // No refreshToken in response since it's in cookie
 }
+interface LogoutResponse { }
 @Injectable({
   providedIn: 'root'
 })
@@ -46,16 +47,16 @@ export class AuthService {
       );
   }
 
-  logout(): void {
-    this.accessToken = null;
-    localStorage.removeItem(this.ACCESS_TOKEN_KEY);
+  logout(): Observable<LogoutResponse> {
     // Call backend to clear the cookie
-    this.http.post('/auth/logout', {}).subscribe();
+    return this.http.post('/auth/logout', {}).pipe(
+      tap(response => this.removeAccessToken())
+    );
   }
 
   // Backend already considers us logged out
   logoutFrontend(): void {
-    return;
+    this.removeAccessToken();
   }
 
   getAccessToken(): string | null {
@@ -64,6 +65,11 @@ export class AuthService {
 
   isAuthenticated(): boolean {
     return !!this.accessToken;
+  }
+
+  private removeAccessToken(): void {
+    this.accessToken = null;
+    localStorage.removeItem(this.ACCESS_TOKEN_KEY);
   }
 
   private storeAccessToken(token: string): void {

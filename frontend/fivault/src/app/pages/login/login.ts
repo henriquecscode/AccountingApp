@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { lastValueFrom, Observable } from 'rxjs';
 
 @Component({
@@ -18,7 +18,11 @@ export class Login {
 
   constructor(
     private authService: AuthService,
-    private fb: FormBuilder) {
+    private fb: FormBuilder,
+    private router: Router,
+    private route: ActivatedRoute  // To get returnUrl query param
+
+  ) {
     this.loginForm = this.fb.group({
       username: ['', Validators.required],
       password: ['', Validators.required]
@@ -35,9 +39,8 @@ export class Login {
     this.authService.login(username, password).subscribe({
       next: (response) => {
         console.log('Login success', response);
-        this.startTryingAuthentication();
-
-        // navigate, store token, etc.
+        var returnUrl: string = this.route.snapshot.queryParams['returnUrl'] || '/app/home';
+        this.router.navigateByUrl(returnUrl);
       },
       error: (err) => {
         console.error('Login failed', err);

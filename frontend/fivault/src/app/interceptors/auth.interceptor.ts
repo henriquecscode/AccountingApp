@@ -14,11 +14,14 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
     return next(clonedReq);
   }
 
+
+
   const token = authService.getAccessToken();
 
   // Add access token to request, and ensure credentials are included for cookies
   const clonedReq = req.clone({
     setHeaders: token ? { Authorization: `Bearer ${token}` } : {},
+    withCredentials: isLogoutRequest(req) ? true: false // Pass session token to be revoked 
   });
 
   return next(clonedReq).pipe(
