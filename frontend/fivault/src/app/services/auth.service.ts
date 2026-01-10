@@ -66,7 +66,7 @@ export class AuthService {
   logout(): Observable<LogoutResponse> {
     // Call backend to clear the cookie
     return this.http.post('/auth/logout', {}).pipe(
-      tap(response => this.removeAccessToken())
+      finalize(() => this.removeAccessToken())
     );
   }
 
