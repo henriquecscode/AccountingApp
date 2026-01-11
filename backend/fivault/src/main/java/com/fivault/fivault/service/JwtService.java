@@ -28,7 +28,6 @@ public class JwtService {
     public String generateToken(String username, Long userId) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("username", username);
-        claims.put("userId", userId);
 
         return Jwts.builder()
                 .claims(claims)
@@ -39,8 +38,8 @@ public class JwtService {
                 .compact();
     }
 
-    public Long extractUserId(String token) {
-        return extractAllClaims(token).get("userId", Long.class);
+    public String extractUsername(String token) {
+        return extractAllClaims(token).get("username", String.class);
     }
 
     public boolean isTokenValid(String token) {
