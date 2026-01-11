@@ -3,7 +3,7 @@
         <div class="col-md-5 col-lg-4">
             <div class="card shadow-sm">
                 <div class="card-body">
-                    <h3 class="card-title text-center mb-4">Sign Up</h3>
+                    <h3 i18n="signup page title@@signup-page-title" class="card-title text-center mb-4">Sign Up</h3>
 
                     <!-- Backend Error Alert -->
                     @if (backendError) {
@@ -17,7 +17,8 @@
 
                         <!-- Username -->
                         <div class="mb-3">
-                            <label for="username" class="form-label">Username</label>
+                            <label i18n="signup form username@@signup-form-username" for="username"
+                                class="form-label">Username</label>
                             <input type="username" class="form-control"
                                 [class.is-invalid]="username?.invalid && (username?.touched || submitted)"
                                 [class.is-valid]="username?.valid && username?.touched" id="username"
@@ -27,7 +28,8 @@
                             @if (username?.invalid && (username?.touched || submitted)) {
                             <div class="invalid-feedback">
                                 @if (username?.errors?.['required']) {
-                                <div>Username is required</div>
+                                <div i18n="required field error@@signup-form-required-username-error">Username is
+                                    required</div>
                                 }
                             </div>
                             }
@@ -45,10 +47,12 @@
                             @if (email?.invalid && (email?.touched || submitted)) {
                             <div class="invalid-feedback">
                                 @if (email?.errors?.['required']) {
-                                <div>Email is required</div>
+                                <div i18n="required field error@@signup-form-required-email-error">Email is required
+                                </div>
                                 }
                                 @if (email?.errors?.['email']) {
-                                <div>Please enter a valid email address</div>
+                                <div i18n="valid email error@@signup-form-valid-email-error">Please enter a valid email
+                                    address</div>
                                 }
                             </div>
                             }
@@ -91,25 +95,31 @@
                             @if (password?.invalid && (password?.touched || submitted)) {
                             <div class="invalid-feedback d-block">
                                 @if (password?.errors?.['required']) {
-                                <div>Password is required</div>
+                                <div i18n="required field error@@signup-form-required-password-error">Password is
+                                    required</div>
                                 }
                                 @if (password?.errors?.['minlength']) {
-                                <div>Password must be at least 8 characters long</div>
+                                <div i18n="password length@@signup-form-password-error-length">Password must be at least
+                                    8 characters long</div>
                                 }
                                 @if (password?.errors?.['passwordStrength']) {
                                 <div>Password must contain:</div>
                                 <ul class="mb-0 ps-3">
                                     @if (!password?.errors?.['passwordStrength'].hasUpper) {
-                                    <li>At least one uppercase letter</li>
+                                    <li i18n="password error uppercase@@signup-form-password-error-uppercase">At least
+                                        one uppercase letter</li>
                                     }
                                     @if (!password?.errors?.['passwordStrength'].hasLower) {
-                                    <li>At least one lowercase letter</li>
+                                    <li i18n="password error lowercase@@signup-form-password-error-lowercase">At least
+                                        one lowercase letter</li>
                                     }
                                     @if (!password?.errors?.['passwordStrength'].hasNumber) {
-                                    <li>At least one number</li>
+                                    <li i18n="password error numbers@@signup-form-password-error-numbers">At least one
+                                        number</li>
                                     }
                                     @if (!password?.errors?.['passwordStrength'].hasSpecial) {
-                                    <li>At least one special character (!@#$%^&*)</li>
+                                    <li i18n="password error strength@@signup-form-password-error-strength">At least one
+                                        special character (!@#$%^&*)</li>
                                     }
                                 </ul>
                                 }
@@ -120,19 +130,19 @@
                             @if (password?.value && password?.touched && !password?.errors?.['required']) {
                             <div class="form-text">
                                 <small class="d-block">Password strength:</small>
-                                <small class="d-block"
+                                <small i18n="password uppercase@@signup-form-password-uppercase" class="d-block"
                                     [class.text-success]="password?.errors?.['passwordStrength']?.hasUpper ?? true">
                                     ✓ Uppercase letter
                                 </small>
-                                <small class="d-block"
+                                <small i18n="password lowercase@@signup-form-password-lowercase" class="d-block"
                                     [class.text-success]="password?.errors?.['passwordStrength']?.hasLower ?? true">
                                     ✓ Lowercase letter
                                 </small>
-                                <small class="d-block"
+                                <small i18n="password numbers@@signup-form-password-numbers" class="d-block"
                                     [class.text-success]="password?.errors?.['passwordStrength']?.hasNumber ?? true">
                                     ✓ Number
                                 </small>
-                                <small class="d-block"
+                                <small i18n="password strength@@signup-form-password-strength" class="d-block"
                                     [class.text-success]="password?.errors?.['passwordStrength']?.hasSpecial ?? true">
                                     ✓ Special character
                                 </small>
@@ -179,11 +189,13 @@
                             (confirmPassword?.touched || submitted)) {
                             <div class="invalid-feedback">
                                 @if (confirmPassword?.errors?.['required']) {
-                                <div>Please confirm your password</div>
+                                <div i18n="confirm password@@signup-form-required-confirm-password-error">Please confirm
+                                    your password</div>
                                 }
                                 @if (signupForm.errors?.['passwordMismatch'] && !confirmPassword?.errors?.['required'])
                                 {
-                                <div>Passwords do not match</div>
+                                <div i18n="confirm password no match@@signup-form-confirm-password-no-match-error">
+                                    Passwords do not match</div>
                                 }
                             </div>
                             }
@@ -191,14 +203,17 @@
 
                         <!-- Submit Button -->
                         <div class="d-grid">
-                            <button type="submit" class="btn btn-primary">
+                            <button type="submit" class="btn btn-primary"
+                                i18n="signup page sign up button@@signup-page-form-button-signup">
                                 Sign up
                             </button>
                         </div>
 
                         <!-- Login Link -->
                         <div class="text-center mt-3">
-                            <a routerLink="/login">Already have an account? Login</a>
+                            <a routerLink="/login"
+                                i18n="signup page already have an account@@signup-form-existing-account">Already have an
+                                account? Login</a>
                         </div>
                     </form>
 

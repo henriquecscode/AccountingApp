@@ -4,3 +4,6 @@ Request
     const response = await lastValueFrom(
       this.authService.signin(username, password)
     );
+
+# Localization
+https://angular.dev/guide/i18n
