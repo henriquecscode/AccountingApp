@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+  <file source-language="en" datatype="plaintext" original="ng2.template">
+    <body>
+      <trans-unit id="signup-page-title" datatype="html">
+        <source>Sign Up</source>
+        <target>Registo</target>
+        <note priority="1" from="description">signup page title</note>
+      </trans-unit>
+      <trans-unit id="signup-form-username" datatype="html">
+        <source>Username</source>
+        <target>Nome de utilizador</target>
+        <note priority="1" from="description">signup form username</note>
+      </trans-unit>
+      <trans-unit id="signup-form-utilizador-placeholder" datatype="html">
+        <source>Enter your username</source>
+        <target state="new">Insira o seu nome de utilizador</target>
+        <note priority="1" from="description">signup form utilizador placeholder</note>
+      </trans-unit>
+      <trans-unit id="signup-form-required-username-error" datatype="html">
+        <source>Username is required</source>
+        <target>Nome de utilizador é obrigatório</target>
+        <note priority="1" from="description">required field error</note>
+      </trans-unit>
+      <trans-unit id="signup-form-required-email-error" datatype="html">
+        <source>Email is required </source>
+        <target>Email é obrigatório </target>
+        <note priority="1" from="description">required field error</note>
+      </trans-unit>
+      <trans-unit id="signup-form-valid-email-error" datatype="html">
+        <source>Please enter a valid email address</source>
+        <target>Por favor insira um email válido</target>
+        <note priority="1" from="description">valid email error</note>
+      </trans-unit>
+      <trans-unit id="signup-form-required-password-error" datatype="html">
+        <source>Password is required</source>
+        <target>Palavra passe é obrigatória</target>
+        <note priority="1" from="description">required field error</note>
+      </trans-unit>
+      <trans-unit id="signup-form-password" datatype="html">
+        <source>Password</source>
+        <target state="new">Palavra passe</target>
+        <note priority="1" from="description">signup form password</note>
+      </trans-unit>
+      <trans-unit id="signup-form-password-error-length" datatype="html">
+        <source>Password must be at least <x id="INTERPOLATION" equiv-text="{{MIN_LENGTH}}"/> characters long</source>
+        <target>Palavra passe deve ter pelo menos <x id="INTERPOLATION" equiv-text="{{MIN_LENGTH}}"/> caracteres </target>
+        <note priority="1" from="description">password length</note>
+      </trans-unit>
+      <trans-unit id="signup-form-password-error-uppercase" datatype="html">
+        <source>At least one uppercase letter</source>
+        <target>Pelo menos uma maiúscula</target>
+        <note priority="1" from="description">password error uppercase</note>
+      </trans-unit>
+      <trans-unit id="signup-form-password-error-lowercase" datatype="html">
+        <source>At least one lowercase letter</source>
+        <target>Pelo menos uma minúscula</target>
+        <note priority="1" from="description">password error lowercase</note>
+      </trans-unit>
+      <trans-unit id="signup-form-password-error-numbers" datatype="html">
+        <source>At least one number</source>
+        <target>Pelo menos um número</target>
+        <note priority="1" from="description">password error numbers</note>
+      </trans-unit>
+      <trans-unit id="signup-form-password-error-strength" datatype="html">
+        <source>At least one special character</source>
+        <target state="new">Pelo menos um caracter especial</target>
+        <note priority="1" from="description">password error strength</note>
+      </trans-unit>
+      <trans-unit id="signup-form-password-uppercase" datatype="html">
+        <source> ✓ Uppercase letter </source>
+        <target> ✓ Letra maiúscula </target>
+        <note priority="1" from="description">password uppercase</note>
+      </trans-unit>
+      <trans-unit id="signup-form-password-lowercase" datatype="html">
+        <source> ✓ Lowercase letter </source>
+        <target> ✓ Letra minúscula </target>
+        <note priority="1" from="description">password lowercase</note>
+      </trans-unit>
+      <trans-unit id="signup-form-password-numbers" datatype="html">
+        <source> ✓ Number </source>
+        <target> ✓ Número </target>
+        <note priority="1" from="description">password numbers</note>
+      </trans-unit>
+      <trans-unit id="signup-form-password-strength" datatype="html">
+        <source> ✓ Special character </source>
+        <target> ✓ Caracter especial </target>
+        <note priority="1" from="description">password strength</note>
+      </trans-unit>
+      <trans-unit id="signup-form-password-strength-success-label" datatype="html">
+        <source>Password strength:</source>
+        <target state="new">Força da palavra passe:</target>
+        <note priority="1" from="description">password strength success label </note>
+      </trans-unit>
+      <trans-unit id="signup-form-required-confirm-password-error" datatype="html">
+        <source>Please confirm your password</source>
+        <target>Confirmar a palavra passe é obrigatório</target>
+        <note priority="1" from="description">confirm password</note>
+      </trans-unit>
+      <trans-unit id="signup-backend-error-invalid-input" datatype="html">
+        <source>Invalid input</source>
+        <target state="new">Campos inválidos</target>
+      </trans-unit>
+      <trans-unit id="signup-backend-error-unknown" datatype="html">
+        <source>Signup failed with error <x id="PH" equiv-text="error"/>. Please try again</source>
+        <target state="new">Registo falhou com error <x id="PH" equiv-text="error"/>. Por favor tente novamente</target>
+      </trans-unit>
+      <trans-unit id="signup-backend-error-user-exists" datatype="html">
+        <source>The username <x id="PH" equiv-text="params?.username"/> is already registered.</source>
+        <target state="new">O nome de utilizador <x id="PH" equiv-text="params?.username"/> já se encontra registado.</target>
+        <note priority="1" from="description">user exists </note>
+      </trans-unit>
+      <trans-unit id="signup-form-confirm-password" datatype="html">
+        <source>Confirm Password</source>
+        <target state="new">Confirme palavra passe</target>
+        <note priority="1" from="description">signup form confirm password</note>
+      </trans-unit>
+      <trans-unit id="signup-form-confirm-password-no-match-error" datatype="html">
+        <source> Passwords do not match</source>
+        <target> Palavras passe não são iguais</target>
+        <note priority="1" from="description">confirm password no match</note>
+      </trans-unit>
+      <trans-unit id="signup-form-confirm-placeholder" datatype="html">
+        <source>Create a password</source>
+        <target state="new">Insira a sua palavra passe</target>
+        <note priority="1" from="description">signup form confirm placeholder</note>
+      </trans-unit>
+      <trans-unit id="signup-form-confirmPassword-placeholder" datatype="html">
+        <source>Confirm your password</source>
+        <target state="new">Confirme a sua palavra passe</target>
+        <note priority="1" from="description">signup form confirm password placeholder</note>
+      </trans-unit>
+      <trans-unit id="signup-page-form-button-signup" datatype="html">
+        <source> Sign up </source>
+        <target>Registar</target>
+        <note priority="1" from="description">signup page sign up button</note>
+      </trans-unit>
+      <trans-unit id="signup-form-email" datatype="html">
+        <source>Email</source>
+        <target state="new">Email</target>
+        <note priority="1" from="description">signup form email</note>
+      </trans-unit>
+      <trans-unit id="signup-form-email-placeholder" datatype="html">
+        <source>Enter your email</source>
+        <target state="new">Insira o seu email</target>
+        <note priority="1" from="description">signup form email placeholder</note>
+      </trans-unit>
+      <trans-unit id="signup-form-existing-account" datatype="html">
+        <source>Already have an account? Login</source>
+        <target>Já tem uma conta? Autentique-se</target>
+        <note priority="1" from="description">signup page already have an account</note>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

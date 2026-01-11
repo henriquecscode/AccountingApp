@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+  <file source-language="en-US" datatype="plaintext" original="ng2.template">
+    <body>
+      <trans-unit id="signup-page-title" datatype="html">
+        <source>Sign Up</source>
+        <note priority="1" from="description">signup page title</note>
+      </trans-unit>
+      <trans-unit id="signup-form-username" datatype="html">
+        <source>Username</source>
+        <note priority="1" from="description">signup form username</note>
+      </trans-unit>
+      <trans-unit id="signup-form-utilizador-placeholder" datatype="html">
+        <source>Enter your username</source>
+        <note priority="1" from="description">signup form utilizador placeholder</note>
+      </trans-unit>
+      <trans-unit id="signup-form-required-username-error" datatype="html">
+        <source>Username is required</source>
+        <note priority="1" from="description">required field error</note>
+      </trans-unit>
+      <trans-unit id="signup-form-email" datatype="html">
+        <source>Email</source>
+        <note priority="1" from="description">signup form email</note>
+      </trans-unit>
+      <trans-unit id="signup-form-email-placeholder" datatype="html">
+        <source>Enter your email</source>
+        <note priority="1" from="description">signup form email placeholder</note>
+      </trans-unit>
+      <trans-unit id="signup-form-required-email-error" datatype="html">
+        <source>Email is required </source>
+        <note priority="1" from="description">required field error</note>
+      </trans-unit>
+      <trans-unit id="signup-form-valid-email-error" datatype="html">
+        <source>Please enter a valid email address</source>
+        <note priority="1" from="description">valid email error</note>
+      </trans-unit>
+      <trans-unit id="signup-form-password" datatype="html">
+        <source>Password</source>
+        <note priority="1" from="description">signup form password</note>
+      </trans-unit>
+      <trans-unit id="signup-form-required-password-error" datatype="html">
+        <source>Password is required</source>
+        <note priority="1" from="description">required field error</note>
+      </trans-unit>
+      <trans-unit id="signup-form-password-error-length" datatype="html">
+        <source>Password must be at least <x id="INTERPOLATION" equiv-text="{{MIN_LENGTH}}"/> characters long</source>
+        <note priority="1" from="description">password length</note>
+      </trans-unit>
+      <trans-unit id="signup-form-password-error-uppercase" datatype="html">
+        <source>At least one uppercase letter</source>
+        <note priority="1" from="description">password error uppercase</note>
+      </trans-unit>
+      <trans-unit id="signup-form-password-error-lowercase" datatype="html">
+        <source>At least one lowercase letter</source>
+        <note priority="1" from="description">password error lowercase</note>
+      </trans-unit>
+      <trans-unit id="signup-form-password-error-numbers" datatype="html">
+        <source>At least one number</source>
+        <note priority="1" from="description">password error numbers</note>
+      </trans-unit>
+      <trans-unit id="signup-form-password-error-strength" datatype="html">
+        <source>At least one special character</source>
+        <note priority="1" from="description">password error strength</note>
+      </trans-unit>
+      <trans-unit id="signup-form-password-strength-success-label" datatype="html">
+        <source>Password strength:</source>
+        <note priority="1" from="description">password strength success label </note>
+      </trans-unit>
+      <trans-unit id="signup-form-password-uppercase" datatype="html">
+        <source> ✓ Uppercase letter </source>
+        <note priority="1" from="description">password uppercase</note>
+      </trans-unit>
+      <trans-unit id="signup-form-password-lowercase" datatype="html">
+        <source> ✓ Lowercase letter </source>
+        <note priority="1" from="description">password lowercase</note>
+      </trans-unit>
+      <trans-unit id="signup-form-password-numbers" datatype="html">
+        <source> ✓ Number </source>
+        <note priority="1" from="description">password numbers</note>
+      </trans-unit>
+      <trans-unit id="signup-form-password-strength" datatype="html">
+        <source> ✓ Special character </source>
+        <note priority="1" from="description">password strength</note>
+      </trans-unit>
+      <trans-unit id="signup-backend-error-invalid-input" datatype="html">
+        <source>Invalid input</source>
+      </trans-unit>
+      <trans-unit id="signup-backend-error-unknown" datatype="html">
+        <source>Signup failed with error <x id="PH" equiv-text="error"/>. Please try again</source>
+      </trans-unit>
+      <trans-unit id="signup-backend-error-user-exists" datatype="html">
+        <source>The username <x id="PH" equiv-text="params?.username"/> is already registered.</source>
+        <note priority="1" from="description">user exists </note>
+      </trans-unit>
+      <trans-unit id="signup-form-confirm-password" datatype="html">
+        <source>Confirm Password</source>
+        <note priority="1" from="description">signup form confirm password</note>
+      </trans-unit>
+      <trans-unit id="signup-form-required-confirm-password-error" datatype="html">
+        <source>Please confirm your password</source>
+        <note priority="1" from="description">confirm password</note>
+      </trans-unit>
+      <trans-unit id="signup-form-confirm-password-no-match-error" datatype="html">
+        <source> Passwords do not match</source>
+        <note priority="1" from="description">confirm password no match</note>
+      </trans-unit>
+      <trans-unit id="signup-form-confirm-placeholder" datatype="html">
+        <source>Create a password</source>
+        <note priority="1" from="description">signup form confirm placeholder</note>
+      </trans-unit>
+      <trans-unit id="signup-form-confirmPassword-placeholder" datatype="html">
+        <source>Confirm your password</source>
+        <note priority="1" from="description">signup form confirm password placeholder</note>
+      </trans-unit>
+      <trans-unit id="signup-page-form-button-signup" datatype="html">
+        <source> Sign up </source>
+        <note priority="1" from="description">signup page sign up button</note>
+      </trans-unit>
+      <trans-unit id="signup-form-existing-account" datatype="html">
+        <source>Already have an account? Login</source>
+        <note priority="1" from="description">signup page already have an account</note>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>
