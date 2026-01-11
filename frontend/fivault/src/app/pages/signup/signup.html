@@ -19,7 +19,8 @@
                         <div class="mb-3">
                             <label i18n="signup form username@@signup-form-username" for="username"
                                 class="form-label">Username</label>
-                            <input type="username" class="form-control"
+                            <input i18n-placeholder="signup form utilizador placeholder@@signup-form-utilizador-placeholder"
+                            type="username" class="form-control"
                                 [class.is-invalid]="username?.invalid && (username?.touched || submitted)"
                                 [class.is-valid]="username?.valid && username?.touched" id="username"
                                 formControlName="username" placeholder="Enter your username">
@@ -37,8 +38,9 @@
 
                         <!-- Email -->
                         <div class="mb-3">
-                            <label for="email" class="form-label">Email</label>
-                            <input type="email" class="form-control"
+                            <label i18n="signup form email@@signup-form-email" for="email"
+                                class="form-label">Email</label>
+                            <input i18n-placeholder="signup form email placeholder@@signup-form-email-placeholder" type="email" class="form-control"
                                 [class.is-invalid]="email?.invalid && (email?.touched || submitted)"
                                 [class.is-valid]="email?.valid && email?.touched" id="email" formControlName="email"
                                 placeholder="Enter your email">
@@ -60,9 +62,11 @@
 
                         <!-- Password -->
                         <div class="mb-3">
-                            <label for="password" class="form-label">Password</label>
+                            <label i18n="signup form password@@signup-form-password" for="password"
+                                class="form-label">Password</label>
                             <div class="input-group">
-                                <input [type]="showPassword ? 'text' : 'password'" class=" form-control"
+                                <input i18n-placeholder="signup form confirm placeholder@@signup-form-confirm-placeholder"
+                                [type]="showPassword ? 'text' : 'password'" class=" form-control"
                                     [class.is-invalid]="password?.invalid && (password?.touched || submitted)"
                                     [class.is-valid]="password?.valid && password?.touched" id="password"
                                     formControlName="password" placeholder="Create a password">
@@ -129,7 +133,9 @@
                             <!-- Password Strength Hints (shown when typing) -->
                             @if (password?.value && password?.touched && !password?.errors?.['required']) {
                             <div class="form-text">
-                                <small class="d-block">Password strength:</small>
+                                <small
+                                    i18n="password strength success label @@signup-form-password-strength-success-label"
+                                    class="d-block">Password strength:</small>
                                 <small i18n="password uppercase@@signup-form-password-uppercase" class="d-block"
                                     [class.text-success]="password?.errors?.['passwordStrength']?.hasUpper ?? true">
                                     ✓ Uppercase letter
@@ -152,9 +158,11 @@
 
                         <!-- Confirm Password -->
                         <div class="mb-3">
-                            <label for="confirmPassword" class="form-label">Confirm Password</label>
+                            <label i18n="signup form confirm password@@signup-form-confirm-password"
+                                for="confirmPassword" class="form-label">Confirm Password</label>
                             <div class="input-group">
-                                <input [type]="showConfirmPassword ? 'text' : 'password'" class="form-control"
+                                <input i18n-placeholder="signup form confirm password placeholder@@signup-form-confirmPassword-placeholder"
+                                [type]="showConfirmPassword ? 'text' : 'password'" class="form-control"
                                     [class.is-invalid]="(confirmPassword?.invalid || signupForm.errors?.['passwordMismatch']) && (confirmPassword?.touched || submitted)"
                                     [class.is-valid]="confirmPassword?.valid && !signupForm.errors?.['passwordMismatch'] && confirmPassword?.touched"
                                     id="confirmPassword" formControlName="confirmPassword"
@@ -187,7 +195,7 @@
                             <!-- Confirm Password Errors -->
                             @if ((confirmPassword?.invalid || signupForm.errors?.['passwordMismatch']) &&
                             (confirmPassword?.touched || submitted)) {
-                            <div class="invalid-feedback">
+                            <div class="invalid-feedback d-block">
                                 @if (confirmPassword?.errors?.['required']) {
                                 <div i18n="confirm password@@signup-form-required-confirm-password-error">Please confirm
                                     your password</div>

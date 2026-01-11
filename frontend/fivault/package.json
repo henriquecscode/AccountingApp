@@ -39,7 +39,9 @@
     "@angular/compiler-cli": "^21.0.0",
     "@angular/localize": "^21.0.6",
     "jsdom": "^27.1.0",
+    "ng-extract-i18n-merge": "^3.2.1",
     "typescript": "~5.9.2",
-    "vitest": "^4.0.8"
+    "vitest": "^4.0.8",
+    "xliffmerge": "^1.0.0"
   }
 }

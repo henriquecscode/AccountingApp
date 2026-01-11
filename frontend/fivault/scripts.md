@@ -1,1 +1,2 @@
 ng extract-i18n --output-path src/locale
+ng extract-i18n
