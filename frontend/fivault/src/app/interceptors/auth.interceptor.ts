@@ -21,7 +21,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   // Add access token to request, and ensure credentials are included for cookies
   const clonedReq = req.clone({
     setHeaders: token ? { Authorization: `Bearer ${token}` } : {},
-    withCredentials: isLogoutRequest(req) ? true: false // Pass session token to be revoked 
+    withCredentials: isLogoutRequest(req) ? true : false // Pass session token to be revoked 
   });
 
   return next(clonedReq).pipe(
@@ -41,7 +41,8 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
             // Retry original request with new token
             const newToken = authService.getAccessToken();
             const retryReq = req.clone({
-              setHeaders: { Authorization: `Bearer ${newToken}` }
+              setHeaders: { Authorization: `Bearer ${newToken}` },
+              withCredentials: isLogoutRequest(req) ? true : false // Pass session token to be revoked 
             });
             return next(retryReq);
           }),
