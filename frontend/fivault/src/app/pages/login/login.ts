@@ -1,8 +1,9 @@
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { lastValueFrom, Observable } from 'rxjs';
+import { BackendErrorLocalizationHandler, ErrorMessage } from '../../util/error-localization';
 
 @Component({
   selector: 'app-login',
@@ -14,13 +15,27 @@ import { lastValueFrom, Observable } from 'rxjs';
 export class Login {
 
   loginForm: FormGroup;
-  polling: Boolean = true;
+  submitted = false;
+  backendError = '';
+  showPassword = false;
 
+  private errorHandler = new BackendErrorLocalizationHandler(
+    [
+      new ErrorMessage('AUTH_002', (params) =>
+        $localize`:invalid loging @@login-backend-error-invalid-credentials:The username or password are incorrect.`
+      )
+    ],
+    new ErrorMessage('UNKNOWN_ERROR', (error) =>
+      $localize`:@@login-backend-error-unknown:Login failed with error ${error}. Please try again`
+    )
+  );
   constructor(
     private authService: AuthService,
     private fb: FormBuilder,
     private router: Router,
-    private route: ActivatedRoute  // To get returnUrl query param
+    private route: ActivatedRoute,  // To get returnUrl query param
+    private cdr: ChangeDetectorRef
+
 
   ) {
     this.loginForm = this.fb.group({
@@ -29,8 +44,24 @@ export class Login {
     });
   }
 
+  get username() {
+    return this.loginForm.get('username');
+  }
+
+  get password() {
+    return this.loginForm.get('password');
+  }
+
+  togglePasswordVisibility() {
+    this.showPassword = !this.showPassword;
+  }
+
   onSubmit() {
+    this.submitted = true;
+    this.backendError = '';
+
     if (this.loginForm.invalid) {
+      this.loginForm.markAllAsTouched();
       return;
     }
 
@@ -43,30 +74,14 @@ export class Login {
         this.router.navigateByUrl(returnUrl);
       },
       error: (err) => {
-        console.error('Login failed', err);
+        const errorCode: string = err.error?.errorCode || 'UNKNOWN_ERROR';
+        const params: any = err.error?.params;
+        this.backendError = this.errorHandler.localize(errorCode, params);
+
+        this.cdr.detectChanges();
       }
     });
   }
 
-  async startTryingAuthentication() {
-    if (!this.polling) { return; }
-
-    let response: String = await lastValueFrom(this.authService.tryAuthentication())
-    console.log(response);
-
-
-
-    await this.delayfunc(2000); // Function RETURNS here again
-
-    this.startTryingAuthentication();
-  }
-
-  private delayfunc(ms: number): Promise<void> {
-    return new Promise(resolve => setTimeout(resolve, ms));
-  }
-
-  ngOnDestroy() {
-    this.polling = false;
-  }
 
 }

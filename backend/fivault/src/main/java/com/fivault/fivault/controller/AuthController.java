@@ -131,13 +131,33 @@ public class AuthController {
         );
 
         if (output.isFailure()) {
-            HttpStatus status = HttpStatus.UNAUTHORIZED;
-            ProblemDetail problem = ProblemDetail.forStatusAndDetail(
+
+            HttpStatus status = null;
+            String detail = null;
+            Map<String, Object> params = Collections.emptyMap();
+            var errorCode = output.getErrorCode().get();
+
+            if (errorCode.equals(ErrorCode.AUTH_INVALID_CREDENTIALS)) {
+                status = HttpStatus.UNAUTHORIZED;
+                detail = errorCode.name();
+            } else {
+                status = HttpStatus.INTERNAL_SERVER_ERROR;
+                detail = errorCode.name();
+            }
+
+            ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(
                     status,
-                    null
+                    detail
             );
+            problemDetail.setTitle(errorCode.getDefaultMessage());
+            problemDetail.setProperty("errorCode", errorCode.getCode());
+            problemDetail.setProperty("timestamp", Instant.now());
+            problemDetail.setProperty("path", httpRequest.getRequestURI());
+            if (!params.isEmpty()) {
+                problemDetail.setProperty("params", params);
+            }
             return ResponseEntity.status(status).body(
-                    BasicResponse.failure(problem)
+                    BasicResponse.failure(problemDetail)
             );
         }
 
@@ -170,13 +190,32 @@ public class AuthController {
         );
 
         if (output.isFailure()) {
-            HttpStatus status = HttpStatus.UNAUTHORIZED;
-            ProblemDetail problem = ProblemDetail.forStatusAndDetail(
+            HttpStatus status = null;
+            String detail = null;
+
+            Map<String, Object> params = Collections.emptyMap();
+            var errorCode = output.getErrorCode().get();
+            if (errorCode.equals(ErrorCode.AUTH_INVALID_SESSION)) {
+                status = HttpStatus.UNAUTHORIZED;
+                detail = errorCode.name();
+            } else {
+                status = HttpStatus.INTERNAL_SERVER_ERROR;
+                detail = errorCode.name();
+            }
+
+            ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(
                     status,
-                    null
+                    detail
             );
+            problemDetail.setTitle(errorCode.getDefaultMessage());
+            problemDetail.setProperty("errorCode", errorCode.getCode());
+            problemDetail.setProperty("timestamp", Instant.now());
+            problemDetail.setProperty("path", httpRequest.getRequestURI());
+            if (!params.isEmpty()) {
+                problemDetail.setProperty("params", params);
+            }
             return ResponseEntity.status(status).body(
-                    BasicResponse.failure(problem)
+                    BasicResponse.failure(problemDetail)
             );
         }
         var result = output.getData().get();
@@ -205,13 +244,32 @@ public class AuthController {
         );
 
         if (output.isFailure()) {
-            HttpStatus status = HttpStatus.UNAUTHORIZED;
-            ProblemDetail problem = ProblemDetail.forStatusAndDetail(
+            HttpStatus status = null;
+            String detail = null;
+
+            Map<String, Object> params = Collections.emptyMap();
+            var errorCode = output.getErrorCode().get();
+            if (errorCode.equals(ErrorCode.AUTH_INVALID_SESSION)) {
+                status = HttpStatus.UNAUTHORIZED;
+                detail = errorCode.name();
+            } else {
+                status = HttpStatus.INTERNAL_SERVER_ERROR;
+                detail = errorCode.name();
+            }
+
+            ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(
                     status,
-                    null
+                    detail
             );
+            problemDetail.setTitle(errorCode.getDefaultMessage());
+            problemDetail.setProperty("errorCode", errorCode.getCode());
+            problemDetail.setProperty("timestamp", Instant.now());
+            problemDetail.setProperty("path", httpRequest.getRequestURI());
+            if (!params.isEmpty()) {
+                problemDetail.setProperty("params", params);
+            }
             return ResponseEntity.status(status).body(
-                    BasicResponse.failure(problem)
+                    BasicResponse.failure(problemDetail)
             );
         }
         ResponseCookie cookie = cookieUtil.createDeleteRefreshTokenCookie();
