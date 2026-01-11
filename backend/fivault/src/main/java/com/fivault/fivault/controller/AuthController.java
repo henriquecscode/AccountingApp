@@ -19,6 +19,8 @@ import org.springframework.web.bind.annotation.*;
 import com.fivault.fivault.util.CookieUtil;
 
 import java.time.Instant;
+import java.util.Collections;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -67,27 +69,32 @@ public class AuthController {
             HttpStatus status = null;
             String detail = null;
 
-
+            Map<String, Object> params = Collections.emptyMap();
             var errorCode = output.getErrorCode().get();
             if (errorCode.equals(ErrorCode.AUTH_USER_EXISTS)) {
                 status = HttpStatus.CONFLICT;
-                detail = errorCode.getCode();
+                detail = errorCode.name();
+                params = Map.of("username", request.username());
+
             } else if (errorCode.equals(ErrorCode.VALIDATION_INVALID_INPUT)) {
                 status = HttpStatus.BAD_REQUEST;
-                detail = errorCode.getCode();
+                detail = errorCode.name();
             } else {
                 status = HttpStatus.INTERNAL_SERVER_ERROR;
-                detail = errorCode.getCode();
+                detail = errorCode.name();
             }
 
             ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(
                     status,
                     detail
             );
-            problemDetail.setTitle(status.getReasonPhrase());
-            problemDetail.setProperty("errorCode", detail);
+            problemDetail.setTitle(errorCode.getDefaultMessage());
+            problemDetail.setProperty("errorCode", errorCode.getCode());
             problemDetail.setProperty("timestamp", Instant.now());
             problemDetail.setProperty("path", httpRequest.getRequestURI());
+            if (!params.isEmpty()) {
+                problemDetail.setProperty("params", params);
+            }
             return ResponseEntity
                     .status(status.value())
                     .body(BasicResponse.failure(problemDetail));

@@ -43,10 +43,8 @@
         <note priority="1" from="description">signup form password</note>
       </trans-unit>
       <trans-unit id="signup-form-password-error-length" datatype="html">
-        <source>Password must be at least <x id="INTERPOLATION" equiv-text="{{MIN_LENGTH}}" />
-          characters long</source>
-        <target>Palavra passe deve ter pelo menos <x id="INTERPOLATION" equiv-text="{{MIN_LENGTH}}" />
-          caracteres </target>
+        <source>Password must be at least <x id="INTERPOLATION" equiv-text="{{MIN_LENGTH}}"/> characters long</source>
+        <target>Palavra passe deve ter pelo menos <x id="INTERPOLATION" equiv-text="{{MIN_LENGTH}}"/> caracteres </target>
         <note priority="1" from="description">password length</note>
       </trans-unit>
       <trans-unit id="signup-form-password-error-uppercase" datatype="html">
@@ -98,6 +96,19 @@
         <source>Please confirm your password</source>
         <target>Confirmar a palavra passe é obrigatório</target>
         <note priority="1" from="description">confirm password</note>
+      </trans-unit>
+      <trans-unit id="signup-backend-error-invalid-input" datatype="html">
+        <source>Invalid input</source>
+        <target state="new">Campos inválidos</target>
+      </trans-unit>
+      <trans-unit id="signup-backend-error-unknown" datatype="html">
+        <source>Signup failed with error <x id="PH" equiv-text="error"/>. Please try again</source>
+        <target state="new">Registo falhou com error <x id="PH" equiv-text="error"/>. Por favor tente novamente</target>
+      </trans-unit>
+      <trans-unit id="signup-backend-error-user-exists" datatype="html">
+        <source>The username <x id="PH" equiv-text="params?.username"/> is already registered.</source>
+        <target state="new">O nome de utilizador <x id="PH" equiv-text="params?.username"/> já se encontra registado.</target>
+        <note priority="1" from="description">user exists </note>
       </trans-unit>
       <trans-unit id="signup-form-confirm-password" datatype="html">
         <source>Confirm Password</source>

@@ -82,6 +82,16 @@
         <source> ✓ Special character </source>
         <note priority="1" from="description">password strength</note>
       </trans-unit>
+      <trans-unit id="signup-backend-error-invalid-input" datatype="html">
+        <source>Invalid input</source>
+      </trans-unit>
+      <trans-unit id="signup-backend-error-unknown" datatype="html">
+        <source>Signup failed with error <x id="PH" equiv-text="error"/>. Please try again</source>
+      </trans-unit>
+      <trans-unit id="signup-backend-error-user-exists" datatype="html">
+        <source>The username <x id="PH" equiv-text="params?.username"/> is already registered.</source>
+        <note priority="1" from="description">user exists </note>
+      </trans-unit>
       <trans-unit id="signup-form-confirm-password" datatype="html">
         <source>Confirm Password</source>
         <note priority="1" from="description">signup form confirm password</note>

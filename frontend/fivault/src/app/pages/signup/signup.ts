@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators, AbstractContro
 import { Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../services/auth.service';
+import { BackendErrorLocalizationHandler, ErrorMessage } from '../../util/error-localization';
 
 @Component({
   selector: 'app-signup',
@@ -19,6 +20,21 @@ export class Signup {
   showPassword = false;
   showConfirmPassword = false;
   MIN_LENGTH = 8;
+
+
+  private errorHandler = new BackendErrorLocalizationHandler(
+    [
+      new ErrorMessage('AUTH_001', (params) =>
+        $localize `:user exists @@signup-backend-error-user-exists:The username ${params?.username} is already registered.`
+      ),
+      new ErrorMessage('VAL_001', () =>
+        $localize `:@@signup-backend-error-invalid-input:Invalid input`
+      ),
+    ],
+    new ErrorMessage('UNKNOWN_ERROR', (error) =>
+      $localize `:@@signup-backend-error-unknown:Signup failed with error ${error}. Please try again`
+    )
+  );
 
   constructor(
     private authservice: AuthService,
@@ -128,14 +144,9 @@ export class Signup {
       error: (err) => {
         console.log("Signup error", err);
 
-        // Handle backend errors
-        if (err.status === 409) {
-          this.backendError = 'This username is already registered';
-        } else if (err.error?.message) {
-          this.backendError = err.error.message;
-        } else {
-          this.backendError = 'Signup failed. Please try again.';
-        }
+        const errorCode: string = err.error?.errorCode || 'UNKNOWN_ERROR';
+        const params: any = err.error?.params;
+        this.backendError = this.errorHandler.localize(errorCode, params);
 
         this.cdr.detectChanges();
       }
