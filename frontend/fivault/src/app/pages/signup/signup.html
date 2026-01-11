@@ -177,7 +177,7 @@
                             <!-- Confirm Password Errors -->
                             @if ((confirmPassword?.invalid || signupForm.errors?.['passwordMismatch']) &&
                             (confirmPassword?.touched || submitted)) {
-                            <div class="invalid-feedback">
+                            <div class="invalid-feedback d-block">
                                 @if (confirmPassword?.errors?.['required']) {
                                 <div>Please confirm your password</div>
                                 }
