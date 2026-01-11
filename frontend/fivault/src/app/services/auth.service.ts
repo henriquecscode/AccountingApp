@@ -32,8 +32,9 @@ export class AuthService {
     this.accessToken = localStorage.getItem(this.ACCESS_TOKEN_KEY);
   }
 
-  signup(email: string, password: string): Observable<SignUpResponse> {
+  signup(username: string, email: string, password: string): Observable<SignUpResponse> {
     return this.http.post<SignUpResponse>('/auth/signup', {
+      username: username,
       email: email,
       password: password
     }).pipe(
@@ -45,7 +46,7 @@ export class AuthService {
   login(username: string, password: string): Observable<AuthResponse> {
     return this.http.post<AuthResponse>('/auth/login',
       {
-        email: username,
+        username: username,
         password: password
       })
       .pipe(

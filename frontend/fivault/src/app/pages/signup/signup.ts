@@ -26,7 +26,8 @@ export class Signup {
     private cdr: ChangeDetectorRef
   ) {
     this.signupForm = this.fb.group({
-      email: ['', [Validators.required]],
+      username: ['', Validators.required],
+      email: ['', [Validators.required, Validators.email]],
       password: ['', [
         Validators.required,
         Validators.minLength(8),
@@ -79,6 +80,10 @@ export class Signup {
   }
 
   // Getters for easy access in template
+  get username() {
+    return this.signupForm.get('username');
+  }
+
   get email() {
     return this.signupForm.get('email');
   }
@@ -112,9 +117,9 @@ export class Signup {
       return;
     }
 
-    const { email, password } = this.signupForm.value;
+    const { username, email, password } = this.signupForm.value;
 
-    this.authservice.signup(email, password).subscribe({
+    this.authservice.signup(username, email, password).subscribe({
       next: (response) => {
         console.log("Signup success", response);
         this.router.navigate(['/app/home']);
@@ -124,7 +129,7 @@ export class Signup {
 
         // Handle backend errors
         if (err.status === 409) {
-          this.backendError = 'This email is already registered';
+          this.backendError = 'This username is already registered';
         } else if (err.error?.message) {
           this.backendError = err.error.message;
         } else {

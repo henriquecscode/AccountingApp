@@ -46,8 +46,11 @@ public class AuthService {
     }
 
     @Transactional(rollbackOn = Exception.class)
-    public Output<SignUpResult> signUp(String email, String password, HttpServletRequest httpRequest) {
+    public Output<SignUpResult> signUp(String username, String email, String password, HttpServletRequest httpRequest) {
         // Validate input
+        if (username == null || username.isBlank()) {
+            return Output.failure(ErrorCode.VALIDATION_INVALID_INPUT);
+        }
         if (email == null || email.isBlank()) {
             return Output.failure(ErrorCode.VALIDATION_INVALID_INPUT);
         }
@@ -55,7 +58,10 @@ public class AuthService {
             return Output.failure(ErrorCode.VALIDATION_INVALID_INPUT);
         }
 
-        // Check if user exists
+        if (userRepository.existsByUsername(username)) {
+            return Output.failure(ErrorCode.AUTH_USER_EXISTS);
+        }
+        // Check if email exists. Might drop this constraint?
         if (userRepository.existsByEmail(email.toLowerCase())) {
             return Output.failure(ErrorCode.AUTH_USER_EXISTS);
         }
@@ -67,6 +73,7 @@ public class AuthService {
         }
         // Create new user
         AppUser user = new AppUser();
+        user.setUsername(username);
         user.setEmail(email.toLowerCase());
 
         // Generate salt and hash password
@@ -84,11 +91,13 @@ public class AuthService {
         return Output.success(new SignUpResult(result.jwtToken(), result.refreshToken(), result.deviceName()));
     }
 
-    public Output<LogInResult> logIn(String email, String password, HttpServletRequest httpRequest) {
-        Optional<AppUser> optionalAppUser = userRepository.findByEmail(email);
-        if (optionalAppUser.isEmpty()) {
+    public Output<LogInResult> logIn(String username, String password, HttpServletRequest httpRequest) {
+        Optional<AppUser> optionalAppUserByUser = userRepository.findByUsername(username);
+        if (optionalAppUserByUser.isEmpty()) {
             return Output.failure(ErrorCode.AUTH_INVALID_CREDENTIALS);
         }
+
+        Optional<AppUser> optionalAppUser = optionalAppUserByUser;
         AppUser user = optionalAppUser.get();
         String hashedPassword = user.getPasswordHash();
         boolean success = passwordService.verifyPassword(password, hashedPassword);
@@ -174,7 +183,7 @@ public class AuthService {
         createAppUserSession(user, deviceId, deviceName, refreshToken, httpRequest.getRemoteAddr(), httpRequest.getHeader("User-Agent"));
 
         // Generate JWT token
-        String jwtToken = jwtService.generateToken(user.getEmail(), user.getAppUserId());
+        String jwtToken = jwtService.generateToken(user.getUsername(), user.getAppUserId());
         UserSessionAuthCredentials result = new UserSessionAuthCredentials(deviceName, refreshToken, jwtToken);
         return result;
     }

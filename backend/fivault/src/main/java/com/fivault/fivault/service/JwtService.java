@@ -25,9 +25,9 @@ public class JwtService {
         return Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
     }
 
-    public String generateToken(String email, Long userId) {
+    public String generateToken(String username, Long userId) {
         Map<String, Object> claims = new HashMap<>();
-        claims.put("email", email);
+        claims.put("username", username);
         claims.put("userId", userId);
 
         return Jwts.builder()
@@ -37,10 +37,6 @@ public class JwtService {
                 .expiration(new Date(System.currentTimeMillis() + expirationTime))
                 .signWith(getSigningKey())
                 .compact();
-    }
-
-    public String extractEmail(String token) {
-        return extractAllClaims(token).getSubject();
     }
 
     public Long extractUserId(String token) {

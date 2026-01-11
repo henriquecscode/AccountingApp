@@ -16,7 +16,11 @@ public class AppUser implements Serializable {
     @Column(unique = true, nullable = false)
     private String email;
 
-    private String name;
+    @Column(unique = true, nullable = false)
+    private String username;
+
+    @Column
+    private String name; // Real name
 
     @Column(nullable = false)
     private String passwordHash;  // Stores the hashed password with salt
@@ -68,6 +72,22 @@ public class AppUser implements Serializable {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getPasswordHash() {
@@ -133,4 +153,5 @@ public class AppUser implements Serializable {
     public void setAccountLockedUntil(LocalDateTime accountLockedUntil) {
         this.accountLockedUntil = accountLockedUntil;
     }
+
 }

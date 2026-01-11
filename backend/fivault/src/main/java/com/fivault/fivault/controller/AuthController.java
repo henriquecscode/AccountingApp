@@ -57,6 +57,7 @@ public class AuthController {
             HttpServletResponse httpResponse
     ) {
         Output<SignUpResult> output = authService.signUp(
+                request.username(),
                 request.email(),
                 request.password(),
                 httpRequest
@@ -117,7 +118,7 @@ public class AuthController {
     ) {
 
         var output = authService.logIn(
-                request.email(),
+                request.username(),
                 request.password(),
                 httpRequest
         );

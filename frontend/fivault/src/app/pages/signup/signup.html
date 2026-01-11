@@ -15,6 +15,24 @@
 
                     <form [formGroup]="signupForm" (ngSubmit)="onSubmit()" novalidate>
 
+                        <!-- Username -->
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Username</label>
+                            <input type="username" class="form-control"
+                                [class.is-invalid]="username?.invalid && (username?.touched || submitted)"
+                                [class.is-valid]="username?.valid && username?.touched" id="username"
+                                formControlName="username" placeholder="Enter your username">
+
+                            <!-- username Errors -->
+                            @if (username?.invalid && (username?.touched || submitted)) {
+                            <div class="invalid-feedback">
+                                @if (username?.errors?.['required']) {
+                                <div>Username is required</div>
+                                }
+                            </div>
+                            }
+                        </div>
+
                         <!-- Email -->
                         <div class="mb-3">
                             <label for="email" class="form-label">Email</label>
