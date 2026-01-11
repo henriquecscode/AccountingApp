@@ -19,8 +19,9 @@
                         <div class="mb-3">
                             <label i18n="signup form username@@signup-form-username" for="username"
                                 class="form-label">Username</label>
-                            <input i18n-placeholder="signup form utilizador placeholder@@signup-form-utilizador-placeholder"
-                            type="username" class="form-control"
+                            <input
+                                i18n-placeholder="signup form utilizador placeholder@@signup-form-utilizador-placeholder"
+                                type="username" class="form-control"
                                 [class.is-invalid]="username?.invalid && (username?.touched || submitted)"
                                 [class.is-valid]="username?.valid && username?.touched" id="username"
                                 formControlName="username" placeholder="Enter your username">
@@ -40,7 +41,8 @@
                         <div class="mb-3">
                             <label i18n="signup form email@@signup-form-email" for="email"
                                 class="form-label">Email</label>
-                            <input i18n-placeholder="signup form email placeholder@@signup-form-email-placeholder" type="email" class="form-control"
+                            <input i18n-placeholder="signup form email placeholder@@signup-form-email-placeholder"
+                                type="email" class="form-control"
                                 [class.is-invalid]="email?.invalid && (email?.touched || submitted)"
                                 [class.is-valid]="email?.valid && email?.touched" id="email" formControlName="email"
                                 placeholder="Enter your email">
@@ -65,8 +67,9 @@
                             <label i18n="signup form password@@signup-form-password" for="password"
                                 class="form-label">Password</label>
                             <div class="input-group">
-                                <input i18n-placeholder="signup form confirm placeholder@@signup-form-confirm-placeholder"
-                                [type]="showPassword ? 'text' : 'password'" class=" form-control"
+                                <input
+                                    i18n-placeholder="signup form confirm placeholder@@signup-form-confirm-placeholder"
+                                    [type]="showPassword ? 'text' : 'password'" class=" form-control"
                                     [class.is-invalid]="password?.invalid && (password?.touched || submitted)"
                                     [class.is-valid]="password?.valid && password?.touched" id="password"
                                     formControlName="password" placeholder="Create a password">
@@ -104,7 +107,7 @@
                                 }
                                 @if (password?.errors?.['minlength']) {
                                 <div i18n="password length@@signup-form-password-error-length">Password must be at least
-                                    8 characters long</div>
+                                    {{MIN_LENGTH}} characters long</div>
                                 }
                                 @if (password?.errors?.['passwordStrength']) {
                                 <div>Password must contain:</div>
@@ -122,8 +125,10 @@
                                         number</li>
                                     }
                                     @if (!password?.errors?.['passwordStrength'].hasSpecial) {
-                                    <li i18n="password error strength@@signup-form-password-error-strength">At least one
-                                        special character (!@#$%^&*)</li>
+                                    <li><ng-container
+                                            i18n="password error strength@@signup-form-password-error-strength">At least
+                                            one
+                                            special character</ng-container> (!@#$%^&*)</li>
                                     }
                                 </ul>
                                 }
@@ -161,8 +166,9 @@
                             <label i18n="signup form confirm password@@signup-form-confirm-password"
                                 for="confirmPassword" class="form-label">Confirm Password</label>
                             <div class="input-group">
-                                <input i18n-placeholder="signup form confirm password placeholder@@signup-form-confirmPassword-placeholder"
-                                [type]="showConfirmPassword ? 'text' : 'password'" class="form-control"
+                                <input
+                                    i18n-placeholder="signup form confirm password placeholder@@signup-form-confirmPassword-placeholder"
+                                    [type]="showConfirmPassword ? 'text' : 'password'" class="form-control"
                                     [class.is-invalid]="(confirmPassword?.invalid || signupForm.errors?.['passwordMismatch']) && (confirmPassword?.touched || submitted)"
                                     [class.is-valid]="confirmPassword?.valid && !signupForm.errors?.['passwordMismatch'] && confirmPassword?.touched"
                                     id="confirmPassword" formControlName="confirmPassword"

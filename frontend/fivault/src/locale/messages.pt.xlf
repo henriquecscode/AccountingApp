@@ -43,8 +43,10 @@
         <note priority="1" from="description">signup form password</note>
       </trans-unit>
       <trans-unit id="signup-form-password-error-length" datatype="html">
-        <source>Password must be at least 8 characters long</source>
-        <target>Palavra passe deve ter pelo menos 8 caracteres</target>
+        <source>Password must be at least <x id="INTERPOLATION" equiv-text="{{MIN_LENGTH}}" />
+          characters long</source>
+        <target>Palavra passe deve ter pelo menos <x id="INTERPOLATION" equiv-text="{{MIN_LENGTH}}" />
+          caracteres </target>
         <note priority="1" from="description">password length</note>
       </trans-unit>
       <trans-unit id="signup-form-password-error-uppercase" datatype="html">
@@ -63,8 +65,8 @@
         <note priority="1" from="description">password error numbers</note>
       </trans-unit>
       <trans-unit id="signup-form-password-error-strength" datatype="html">
-        <source>At least one special character (!@#$%^&amp;*)</source>
-        <target>Pelo menos um caracter especial (!@#$%^&amp;*)</target>
+        <source>At least one special character</source>
+        <target state="new">Pelo menos um caracter especial</target>
         <note priority="1" from="description">password error strength</note>
       </trans-unit>
       <trans-unit id="signup-form-password-uppercase" datatype="html">

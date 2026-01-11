@@ -18,6 +18,7 @@ export class Signup {
   backendError = '';
   showPassword = false;
   showConfirmPassword = false;
+  MIN_LENGTH = 8;
 
   constructor(
     private authservice: AuthService,
@@ -30,7 +31,7 @@ export class Signup {
       email: ['', [Validators.required, Validators.email]],
       password: ['', [
         Validators.required,
-        Validators.minLength(8),
+        Validators.minLength(this.MIN_LENGTH),
         this.passwordStrengthValidator
       ]],
       confirmPassword: ['', Validators.required]
