@@ -3,8 +3,8 @@ import { ChangeDetectorRef, Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { AuthService } from '../../services/auth.service';
-import { BackendErrorLocalizationHandler, ErrorMessage } from '../../util/error-localization';
+import { AuthService } from '../../../services/auth.service';
+import { BackendErrorLocalizationHandler, ErrorMessage } from '../../../util/error-localization';
 
 @Component({
   selector: 'app-signup',

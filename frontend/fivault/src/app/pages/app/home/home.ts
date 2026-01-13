@@ -2,10 +2,11 @@ import { Component } from '@angular/core';
 import { AuthService } from '../../../services/auth.service';
 import { Router } from '@angular/router';
 import { finalize } from 'rxjs';
+import { Navbar } from '../navbar/navbar';
 
 @Component({
   selector: 'app-home',
-  imports: [],
+  imports: [Navbar],
   templateUrl: './home.html',
   styleUrl: './home.scss',
 })
@@ -15,18 +16,5 @@ export class HomeComponent {
     private authService: AuthService,
     private router: Router
   ) { }
-  logout() {
-    this.authService.logout().pipe(
-      finalize(() => {
-        this.router.navigate(['/']);
-      })
-    ).subscribe({
-      next: (response) => {
-        console.log('Logout success', response);
-      },
-      error: (err) => {
-        console.error('Logout failed', err);
-      }
-    })
-  }
+ 
 }

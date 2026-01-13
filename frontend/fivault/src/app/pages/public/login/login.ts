@@ -1,9 +1,9 @@
 import { ChangeDetectorRef, Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { AuthService } from '../../services/auth.service';
+import { AuthService } from '../../../services/auth.service';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { lastValueFrom, Observable } from 'rxjs';
-import { BackendErrorLocalizationHandler, ErrorMessage } from '../../util/error-localization';
+import { BackendErrorLocalizationHandler, ErrorMessage } from '../../../util/error-localization';
 
 @Component({
   selector: 'app-login',
