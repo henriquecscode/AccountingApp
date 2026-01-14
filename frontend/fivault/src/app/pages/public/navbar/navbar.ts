@@ -5,7 +5,8 @@ import { Component } from '@angular/core';
   imports: [],
   templateUrl: './navbar.html',
   styleUrl: './navbar.scss',
+  standalone: true
 })
-export class Navbar {
+export class PublicNavbar {
 
 }

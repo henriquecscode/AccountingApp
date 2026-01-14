@@ -7,7 +7,7 @@ import { BackendErrorLocalizationHandler, ErrorMessage } from '../../../util/err
 
 @Component({
   selector: 'app-login',
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [ReactiveFormsModule],
   templateUrl: './login.html',
   styleUrl: './login.scss',
   standalone: true

@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { PublicNavbar } from './navbar';
+import { Domain } from './domain';
 
-describe('Navbar', () => {
-  let component: PublicNavbar;
-  let fixture: ComponentFixture<PublicNavbar>;
+describe('Domain', () => {
+  let component: Domain;
+  let fixture: ComponentFixture<Domain>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [PublicNavbar]
+      imports: [Domain]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(PublicNavbar);
+    fixture = TestBed.createComponent(Domain);
     component = fixture.componentInstance;
     await fixture.whenStable();
   });

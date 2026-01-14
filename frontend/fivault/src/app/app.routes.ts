@@ -5,7 +5,7 @@ import { Signup } from './pages/public/signup/signup';
 import { authGuard } from './guards/auth-guard/auth-guard';
 import { loginGuard } from './guards/login-guard/login-guard';
 import { PublicLayout } from './pages/public/public-layout/public-layout';
-import { AppLayout } from './pages/app/app-layout/app-layout';
+
 export const routes: Routes = [
   {
     path: '',
@@ -27,7 +27,6 @@ export const routes: Routes = [
   },
   {
     path: 'app',
-    component: AppLayout,
     canActivate: [authGuard],
     loadChildren: () => import('./pages/app/app-in.routes').then(m => m.routes)
   },

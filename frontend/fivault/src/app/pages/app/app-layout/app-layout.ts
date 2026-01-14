@@ -7,6 +7,7 @@ import { RouterOutlet } from '@angular/router';
   imports: [Navbar, RouterOutlet],
   templateUrl: './app-layout.html',
   styleUrl: './app-layout.scss',
+  standalone: true
 })
 export class AppLayout {
 

@@ -1,13 +1,14 @@
 import { Component } from '@angular/core';
 import { AuthService } from '../../../services/auth.service';
-import { Router } from '@angular/router';
 import { finalize } from 'rxjs';
+import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 
 @Component({
+  standalone: true,
   selector: 'app-navbar',
-  imports: [],
+  imports: [RouterLink, RouterLinkActive],
   templateUrl: './navbar.html',
-  styleUrl: './navbar.scss',
+  styleUrl: './navbar.scss'
 })
 export class Navbar {
   constructor(
