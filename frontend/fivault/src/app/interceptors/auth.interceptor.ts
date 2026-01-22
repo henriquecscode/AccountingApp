@@ -2,9 +2,11 @@ import { HttpInterceptorFn, HttpErrorResponse, HttpRequest } from '@angular/comm
 import { inject } from '@angular/core';
 import { AuthService } from '../services/auth.service';
 import { catchError, switchMap, throwError } from 'rxjs';
+import { Router } from '@angular/router';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const authService = inject(AuthService);
+  const router = inject(Router);
 
   // Don't add token to auth endpoints
   if (isAuthenticationRequest(req)) {
@@ -46,8 +48,13 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
             });
             return next(retryReq);
           }),
-          catchError(refreshError => {
-            return throwError(() => refreshError);
+          catchError(error => {
+            authService.logoutFrontend();
+            const returnUrl = router.url;
+            router.navigate(['/login'], {
+              queryParams: { returnUrl: returnUrl }
+            });
+            return throwError(() => error);
           })
         );
       }
