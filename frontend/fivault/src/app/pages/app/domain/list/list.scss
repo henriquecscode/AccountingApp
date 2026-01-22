@@ -1,0 +1,111 @@
+@use "variables" as vars;
+// domain.component.scss
+.domains-page {
+  min-height: 100vh;
+  background-color: #f5f5f5;
+}
+
+.section-title {
+  font-size: 1.5rem;
+  color: vars.$color-1;
+  margin-bottom: 1.5rem;
+  font-weight: 600;
+}
+
+// Create Button
+.btn-create {
+  padding: 0.75rem 1.5rem;
+  background: vars.$color-3;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    background: vars.$color-4;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(vars.$color-3, 0.3);
+  }
+}
+
+// Domains Grid
+.domains-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+// Domain Card
+.domain-card {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 180px;
+  
+  &:hover {
+    border-color: vars.$color-3;
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(vars.$color-3, 0.15);
+  }
+}
+
+.card-content {
+  flex: 1;
+}
+
+.domain-name {
+  font-size: 1.25rem;
+  color: vars.$color-1;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+
+.domain-description {
+  color: #666;
+  margin-bottom: 0.5rem;
+  font-size: 0.95rem;
+}
+
+.domain-owner {
+  color: #999;
+  font-size: 0.85rem;
+  font-style: italic;
+}
+
+// Edit Button
+.card-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 1rem;
+}
+
+.btn-edit {
+  padding: 0.5rem 1rem;
+  background: transparent;
+  color: vars.$color-3;
+  border: 2px solid vars.$color-3;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    background: vars.$color-3;
+    color: white;
+  }
+}
+
+// Responsive
+@media (max-width: 768px) {
+  .domains-grid {
+    grid-template-columns: 1fr;
+  }
+}

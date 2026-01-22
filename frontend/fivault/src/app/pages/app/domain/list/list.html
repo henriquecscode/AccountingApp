@@ -1,0 +1,67 @@
+<!-- domain.component.html -->
+<div class="domains-page">
+    <div class="container py-4">
+
+        <!-- Header with Create Button -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="mb-0">Domains</h1>
+            <button class="btn-create" (click)="createDomain()">
+                Create Domain
+            </button>
+        </div>
+
+        <!-- My Domains Section -->
+        <section class="mb-5">
+            <h2 class="section-title">My Domains</h2>
+            <div class="domains-grid">
+                @for(domain of myDomains; track $index) {
+                <!-- <div 
+            *ngFor="let domain of myDomains" 
+            class="domain-card"
+            (click)="viewDomain(domain.id)"> -->
+                <div class="domain-card" (click)="viewDomain(domain.id)">
+
+                    <div class="card-content">
+                        <h3 class="domain-name">{{ domain.name }}</h3>
+                        <p class="domain-description">{{ domain.description }}</p>
+                    </div>
+
+                    <div class="card-actions">
+                        <button class="btn-edit" (click)="editDomain($event, domain.id)">
+                            Edit
+                        </button>
+                    </div>
+                </div>
+                }
+            </div>
+        </section>
+
+        <!-- Other Domains Section -->
+        <section>
+            <h2 class="section-title">Other Domains</h2>
+            <div class="domains-grid">
+                <!-- <div 
+          *ngFor="let domain of otherDomains" 
+          class="domain-card"
+          (click)="viewDomain(domain.id)"> -->
+                @for(domain of otherDomains; track $index) {
+                <div class="domain-card" (click)="viewDomain(domain.id)">
+
+                    <div class="card-content">
+                        <h3 class="domain-name">{{ domain.name }}</h3>
+                        <p class="domain-description">{{ domain.description }}</p>
+                        <p class="domain-owner">Owner: {{ domain.owner }}</p>
+                    </div>
+
+                    <div class="card-actions">
+                        <button class="btn-edit" (click)="editDomain($event, domain.id)">
+                            Edit
+                        </button>
+                    </div>
+                </div>
+                }
+            </div>
+        </section>
+
+    </div>
+</div>

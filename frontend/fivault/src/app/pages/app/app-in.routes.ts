@@ -1,6 +1,6 @@
 import { Routes } from "@angular/router";
 import { HomeComponent } from "./home/home";
-import { Domain } from "./domain/domain";
+import { DomainList } from "./domain/list/list";
 import { AppLayout } from "./app-layout/app-layout";
 
 export const routes: Routes = [
@@ -10,7 +10,10 @@ export const routes: Routes = [
         children: [
             { path: '', redirectTo: 'home', pathMatch: 'full' },
             { path: 'home', component: HomeComponent },
-            { path: 'domain', component: Domain }
+            {
+                path: 'domain',
+                loadChildren: () => import('./domain/domain.routes').then(m => m.routes)
+            }
         ]
     }
 ]

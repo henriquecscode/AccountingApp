@@ -1,2 +1,17 @@
 
+$color-1: #2c3e50;  // Dark blue-gray
+$color-2: #3498db;  // Bright blue
+$color-3: #e74c3c;  // Red
+$color-4: #f39c12;  // Orange
+$color-5: #2ecc71;  // Green
+
+// Add them to Bootstrap's theme-colors map
+$custom-colors: (
+  "color-1": $color-1,
+  "color-2": $color-2,
+  "color-3": $color-3,
+  "color-4": $color-4,
+  "color-5": $color-5
+);
+
 $main-bg: #f8f9fa; // soft off-white
