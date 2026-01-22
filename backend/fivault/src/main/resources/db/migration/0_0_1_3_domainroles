@@ -1,0 +1,5 @@
+INSERT INTO domain_roles (code, name, description) VALUES
+('OWNER', 'Owner', 'Full control of the domain'),
+('ADMIN', 'Administrator', 'Can manage users and settings'),
+('MEMBER', 'Member', 'Standard access'),
+('VIEWER', 'Viewer', 'Read-only access');

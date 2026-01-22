@@ -1,4 +1,4 @@
-package com.fivault.fivault.controller.response;
+package com.fivault.fivault.controller.response.auth;
 
 public record TokenVerificationResponse(
         boolean valid,

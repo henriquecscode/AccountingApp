@@ -2,6 +2,10 @@ package com.fivault.fivault.service.exception;
 
 import org.springframework.http.HttpStatus;
 
+
+/**
+ * Error codes issued by services
+ */
 public enum ErrorCode {
     // Database errors
     DB_DUPLICATE_KEY("DB_001", "Resource already exists", ErrorCategory.DATABASE),
@@ -19,6 +23,15 @@ public enum ErrorCode {
     // Validation errors
     VALIDATION_INVALID_INPUT("VAL_001", "Invalid input provided", ErrorCategory.VALIDATION),
     VALIDATION_MISSING_FIELD("VAL_002", "Required field is missing", ErrorCategory.VALIDATION),
+
+    // Domain
+    DOMAIN_NO_OWNER_ROLE("DOMAIN_001", "Could not fetch role for Owner", ErrorCategory.DATABASE_CATALOG),
+    DOMAIN_CREATE_NO_NAME("DOMAIN_002", "Cannot create domain with empty name", ErrorCategory.VALIDATION),
+    DOMAIN_CREATE_INVALID_SLUG("DOMAIN_003", "Cannot create domain with that name. Results in invalid slug", ErrorCategory.VALIDATION),
+
+    // AppUser
+    APPUSER_FAILURE_FETCHING_APPUSER("APP_USER_001", "Could not fetch app user from authentication credentials", ErrorCategory.DATA),
+    FIND_BY_USERNAME_ERROR("APP_USER_002", "Could not fetch app user from username", ErrorCategory.DATA),
 
     // Generic
     INTERNAL_ERROR("INT_001", "An unexpected error occurred", ErrorCategory.SYSTEM);
@@ -40,6 +53,7 @@ public enum ErrorCode {
     public String getDefaultMessage() {
         return defaultMessage;
     }
+
     public ErrorCategory getCategory() {
         return category;
     }
@@ -50,6 +64,8 @@ public enum ErrorCode {
         AUTHORIZATION,
         VALIDATION,
         BUSINESS_LOGIC,
-        SYSTEM
+        SYSTEM,
+        DATABASE_CATALOG,
+        DATA
     }
 }

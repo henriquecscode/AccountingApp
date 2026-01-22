@@ -1,17 +1,17 @@
 package com.fivault.fivault.controller;
 
-import com.fivault.fivault.controller.request.RefreshRequest;
-import com.fivault.fivault.controller.request.LogInRequest;
-import com.fivault.fivault.controller.request.SignUpRequest;
-import com.fivault.fivault.controller.response.LogoutResponse;
-import com.fivault.fivault.controller.response.RefreshResponse;
-import com.fivault.fivault.controller.response.SignUpResponse;
+import com.fivault.fivault.controller.request.auth.RefreshRequest;
+import com.fivault.fivault.controller.request.auth.LogInRequest;
+import com.fivault.fivault.controller.request.auth.SignUpRequest;
+import com.fivault.fivault.controller.response.auth.LogoutResponse;
+import com.fivault.fivault.controller.response.auth.RefreshResponse;
+import com.fivault.fivault.controller.response.auth.SignUpResponse;
 import com.fivault.fivault.controller.response.BasicResponse;
 import com.fivault.fivault.service.AuthService;
 import com.fivault.fivault.service.JwtService;
 import com.fivault.fivault.service.exception.ErrorCode;
 import com.fivault.fivault.service.output.Output;
-import com.fivault.fivault.service.output.SignUpResult;
+import com.fivault.fivault.service.output.Auth.SignUpResult;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.*;
@@ -35,16 +35,6 @@ public class AuthController {
         this.authService = authService;
         this.jwtService = jwtService;
         this.cookieUtil = cookieUtil;
-    }
-
-    @GetMapping("/try-authenticated")
-    public ResponseEntity<BasicResponse<String>> hi() {
-        return ResponseEntity.ok(BasicResponse.success("Authenticated"));
-    }
-
-    @GetMapping("/try-not-authenticated")
-    public String hiNotauth() {
-        return "Not Authenticated";
     }
 
     /**

@@ -1,7 +1,8 @@
-package com.fivault.fivault.controller.response;
+package com.fivault.fivault.controller.response.auth;
 
-public record SignUpResponse(
+public record LogInResponse(
         String accessToken,
         String message,
         String deviceName
 ) {}
+

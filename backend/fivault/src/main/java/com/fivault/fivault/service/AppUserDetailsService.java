@@ -43,6 +43,6 @@ public class AppUserDetailsService implements UserDetailsService {
                 return appUser.getUsername();
             }
         };
-
     }
+
 }

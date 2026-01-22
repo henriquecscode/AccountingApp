@@ -1,7 +1,10 @@
 package com.fivault.fivault.dto;
 
 
-public enum DomainRuleEnum {
+/**
+ * Static roles
+ */
+public enum DomainRoleEnum {
     OWNER(1L),
     ADMIN(2L),
     MEMBER(3L),
@@ -9,14 +12,11 @@ public enum DomainRuleEnum {
 
     private final Long domainRoleId;
 
-    DomainRuleEnum(Long domainRoleId) {
+    DomainRoleEnum(Long domainRoleId) {
         this.domainRoleId = domainRoleId;
     }
 
     public Long getDomainRoleId() {
         return domainRoleId;
     }
-}
-
-public class DomainRoleDTO {
 }
