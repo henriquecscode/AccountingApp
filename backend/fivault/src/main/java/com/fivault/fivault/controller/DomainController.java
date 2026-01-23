@@ -40,7 +40,10 @@ public class DomainController {
         Output<CreateDomainResult> output = domainService.createDomain(username, request.getDomainName(), request.getDescription());
 
         if (output.isFailure()) {
-
+            return OutputFailureHandler.handleOutputFailure(
+                    httpRequest,
+                    output
+            );
         }
         return ResponseEntity.ok(BasicResponse.success(
                 new DomainCreateResponse()
