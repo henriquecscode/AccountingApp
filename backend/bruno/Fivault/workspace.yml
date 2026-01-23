@@ -1,0 +1,12 @@
+opencollection: 1.0.0
+info:
+  name: "Fivault"
+  type: workspace
+
+collections:
+  - name: "Backend"
+    path: "collections\\Backend"
+
+specs:
+
+docs: ''
