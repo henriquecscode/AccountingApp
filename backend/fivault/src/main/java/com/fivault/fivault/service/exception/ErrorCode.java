@@ -36,7 +36,7 @@ public enum ErrorCode {
     // Generic
     INTERNAL_ERROR("INT_001", "An unexpected error occurred", ErrorCategory.SYSTEM);
 
-    private final String code;
+    public final String code;
     private final String defaultMessage;
     private final ErrorCategory category;
 

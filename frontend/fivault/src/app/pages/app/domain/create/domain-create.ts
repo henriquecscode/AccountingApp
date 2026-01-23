@@ -57,7 +57,7 @@ export class DomainCreate {
     return this.domainCreateForm.get("domainSlug");
   }
 
-  get description(){
+  get description() {
     return this.domainCreateForm.get("description");
   }
 
@@ -70,7 +70,7 @@ export class DomainCreate {
       return;
     }
 
-    const { domainName, _ , description} = this.domainCreateForm.value;
+    const { domainName, _, description } = this.domainCreateForm.value;
 
     this.domainService.create(domainName, description).subscribe({
       next: (response) => {
@@ -80,7 +80,8 @@ export class DomainCreate {
       error: (err) => {
         const errorCode: string = err.error?.errorCode || 'UNKNOWN_ERROR';
         const params: any = err.error?.params;
-        this.backendError = this.errorHandler.localize(errorCode, params);
+        const paramsString = params ? JSON.stringify(params, null, 2) : '';
+        this.backendError = this.errorHandler.localize(errorCode, paramsString);
 
         this.cdr.detectChanges();
       }
