@@ -1,5 +1,5 @@
 import { Routes } from "@angular/router";
-import { DomainList } from "./list/list";
+import { DomainList } from "./list/domain-list";
 import { DomainCreate } from "./create/domain-create";
 
 export const routes: Routes = [

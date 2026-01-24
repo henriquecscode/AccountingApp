@@ -1,4 +1,4 @@
 package com.fivault.fivault.service.output.Domain;
 
-public class CreateDomainResult {
+public record CreateDomainResult(String domainSlug) {
 }

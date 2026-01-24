@@ -4,8 +4,8 @@ import com.fivault.fivault.database.model.AppUser;
 import com.fivault.fivault.database.model.AppUsersDomains;
 import com.fivault.fivault.database.model.Domain;
 import com.fivault.fivault.database.model.DomainRole;
-import com.fivault.fivault.dto.AppUserDTO;
 import com.fivault.fivault.dto.DomainRoleEnum;
+import com.fivault.fivault.dto.VisibleDomainDTO;
 import com.fivault.fivault.repository.AppUserRepository;
 import com.fivault.fivault.repository.AppUsersDomainsRepository;
 import com.fivault.fivault.repository.DomainRepository;
@@ -13,15 +13,18 @@ import com.fivault.fivault.repository.DomainRoleRepository;
 import com.fivault.fivault.service.exception.ErrorCode;
 import com.fivault.fivault.service.output.Domain.CreateDomainResult;
 import com.fivault.fivault.service.output.Domain.GetDomainsResult;
+import com.fivault.fivault.service.output.Domain.ListDomainsResult;
 import com.fivault.fivault.service.output.Output;
 import com.fivault.fivault.util.SlugUtil;
-import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @Service
 public class DomainService {
@@ -58,7 +61,7 @@ public class DomainService {
 
         String baseSlug = SlugUtil.generateSlug(name);
 
-        if (baseSlug == null || baseSlug.isBlank()){
+        if (baseSlug == null || baseSlug.isBlank()) {
             return Output.failure(ErrorCode.DOMAIN_CREATE_INVALID_SLUG);
         }
         // Step 2: Fetch all slugs that start with this base for the owner
@@ -89,8 +92,35 @@ public class DomainService {
         domainRepository.save(domain);
         appUsersDomainsRepository.save(appUsersDomains);
 
-        return Output.success(new CreateDomainResult());
+        return Output.success(new CreateDomainResult(slug));
     }
+
+    @Transactional
+    public Output<ListDomainsResult> listDomains(String username) {
+        Optional<AppUser> appUserOptional = appUserRepository.findByUsername(username);
+        if (appUserOptional.isEmpty()) {
+            return Output.failure(ErrorCode.FIND_BY_USERNAME_ERROR);
+        }
+        AppUser appUser = appUserOptional.get();
+
+        List<AppUsersDomains> appUsersDomains = appUsersDomainsRepository.findByAppUser(appUser);
+        List<VisibleDomainDTO> allVisibleDomainsDTO = appUsersDomains.stream().map(aud -> {
+            Domain d = aud.getDomain();
+            String selfRole = aud.getDomainRole().getCode();
+            String owner = d.getOwner().getUsername();
+            return new VisibleDomainDTO(owner, d.getName(), d.getSlug(), d.getDescription(), selfRole);
+        }).toList();
+
+        var ownedDomains = allVisibleDomainsDTO.stream().filter(
+                visDomain -> visDomain.selfDomainRoleCode().equals(DomainRoleEnum.OWNER.name())).toList();
+        var visibleDomains = allVisibleDomainsDTO.stream()
+                .filter(e -> !ownedDomains.contains(e)).toList();
+
+
+        ListDomainsResult result = new ListDomainsResult(ownedDomains, visibleDomains);
+        return Output.success(result);
+    }
+
 
     /**
      * Given a base slug and a list of existing domains, determine the next available slug.
@@ -117,4 +147,5 @@ public class DomainService {
 
         return (max == 0) ? baseSlug : baseSlug + "-" + (max + 1);
     }
+
 }

@@ -1,0 +1,83 @@
+<!-- domain.component.html -->
+<div class="domains-page">
+    <div class="container py-4">
+
+        <!-- Header with Create Button -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="mb-0" i18n="@@domains-list-title">Domains</h1>
+            <button class="btn-create" (click)="createDomain()" i18n="@@domains-list-create-button">
+                Create Domain
+            </button>
+        </div>
+
+        @if (backendError) {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            {{ backendError }}
+            <button type="button" class="btn-close" (click)="backendError = ''" aria-label="Close"></button>
+        </div>
+        }
+        <!-- My Domains Section -->
+        <section class="mb-5">
+            <h2 class="section-title" i18n="@@domains-list-my-domains-title">My Domains</h2>
+            @if (myDomains.length === 0) {
+            <div class="empty-state text-center py-4">
+                <p class="text-muted" i18n="@@domains-list-no-my-domains">
+                    You don't have any domains yet.
+                </p>
+            </div>
+            } @else {
+            <div class="domains-grid">
+                @for(domain of myDomains; track domain.owner + '-' + domain.slug) {
+                <div class="domain-card" (click)="viewDomain( domain.owner, domain.slug)">
+
+                    <div class="card-content">
+                        <h3 class="domain-name">{{ domain.name }}</h3>
+                        <p class="domain-description">{{ domain.description }}</p>
+                    </div>
+
+                    <div class="card-actions">
+                        <button class="btn-edit" (click)="editDomain($event,  domain.owner, domain.slug)"
+                            i18n="@@domains-list-edit-button">
+                            Edit
+                        </button>
+                    </div>
+                </div>
+                }
+            </div>
+            }
+        </section>
+
+        <!-- Other Domains Section -->
+        <section>
+            <h2 class="section-title" i18n="@@domains-list-other-domains-title">Other Domains</h2>
+            @if (otherDomains.length === 0) {
+            <div class="empty-state text-center py-4">
+                <p class="text-muted" i18n="@@domains-list-no-other-domains">
+                    No other domains available.
+                </p>
+            </div>
+            } @else {
+            <div class="domains-grid">
+                @for(domain of otherDomains; track domain.owner + '-' + domain.slug) {
+                <div class="domain-card" (click)="viewDomain(domain.owner, domain.slug)">
+
+                    <div class="card-content">
+                        <h3 class="domain-name">{{ domain.name }}</h3>
+                        <p class="domain-description">{{ domain.description }}</p>
+                        <p class="domain-owner" i18n="@@domains-list-owner-label">Owner: {{ domain.owner }}</p>
+                    </div>
+
+                    <div class="card-actions">
+                        <button class="btn-edit" (click)="editDomain($event, domain.owner, domain.slug)"
+                            i18n="@@domains-list-edit-button">
+                            Edit
+                        </button>
+                    </div>
+                </div>
+                }
+            </div>
+            }
+        </section>
+
+    </div>
+</div>

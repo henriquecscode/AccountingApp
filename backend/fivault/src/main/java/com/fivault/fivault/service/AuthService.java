@@ -14,12 +14,12 @@ import com.fivault.fivault.service.output.Auth.LogoutResult;
 import com.fivault.fivault.service.output.Auth.RefreshSessionResult;
 import com.fivault.fivault.service.output.Auth.SignUpResult;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import com.fivault.fivault.util.DeviceFingerprint;
 import com.fivault.fivault.util.RandomUtil;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -49,7 +49,7 @@ public class AuthService {
         this.deviceFingerprint = deviceFingerprint;
     }
 
-    @Transactional(rollbackOn = Exception.class)
+    @Transactional(rollbackFor = Exception.class)
     public Output<SignUpResult> signUp(String username, String email, String password, HttpServletRequest httpRequest) {
         // Validate input
         if (username == null || username.isBlank()) {
@@ -114,6 +114,7 @@ public class AuthService {
         return Output.success(new LogInResult(result.jwtToken, result.refreshToken()));
     }
 
+    @Transactional
     public Output<RefreshSessionResult> refreshAccessToken(String token, HttpServletRequest httpRequest) {
         // First validate refresh token
         AppUserSession appUserSession = fetchAppUserSession(token);

@@ -3,20 +3,16 @@ package com.fivault.fivault.controller;
 import com.fivault.fivault.controller.request.domain.DomainCreateRequest;
 import com.fivault.fivault.controller.response.BasicResponse;
 import com.fivault.fivault.controller.response.domain.DomainCreateResponse;
-import com.fivault.fivault.dto.AppUserDTO;
+import com.fivault.fivault.controller.response.domain.DomainListResponse;
 import com.fivault.fivault.service.AppUserService;
 import com.fivault.fivault.service.DomainService;
-import com.fivault.fivault.service.output.AppUser.GetRequestAppUserResult;
 import com.fivault.fivault.service.output.Domain.CreateDomainResult;
+import com.fivault.fivault.service.output.Domain.ListDomainsResult;
 import com.fivault.fivault.service.output.Output;
-import com.fivault.fivault.util.ControllerOutputFailureUtil;
 import com.fivault.fivault.util.SecurityUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -47,6 +43,26 @@ public class DomainController {
         }
         return ResponseEntity.ok(BasicResponse.success(
                 new DomainCreateResponse()
+        ));
+    }
+
+    @GetMapping("/list")
+    public ResponseEntity<BasicResponse<DomainListResponse>> list(
+            HttpServletRequest httpRequest
+    ) {
+
+        String username = SecurityUtil.GetRequestAppUserUsername();
+        Output<ListDomainsResult> output = domainService.listDomains(username);
+
+        if (output.isFailure()) {
+            return OutputFailureHandler.handleOutputFailure(
+                    httpRequest,
+                    output
+            );
+        }
+
+        return ResponseEntity.ok(BasicResponse.success(
+                DomainListResponse.from(output.getData().get())
         ));
     }
 }
