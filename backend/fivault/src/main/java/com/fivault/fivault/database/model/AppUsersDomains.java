@@ -3,7 +3,10 @@ package com.fivault.fivault.database.model;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "app_users_domains")
+@Table(name = "app_users_domains",
+        indexes = {
+                @Index(name = "idx_app_users_domains_domain_id", columnList = "domain_id")
+        })
 public class AppUsersDomains {
 
     @Id

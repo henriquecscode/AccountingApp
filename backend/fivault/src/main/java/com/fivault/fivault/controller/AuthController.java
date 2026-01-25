@@ -10,17 +10,14 @@ import com.fivault.fivault.controller.response.BasicResponse;
 import com.fivault.fivault.service.AuthService;
 import com.fivault.fivault.service.JwtService;
 import com.fivault.fivault.service.exception.ErrorCode;
-import com.fivault.fivault.service.output.Output;
-import com.fivault.fivault.service.output.Auth.SignUpResult;
+import com.fivault.fivault.service.Output;
+import com.fivault.fivault.service.result.Auth.SignUpResult;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import com.fivault.fivault.util.CookieUtil;
 
-import java.time.Instant;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 
 @RestController

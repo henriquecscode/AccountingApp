@@ -2,7 +2,7 @@ package com.fivault.fivault.util;
 
 import com.fivault.fivault.controller.response.BasicResponse;
 import com.fivault.fivault.service.exception.ErrorCode;
-import com.fivault.fivault.service.output.Output;
+import com.fivault.fivault.service.Output;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;

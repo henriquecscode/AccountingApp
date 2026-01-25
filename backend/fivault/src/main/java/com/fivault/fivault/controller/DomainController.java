@@ -3,12 +3,16 @@ package com.fivault.fivault.controller;
 import com.fivault.fivault.controller.request.domain.DomainCreateRequest;
 import com.fivault.fivault.controller.response.BasicResponse;
 import com.fivault.fivault.controller.response.domain.DomainCreateResponse;
+import com.fivault.fivault.controller.response.domain.DomainDetailResponse;
 import com.fivault.fivault.controller.response.domain.DomainListResponse;
+import com.fivault.fivault.dto.DomainRoleEnum;
 import com.fivault.fivault.service.AppUserService;
 import com.fivault.fivault.service.DomainService;
-import com.fivault.fivault.service.output.Domain.CreateDomainResult;
-import com.fivault.fivault.service.output.Domain.ListDomainsResult;
-import com.fivault.fivault.service.output.Output;
+import com.fivault.fivault.service.result.Domain.CreateDomainResult;
+import com.fivault.fivault.service.result.Domain.HasDomainReadAccessResult;
+import com.fivault.fivault.service.result.Domain.ListDomainsResult;
+import com.fivault.fivault.service.result.Domain.DomainDetailResult;
+import com.fivault.fivault.service.Output;
 import com.fivault.fivault.util.SecurityUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -20,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 public class DomainController {
     private final DomainService domainService;
     private final AppUserService appUserService;
+
 
     public DomainController(DomainService domainService, AppUserService appUserService) {
         this.domainService = domainService;
@@ -64,5 +69,28 @@ public class DomainController {
         return ResponseEntity.ok(BasicResponse.success(
                 DomainListResponse.from(output.getData().get())
         ));
+    }
+
+    @GetMapping("/{owner}/{slug}")
+    public ResponseEntity<BasicResponse<DomainDetailResponse>> detail(
+            @PathVariable String owner,
+            @PathVariable String slug,
+            HttpServletRequest httpRequest
+    ) {
+
+        // Access
+        String username = SecurityUtil.GetRequestAppUserUsername();
+        Output<HasDomainReadAccessResult> output = domainService.assertDomainReadAccess(owner, slug, username);
+        if (output.isFailure()) {
+            return OutputFailureHandler.handleOutputFailure(httpRequest, output);
+        }
+        // Logic
+        Output<DomainDetailResult> outputDetail = domainService.getDomainDetail(output.getData().get().domainId());
+        DomainDetailResult result = outputDetail.getData().get();
+
+        return ResponseEntity.ok(BasicResponse.success(
+                        new DomainDetailResponse(result.domain(), result.domainAppUsers())
+                )
+        );
     }
 }

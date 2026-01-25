@@ -19,4 +19,5 @@ public enum DomainRoleEnum {
     public Long getDomainRoleId() {
         return domainRoleId;
     }
+
 }

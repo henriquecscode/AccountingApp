@@ -14,7 +14,7 @@ public interface AppUserMapper {
     AppUserDTO toDTO(AppUser user);
 
     @BeanMapping(ignoreByDefault = true)
-    @Mapping(target = "username ", source="username")
+    @Mapping(target = "username", source="username")
     @Mapping(target = "email", source="email")
     @Mapping(target = "name", source="name")
     AppUser toEntity(AppUserDTO dto);

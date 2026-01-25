@@ -1,7 +1,5 @@
 package com.fivault.fivault.service.exception;
 
-import org.springframework.http.HttpStatus;
-
 
 /**
  * Error codes issued by services
@@ -28,13 +26,18 @@ public enum ErrorCode {
     DOMAIN_NO_OWNER_ROLE("DOMAIN_001", "Could not fetch role for Owner", ErrorCategory.DATABASE_CATALOG),
     DOMAIN_CREATE_NO_NAME("DOMAIN_002", "Cannot create domain with empty name", ErrorCategory.VALIDATION),
     DOMAIN_CREATE_INVALID_SLUG("DOMAIN_003", "Cannot create domain with that name. Results in invalid slug", ErrorCategory.VALIDATION),
+    DOMAIN_FIND_BY_OWNER_SLUG_ERROR("DOMAIN_004", "Cannot find domain by owner and slug", ErrorCategory.DATA),
+    DOMAIN_NO_ROLE_FOR_DOMAIN("DOMAIN_005", "Appuser has no role in given domain", ErrorCategory.AUTHORIZATION),
+    DOMAIN_FIND_BY_DOMAIN_ID_ERROR("DOMAIN_006", "Cannot find domain by domain id", ErrorCategory.DATA),
+    DOMAIN_NO_VIEW_ACCESS("DOMAIN_ACCESS_001", "Appuser has no read access", ErrorCategory.AUTHORIZATION),
 
     // AppUser
-    APPUSER_FAILURE_FETCHING_APPUSER("APP_USER_001", "Could not fetch app user from authentication credentials", ErrorCategory.DATA),
-    FIND_BY_USERNAME_ERROR("APP_USER_002", "Could not fetch app user from username", ErrorCategory.DATA),
+    APPUSER_FAILURE_FETCHING_APPUSER("APP_USER_001","Could not fetch app user from authentication credentials",ErrorCategory.DATA),
+
+    APPUSER_FIND_BY_USERNAME_ERROR("APP_USER_002","Could not fetch app user from username",ErrorCategory.DATA),
 
     // Generic
-    INTERNAL_ERROR("INT_001", "An unexpected error occurred", ErrorCategory.SYSTEM);
+    INTERNAL_ERROR("INT_001","An unexpected error occurred",ErrorCategory.SYSTEM);
 
     public final String code;
     private final String defaultMessage;

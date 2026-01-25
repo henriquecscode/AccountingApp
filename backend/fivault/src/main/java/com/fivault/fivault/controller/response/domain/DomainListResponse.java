@@ -1,7 +1,7 @@
 package com.fivault.fivault.controller.response.domain;
 
 import com.fivault.fivault.dto.VisibleDomainDTO;
-import com.fivault.fivault.service.output.Domain.ListDomainsResult;
+import com.fivault.fivault.service.result.Domain.ListDomainsResult;
 
 import java.util.List;
 

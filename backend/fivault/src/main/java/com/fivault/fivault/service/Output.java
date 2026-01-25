@@ -1,4 +1,4 @@
-package com.fivault.fivault.service.output;
+package com.fivault.fivault.service;
 
 import com.fivault.fivault.service.exception.ErrorCode;
 
@@ -11,9 +11,11 @@ import java.util.function.Function;
  */
 public sealed interface Output<T> permits Output.Success, Output.Failure {
 
-    record Success<T>(T data) implements Output<T> {}
+    record Success<T>(T data) implements Output<T> {
+    }
 
-    record Failure<T>(ErrorCode errorCode, String message) implements Output<T> {}
+    record Failure<T>(ErrorCode errorCode, String message) implements Output<T> {
+    }
 
     // Factory methods
     static <T> Output<T> success(T data) {
@@ -42,6 +44,13 @@ public sealed interface Output<T> permits Output.Success, Output.Failure {
             return Optional.of(success.data());
         }
         return Optional.empty();
+    }
+
+    default <U> Output<U> mapFailure() {
+        if (this instanceof Failure<T> failure) {
+            return Output.failure(failure.errorCode(), failure.message());
+        }
+        return (Output<U>) this; // it's a success, just cast
     }
 
     default Optional<ErrorCode> getErrorCode() {

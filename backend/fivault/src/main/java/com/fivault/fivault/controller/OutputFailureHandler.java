@@ -2,8 +2,7 @@ package com.fivault.fivault.controller;
 
 import com.fivault.fivault.controller.response.BasicResponse;
 import com.fivault.fivault.service.exception.ErrorCode;
-import com.fivault.fivault.service.output.Output;
-import com.sun.net.httpserver.HttpServer;
+import com.fivault.fivault.service.Output;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
@@ -12,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import java.time.Instant;
 import java.util.Collections;
 import java.util.EnumMap;
-import java.util.HashMap;
 import java.util.Map;
 
 public class OutputFailureHandler {
@@ -46,7 +44,7 @@ public class OutputFailureHandler {
 
         // AppUser errors
         DEFAULT_MAPPING.put(ErrorCode.APPUSER_FAILURE_FETCHING_APPUSER, HttpStatus.INTERNAL_SERVER_ERROR);
-        DEFAULT_MAPPING.put(ErrorCode.FIND_BY_USERNAME_ERROR, HttpStatus.NOT_FOUND);
+        DEFAULT_MAPPING.put(ErrorCode.APPUSER_FIND_BY_USERNAME_ERROR, HttpStatus.NOT_FOUND);
 
         // Generic
         DEFAULT_MAPPING.put(ErrorCode.INTERNAL_ERROR, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -105,7 +103,7 @@ public class OutputFailureHandler {
             params = Collections.emptyMap();
         }
 
-        String detail = errorCode.name();
+        String detail = errorCode.getCode();
 
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(
                 status,

@@ -1,0 +1,70 @@
+<div class="domain-detail-page">
+  <div class="container py-4">
+
+    @if (viewModel$ | async; as vm) {
+
+      <!-- Loading -->
+      @if (vm.isLoading) {
+        <div class="text-center py-5">
+          <span class="spinner-border"></span>
+        </div>
+      }
+
+      <!-- Error -->
+      @if (vm.error) {
+        <div class="alert alert-danger">
+          {{ vm.error }}
+        </div>
+      }
+
+      <!-- Domain Info -->
+      @if (vm.domain) {
+        <section class="mb-4">
+          <h1 class="mb-1">{{ vm.domain.name }}</h1>
+          <p class="text-muted">
+            {{ vm.domain.slug }} ·
+            <span i18n="@@domain-detail-owner-label">
+              Owner: {{ vm.domain.owner }}
+            </span>
+          </p>
+
+          @if (vm.domain.description) {
+            <p class="mt-3">
+              {{ vm.domain.description }}
+            </p>
+          }
+        </section>
+
+        <!-- Domain Users -->
+        <section>
+          <h2 class="section-title" i18n="@@domain-detail-users-title">
+            Domain Users
+          </h2>
+
+          @if (vm.domainAppUsers.length === 0) {
+            <p class="text-muted" i18n="@@domain-detail-no-users">
+              No users are associated with this domain.
+            </p>
+          } @else {
+            <table class="table">
+              <thead>
+                <tr>
+                  <th i18n="@@domain-detail-user-name">User</th>
+                  <th i18n="@@domain-detail-user-role">Role</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (user of vm.domainAppUsers; track user.name) {
+                  <tr>
+                    <td>{{ user.name }}</td>
+                    <td>{{ user.roleCode }}</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          }
+        </section>
+      }
+    }
+  </div>
+</div>

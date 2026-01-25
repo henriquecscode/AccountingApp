@@ -28,15 +28,15 @@
             </div>
             } @else {
             <div class="domains-grid">
-                @for(domain of vm.myDomains; track domain.owner + '-' + domain.slug) {
-                <div class="domain-card" (click)="viewDomain(domain.owner, domain.slug)">
+                @for(visibledomain of vm.myDomains; track visibledomain.domain.owner + '-' + visibledomain.domain.slug) {
+                <div class="domain-card" (click)="viewDomain(visibledomain.domain.owner, visibledomain.domain.slug)">
                     <div class="card-content">
-                        <h3 class="domain-name">{{ domain.name }}</h3>
-                        <p class="domain-slug text-muted">{{ domain.slug }}</p>
-                        <p class="domain-description">{{ domain.description }}</p>
+                        <h3 class="domain-name">{{ visibledomain.domain.name }}</h3>
+                        <p class="domain-slug text-muted">{{ visibledomain.domain.slug }}</p>
+                        <p class="domain-description">{{ visibledomain.domain.description }}</p>
                     </div>
                     <div class="card-actions">
-                        <button class="btn-edit" (click)="editDomain($event, domain.owner, domain.slug)"
+                        <button class="btn-edit" (click)="editDomain($event, visibledomain.domain.owner, visibledomain.domain.slug)"
                             i18n="@@domains-list-edit-button">
                             Edit
                         </button>
@@ -58,18 +58,20 @@
             </div>
             } @else {
             <div class="domains-grid">
-                @for(domain of vm.otherDomains; track domain.owner + '-' + domain.slug) {
-                <div class="domain-card" (click)="viewDomain(domain.owner, domain.slug)">
+                @for(visibledomain of vm.otherDomains; track visibledomain.domain.owner + '-' +
+                visibledomain.domain.slug) {
+                <div class="domain-card" (click)="viewDomain(visibledomain.domain.owner, visibledomain.domain.slug)">
                     <div class="card-content">
-                        <h3 class="domain-name">{{ domain.name }}</h3>
-                        <p class="domain-slug text-muted">{{ domain.slug }}</p>
-                        <p class="domain-description">{{ domain.description }}</p>
+                        <h3 class="domain-name">{{ visibledomain.domain.name }}</h3>
+                        <p class="domain-slug text-muted">{{ visibledomain.domain.slug }}</p>
+                        <p class="domain-description">{{ visibledomain.domain.description }}</p>
                         <p class="domain-owner text-muted" i18n="@@domains-list-owner-label">
-                            Owner: {{ domain.owner }}
+                            Owner: {{ visibledomain.domain.owner }}
                         </p>
                     </div>
                     <div class="card-actions">
-                        <button class="btn-edit" (click)="editDomain($event, domain.owner, domain.slug)"
+                        <button class="btn-edit"
+                            (click)="editDomain($event, visibledomain.domain.owner, visibledomain.domain.slug)"
                             i18n="@@domains-list-edit-button">
                             Edit
                         </button>

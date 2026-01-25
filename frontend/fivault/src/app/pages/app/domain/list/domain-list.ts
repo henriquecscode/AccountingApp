@@ -1,13 +1,13 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Domain } from '../domain.models';
+import { Domain, VisibleDomain } from '../domain.models';
 import { DomainListResult, DomainService } from '../../../../services/domain.service';
 import { BackendErrorLocalizationHandler, ErrorMessage } from '../../../../util/error-localization';
 import { catchError, map, Observable, of } from 'rxjs';
 import { CommonModule } from '@angular/common';
 interface ViewModel {
-  myDomains: Domain[];
-  otherDomains: Domain[];
+  myDomains: VisibleDomain[];
+  otherDomains: VisibleDomain[];
   error: string | null;
   isLoading: boolean;
 }
@@ -54,8 +54,8 @@ export class DomainList implements OnInit {
         const params: any = err.error?.params;
         const paramsString = params ? JSON.stringify(params, null, 2) : '';
         return of({
-          myDomains: [] as Domain[],
-          otherDomains: [] as Domain[],
+          myDomains: [] as VisibleDomain[],
+          otherDomains: [] as VisibleDomain[],
           error: this.errorHandler.localize(errorCode, paramsString),
           isLoading: false
         });
@@ -63,7 +63,7 @@ export class DomainList implements OnInit {
     );
   }
 
-  retry(){
+  retry() {
     this.loadDomains();
   }
   createDomain(): void {
@@ -73,6 +73,7 @@ export class DomainList implements OnInit {
 
   viewDomain(owner: String, slug: String): void {
     console.log("view domain", owner, "/", slug);
+    this.router.navigate([owner, slug], { relativeTo: this.route })
   }
 
   editDomain(event: Event, owner: String, slug: String): void {

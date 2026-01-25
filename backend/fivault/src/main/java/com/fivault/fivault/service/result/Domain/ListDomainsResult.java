@@ -1,4 +1,4 @@
-package com.fivault.fivault.service.output.Domain;
+package com.fivault.fivault.service.result.Domain;
 
 import com.fivault.fivault.dto.VisibleDomainDTO;
 
