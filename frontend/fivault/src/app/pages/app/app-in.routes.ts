@@ -12,7 +12,8 @@ export const routes: Routes = [
             {
                 path: 'domain',
                 loadChildren: () => import('./domain/domain.routes').then(m => m.routes)
-            }
+            },
+            { path: '**', redirectTo: 'home' }
         ]
     }
 ]

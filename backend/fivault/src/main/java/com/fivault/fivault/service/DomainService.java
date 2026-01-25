@@ -59,7 +59,7 @@ public class DomainService {
         return Output.success(new GetDomainsResult());
     }
 
-    @Transactional
+    @Transactional(readOnly = false)
     public Output<CreateDomainResult> createDomain(String ownerUsername, String name, String description) {
         // Step 1: Generate base slug
         Optional<AppUser> ownerOptional = appUserRepository.findByUsername(ownerUsername);
@@ -108,7 +108,7 @@ public class DomainService {
         return Output.success(new CreateDomainResult(slug));
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public Output<ListDomainsResult> listDomains(String username) {
         Optional<AppUser> appUserOptional = appUserRepository.findByUsername(username);
         if (appUserOptional.isEmpty()) {
@@ -146,13 +146,14 @@ public class DomainService {
         AppUserDomainRoleData data = output.getData().get();
         DomainRole role = data.role();
         Domain domain = data.domain();
+        AppUser appUser = data.user();
         DomainRoleEnum roleEnum = DomainRoleEnum.valueOf(role.getCode());
         Boolean hasAccess = hasViewAccess(roleEnum.name());
 
         if (!hasAccess) {
             return Output.failure(ErrorCode.DOMAIN_NO_VIEW_ACCESS);
         }
-        return Output.success(new HasDomainReadAccessResult(hasAccess, roleEnum, domain.getDomainId()));
+        return Output.success(new HasDomainReadAccessResult(hasAccess, roleEnum, domain.getDomainId(), appUser.getAppUserId()));
     }
 
     private Output<AppUserDomainRoleData> getAppUserDomainRole(String owner, String slug, String username) {
@@ -177,6 +178,7 @@ public class DomainService {
         return Output.success(new AppUserDomainRoleData(appUserOptional.get(), domain, role));
     }
 
+    @Transactional(readOnly = true)
     public Output<DomainDetailResult> getDomainDetail(Long domainId) {
         Optional<Domain> domainOptional = domainRepository.findByDomainId(domainId);
 

@@ -12,7 +12,16 @@ export const routes: Routes = [
         path: 'create', component: DomainCreate
     },
     {
-        path: ':owner/:slug', component: DomainDetail
+        path: ':owner/:slug',
+        children: [
+            { path: '', component: DomainDetail, pathMatch: 'full' },
+            {
+                path: 'platform',
+                loadChildren: () => import('../platform/platform.routes').then(m => m.routes)
+            },
+            { path: '**', component: DomainDetail } // Catch-all redirects to domain detail
+
+        ]
     },
     {
         path: '**', redirectTo: ''

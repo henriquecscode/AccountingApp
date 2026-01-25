@@ -2,6 +2,8 @@ import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { map, Observable } from "rxjs";
 import { AppUserDomainRole, Domain, VisibleDomain } from "../pages/app/domain/domain.models";
+import { Platform } from "../pages/app/platform/platform.models";
+import { PlatformDTO, PlatformService } from "./platform.service";
 
 
 interface DomainCreateResponse { }
@@ -18,6 +20,8 @@ interface VisibleDomainDTO {
     domainDTO: DomainDTO;
     selfDomainRoleCode: string;
 }
+
+
 
 interface AppUserDomainRoleDTO {
     name: string;
@@ -37,11 +41,14 @@ export interface DomainListResult {
 export interface DomainDetailResponse {
     domainDTO: DomainDTO;
     domainAppUsers: AppUserDomainRoleDTO[];
+    platformDTOS: PlatformDTO[];
+
 }
 
 export interface DomainDetailResult {
     domain: Domain;
     userRoles: AppUserDomainRole[];
+    platforms: Platform[];
 }
 
 @Injectable({
@@ -49,7 +56,10 @@ export interface DomainDetailResult {
 })
 export class DomainService {
 
-    constructor(private http: HttpClient) {
+    constructor(
+        private http: HttpClient,
+        private platformService: PlatformService
+    ) {
 
     }
 
@@ -77,7 +87,8 @@ export class DomainService {
         return this.http.get<DomainDetailResponse>(`/domain/${owner}/${slug}`).pipe(
             map(response => ({
                 domain: this.mapDomain(response.domainDTO),
-                userRoles: this.mapUserRoles(response.domainAppUsers)
+                userRoles: this.mapUserRoles(response.domainAppUsers),
+                platforms: this.platformService.mapPlatforms(response.platformDTOS)
             }))
         );
     }

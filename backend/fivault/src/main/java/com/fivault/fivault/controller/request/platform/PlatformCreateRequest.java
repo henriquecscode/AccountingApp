@@ -1,19 +1,17 @@
-package com.fivault.fivault.controller.request.domain;
+package com.fivault.fivault.controller.request.platform;
 
-import com.fivault.fivault.service.exception.ErrorCode;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
-public class DomainCreateRequest {
+public class PlatformCreateRequest {
     @NotBlank()
-    private String domainName;
-
+    private String platformName;
 
     @Size(max = 500)
     private String description;
 
-    public String getDomainName() {
-        return domainName;
+    public String getPlatformName() {
+        return platformName;
     }
 
     public String getDescription() {

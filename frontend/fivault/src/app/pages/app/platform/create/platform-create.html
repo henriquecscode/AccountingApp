@@ -1,0 +1,78 @@
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-5 col-lg-4">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h3 i18n="platform create page @@platform-create-page-title" class="card-title text-center mb-4">Create
+                        Platform</h3>
+                    <!-- Backend Error Alert -->
+                    @if (backendError) {
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        {{ backendError }}
+                        <button type="button" class="btn-close" (click)="backendError = ''" aria-label="Close"></button>
+                    </div>
+                    }
+                    <form [formGroup]="platformCreateForm" (ngSubmit)="onSubmit()" novalidate>
+                        <!-- Platform Name -->
+                        <div class="mb-3">
+                            <label i18n="platform create form name@@platform-create-name" for="platformName"
+                                class="form-label">Platform name</label>
+                            <input
+                                i18n-placeholder="platform create form platformName placeholder@@platform-create-platformName-placeholder"
+                                type="text" class="form-control" id="platformName" formControlName="platformName"
+                                placeholder="Enter platform name"
+                                [class.is-valid]="platformName?.valid && platformName?.touched"
+                                [class.is-invalid]="platformName?.invalid && (platformName?.touched || submitted)">
+                            <!-- platformName Errors -->
+                            @if (platformName?.invalid && (platformName?.touched || submitted)) {
+                            <div class="invalid-feedback">
+                                @if (platformName?.errors?.['required']) {
+                                <div i18n="required field error@@platform-create-required-name-error">Platform name is
+                                    required</div>
+                                }
+                            </div>
+                            }
+                        </div>
+                        <!-- Platform Slug -->
+                        <div class="mb-3">
+                            <label i18n="platform create form slug@@platform-create-slug" class="form-label">Platform
+                                slug</label>
+                            <input type="text" id="platformSlug" formControlName  ="platformSlug"
+                                class="slug-display form-control"
+                                [class.is-valid]="platformSlug?.valid && platformSlug?.touched"
+                                [class.is-invalid]="platformSlug?.invalid && (platformSlug?.touched || submitted)" readonly>
+                            <small class="form-text text-muted"
+                                i18n="platform create form slug help@@platform-create-slug-help">
+                                This will be used in the URL
+                            </small>
+                            @if (platformSlug?.invalid && (platformSlug?.touched || submitted)) {
+                            <div class="invalid-feedback">
+                                @if (platformSlug?.errors?.['required'] && !(platformName?.errors?.['required'])) {
+                                <div i18n="required field error@@platform-create-required-name-error">Slug must be non-empty</div>
+                                }
+                            </div>
+                            }
+                        </div>
+
+                        <div class="mb-3">
+                            <label i18n="platform create form name@@platform-create-description" for="description"
+                                class="form-label">Description</label>
+                            <input
+                                i18n-placeholder="platform create form description placeholder@@platform-create-description-placeholder"
+                                type="text" class="form-control" id="description" formControlName="description"
+                                placeholder="Enter description">
+                            <!-- platformName Errors -->
+                        </div>
+
+                        <!-- Submit button -->
+                        <div class="d-grid">
+                            <button i18n="platform create submit@@platform-create-form-create-button" type="submit"
+                                class="btn btn-primary">Create</button>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

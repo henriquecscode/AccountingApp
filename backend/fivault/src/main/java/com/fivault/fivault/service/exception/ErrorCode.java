@@ -33,8 +33,13 @@ public enum ErrorCode {
 
     // AppUser
     APPUSER_FAILURE_FETCHING_APPUSER("APP_USER_001","Could not fetch app user from authentication credentials",ErrorCategory.DATA),
-
     APPUSER_FIND_BY_USERNAME_ERROR("APP_USER_002","Could not fetch app user from username",ErrorCategory.DATA),
+
+
+    // Platform
+    PLATFORM_NO_OWNER_ROLE("PLATFORM_001", "Could not fetch role for Platform", ErrorCategory.DATABASE_CATALOG),
+    PLATFORM_CREATE_NO_NAME("PLATFORM_002", "Cannot create platform with empty name", ErrorCategory.VALIDATION),
+    PLATFORM_CREATE_INVALID_SLUG("PLATFORM_003", "Cannot create platform with that name. Results in invalid slug", ErrorCategory.VALIDATION),
 
     // Generic
     INTERNAL_ERROR("INT_001","An unexpected error occurred",ErrorCategory.SYSTEM);
