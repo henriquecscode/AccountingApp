@@ -1,12 +1,60 @@
-Start introducing localization (how to do for backend? read cookies language? pass a code to the frontend and handle it there?)
-    Keep asking claude how easy it is to migrate to a lazy load.
-    Keep asking claude if there is a way to use the default language whem issing the translated language and only then use the fallback backend message.
-When accessing a page from the authenticated app but has no token, see if having the cookie will make it refresh!
+# Steps
+## Must
+
+https://www.geeksforgeeks.org/springboot/request-body-and-parameter-validation-with-spring-boot/
+
+Use message with the error codes that I have been returning instead?
+Backend Base controler:
+    @RestController
+    @RequestMapping("/domain/{owner}/{slug}/files")
+    public class DomainFilesController extends BaseDomainController {
+
+        public DomainFilesController(DomainService domainService) {
+            super(domainService);
+        }
+
+        @GetMapping
+        public List<FileDto> listFiles(@PathVariable String owner, @PathVariable String slug) {
+            Domain domain = getDomain(owner, slug);
+            return domainService.listFiles(domain);
+        }
+    }
+## Nice to have
+
+Logging in the backend
+Output.failure with data objects for better keeping track of what exactly failed
+Domain page
+    Datbase Indexes
+Disable multiple clicks
+Finish @Valid @RequestBody logic
+    See https://claude.ai/share/fac57841-b73a-4f6f-8265-c4c5d92cfc4f
+    // dto/CreateDomainRequest.java
+    public class CreateDomainRequest {
+    @NotBlank(message = "Domain name is required")
+    @Size(min = 3, max = 100)
+    private String name;
+    
+    @NotBlank(message = "Slug is required")
+    @Pattern(regexp = "^[a-z0-9]+(?:-[a-z0-9]+)*$", message = "Invalid slug format")
+    @Size(min = 3, max = 100)
+    private String slug;
+    
+    @Size(max = 500)
+    private String description;
+    
+    // Getters, setters
+    }
+Generalize error handling for every component in the frontend that can be reused easily
+     Introduce default errors for status 0 (for example the server being offline)
+Generalize error handling to do a response for every component in the frontend
+when failing with error undefined should also have an error code -> Test by killing application while running request
+Lombok 
+    Lombok with mapstruct integration
+        https://www.baeldung.com/java-mapstruct-lombok
+Save and manipulate device information
+# We will get there
+How to do proper forms validation on the backend controller level?
+## QOL
 Start making components to make frontned consistent while using Claude AI?
-User Details service is not injecting a proper implementatin. That is what is breaking
-Cors on signin try authenticated is failing
-Backend controller error codes mapping to HTTP status code
-How to do proper forms validation on the controller level?
-How to do proper forms validation on the frontned
+Serve different paths for multiple localizations at the same time
 Containerize backend
-Serve differnt paths for multiple localizations at the same time
