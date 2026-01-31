@@ -6,25 +6,26 @@ import com.fivault.fivault.mapper.PlatformMapper;
 import com.fivault.fivault.repository.DomainRepository;
 import com.fivault.fivault.repository.PlatformRepository;
 import com.fivault.fivault.service.exception.ErrorCode;
-import com.fivault.fivault.service.result.Platform.PlatformCreateResult;
-import com.fivault.fivault.service.result.Platform.PlatformListResult;
+import com.fivault.fivault.service.result.Domain.DomainAccessResult;
+import com.fivault.fivault.service.result.Platform.*;
 import com.fivault.fivault.util.SlugUtil;
+import com.fivault.fivault.util.StringUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @Service
 public class PlatformService {
 
+    private final DomainService domainService;
     private final DomainRepository domainRepository;
     private final PlatformRepository platformRepository;
     private final PlatformMapper platformMapper;
 
-    public PlatformService(DomainRepository domainRepository, PlatformRepository platformRepository, PlatformMapper platformMapper) {
+    public PlatformService(DomainService domainService, DomainRepository domainRepository, PlatformRepository platformRepository, PlatformMapper platformMapper) {
+        this.domainService = domainService;
         this.domainRepository = domainRepository;
         this.platformRepository = platformRepository;
         this.platformMapper = platformMapper;
@@ -52,13 +53,17 @@ public class PlatformService {
             return Output.failure(ErrorCode.PLATFORM_CREATE_INVALID_SLUG);
         }
 
+        if (StringUtil.isValidUUID(baseSlug)) {
+            return Output.failure(ErrorCode.PLATFORM_CREATE_INVALID_SLUG_UUID);
+        }
+
         // Step 2: Fetch all slugs that start with this base for the domain
         List<Platform> existingPlatforms = platformRepository.findByDomainAndSlugStartingWith(domain, baseSlug);
 
         // Step 3: Determine next available slug
         String slug = nextAvailableSlug(baseSlug, existingPlatforms);
 
-        // Step 4: Create the domain
+        // Step 4: Create the platform
         Platform platform = new Platform();
         platform.setName(platformName);
         platform.setSlug(slug);
@@ -74,17 +79,87 @@ public class PlatformService {
     @Transactional(readOnly = true)
     public Output<PlatformListResult> getPlatformList(Long domainId, Long user) {
 
-        // TODO use UserId to get only platforms with permission
         Optional<Domain> domainOptional = domainRepository.findByDomainId(domainId);
 
         if (domainOptional.isEmpty()) {
             return Output.failure(ErrorCode.DOMAIN_FIND_BY_DOMAIN_ID_ERROR);
         }
+        // TODO use UserId to get only platforms with permission
         List<Platform> platforms = platformRepository.findByDomain(domainOptional.get());
         List<PlatformDTO> platformDTOS = platforms.stream()
                 .map(platformMapper::toDTO).toList();
 
         return Output.success(new PlatformListResult(platformDTOS));
+    }
+
+    @Transactional(readOnly = true)
+    public Output<PlatformDetailResult> getPlatformDetail(Long platformId) {
+        Optional<Platform> platformOptional = platformRepository.findByPlatformId(platformId);
+
+        if (platformOptional.isEmpty()) {
+            return Output.failure(ErrorCode.PLATFORM_FIND_BY_PLATFORM_ID_ERROR);
+        }
+        Platform platform = platformOptional.get();
+        // Get Information
+        PlatformDTO platformDTO = platformMapper.toDTO(platform);
+
+        return Output.success(
+                new PlatformDetailResult(platformDTO)
+        );
+    }
+
+    @Transactional(readOnly = true)
+    public Output<PlatformAccessResult> assertPlatformReadAccess(String owner, String slug, String username, String platformSlug) {
+        // First must have read of domain
+        Output<DomainAccessResult> accessResultOutput = domainService.assertDomainReadAccess(owner, slug, username);
+
+        if (accessResultOutput.isFailure()) {
+            return accessResultOutput.mapFailure();
+        }
+        DomainAccessResult result = accessResultOutput.getData().get();
+
+        Long domainId = result.domainId();
+        Long appUserId = result.appUserId();
+        // TODO
+        // Still have no feature for specific platform access
+        Optional<Platform> optionalPlatform = platformRepository.findByDomain_DomainIdAndSlug(domainId, platformSlug);
+
+        if (optionalPlatform.isEmpty()) {
+            return Output.failure(ErrorCode.PLATFORM_FIND_BY_DOMAIN_SLUG_ERROR);
+        }
+
+        boolean hasAccess = true;
+        if (!hasAccess) {
+            return Output.failure(ErrorCode.PLATFORM_NO_READ_ACCESS);
+        }
+        return Output.success(new PlatformAccessResult(hasAccess, optionalPlatform.get().getPlatformId(), domainId, appUserId));
+    }
+
+    @Transactional(readOnly = true)
+    public Output<PlatformAccessResult> assertPlatformAdminAccess(String owner, String slug, String username, String platformSlug) {
+        // First must have admin of domain
+        Output<DomainAccessResult> accessResultOutput = domainService.assertDomainAdminAccess(owner, slug, username);
+
+        if (accessResultOutput.isFailure()) {
+            return accessResultOutput.mapFailure();
+        }
+        DomainAccessResult result = accessResultOutput.getData().get();
+
+        Long domainId = result.domainId();
+        Long appUserId = result.appUserId();
+        // TODO
+        // Still have no feature for specific platform access
+        Optional<Platform> optionalPlatform = platformRepository.findByDomain_DomainIdAndSlug(domainId, platformSlug);
+
+        if (optionalPlatform.isEmpty()) {
+            return Output.failure(ErrorCode.PLATFORM_FIND_BY_DOMAIN_SLUG_ERROR);
+        }
+
+        boolean hasAccess = true;
+        if (!hasAccess) {
+            return Output.failure(ErrorCode.PLATFORM_NO_ADMIN_ACCESS);
+        }
+        return Output.success(new PlatformAccessResult(hasAccess, optionalPlatform.get().getPlatformId(), domainId, appUserId));
     }
 
     /**
@@ -94,22 +169,11 @@ public class PlatformService {
      * returns "my-domain-3"
      */
     private String nextAvailableSlug(String baseSlug, List<Platform> existingPlatforms) {
-        int max = 0;
-        Pattern pattern = Pattern.compile(Pattern.quote(baseSlug) + "-(\\d+)$");
-
-        for (Platform p : existingPlatforms) {
-            String s = p.getSlug();
-            if (s.equals(baseSlug)) {
-                max = Math.max(max, 1);
-            } else {
-                Matcher m = pattern.matcher(s);
-                if (m.find()) {
-                    int n = Integer.parseInt(m.group(1));
-                    max = Math.max(max, n);
-                }
-            }
-        }
-
-        return (max == 0) ? baseSlug : baseSlug + "-" + (max + 1);
+        return SlugUtil.nextAvailableSlug(
+                baseSlug,
+                existingPlatforms.stream().map(
+                        Platform::getSlug
+                ).toList()
+        );
     }
 }

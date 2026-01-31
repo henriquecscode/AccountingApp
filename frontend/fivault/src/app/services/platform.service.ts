@@ -2,6 +2,8 @@ import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { map, Observable } from "rxjs";
 import { Platform } from "../pages/app/platform/platform.models";
+import { Account } from "../pages/app/account/account.model";
+import { AccountDTO } from "./account.service";
 
 
 
@@ -35,6 +37,7 @@ interface AppUserPlatformRoleDTO {
     name: string;
     roleCode: string;
 }
+
 interface PlatformListResponse {
     ownedPlatforms: VisiblePlatformDTO[];
     nonOwnedPlatforms: VisiblePlatformDTO[];
@@ -45,17 +48,18 @@ export interface PlatformListResult {
     myPlatforms: VisiblePlatform[];
     otherPlatforms: VisiblePlatform[];
 }
+*/
 
 export interface PlatformDetailResponse {
     platformDTO: PlatformDTO;
-    platformAppUsers: AppUserPlatformRoleDTO[];
+    accountDTOs: AccountDTO[];
 }
 
 export interface PlatformDetailResult {
     platform: Platform;
-    userRoles: AppUserPlatformRole[];
+    accounts: Account[];
 }
-*/
+
 
 @Injectable({
     providedIn: 'root'
@@ -87,31 +91,33 @@ export class PlatformService {
                 otherPlatforms: this.mapVisiblePlatforms(response.nonOwnedPlatforms)
             }))
         );
-    }
+    }*/
 
 
-    getDetail(owner: string, slug: string): Observable<PlatformDetailResult> {
+    getDetail(owner: string, domainSlug: string, platformSlug: string): Observable<PlatformDetailResult> {
         // return this.http.get<Object>(`/platform/${owner}/${slug}`);
-        return this.http.get<PlatformDetailResponse>(`/platform/${owner}/${slug}`).pipe(
+        return this.http.get<PlatformDetailResponse>(`/domain/${owner}/${domainSlug}/platform/${platformSlug}`).pipe(
             map(response => ({
                 platform: this.mapPlatform(response.platformDTO),
-                userRoles: this.mapUserRoles(response.platformAppUsers)
+                accounts: response.accountDTOs.map(this.mapAccount)
             }))
         );
     }
 
-    */
-    public mapPlatforms(dtos: PlatformDTO[]): Platform[] {
-        return dtos.map(dto =>
-            this.mapPlatform(dto)
-        );
-    }
 
     public mapPlatform(dto: PlatformDTO): Platform {
         return {
             name: dto.platformName,
             slug: dto.platformSlug,
             description: dto.platformDescription
+        };
+    }
+
+    private mapAccount(dto: AccountDTO): Account {
+        return {
+            name: dto.accountName,
+            slug: dto.accountSlug,
+            description: dto.accountDescription
         };
     }
     /*

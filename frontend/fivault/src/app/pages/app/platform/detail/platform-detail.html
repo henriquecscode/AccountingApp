@@ -1,1 +1,71 @@
-<p>platform-detail works!</p>
+<div class="platform-detail-page">
+    <div class="container py-4">
+
+        @if (viewModel$ | async; as vm) {
+
+        <!-- Loading -->
+        @if (vm.isLoading) {
+        <div class="text-center py-5">
+            <span class="spinner-border"></span>
+        </div>
+        }
+
+        <!-- Error -->
+        @if (vm.error) {
+        <div class="alert alert-danger">
+            {{ vm.error }}
+        </div>
+        }
+
+        <!-- Platform Info -->
+        @if (vm.platform) {
+        <section class="mb-4">
+            <h1 class="mb-1">{{ vm.platform.name }}</h1>
+            <p class="text-muted">
+                {{ vm.platform.slug }}
+            </p>
+
+            @if (vm.platform.description) {
+            <p class="mt-3">
+                {{ vm.platform.description }}
+            </p>
+            }
+        </section>
+
+        <!-- Accounts Section -->
+        <section>
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="section-title mb-0" i18n="@@accounts-list-title">Accounts</h2>
+                <button class="btn-create" (click)="createAccount()" i18n="@@accounts-list-create-button">
+                    Create Account
+                </button>
+            </div>
+
+            @if (vm.accounts.length === 0) {
+            <p class="text-muted" i18n="@@accounts-list-empty">
+                No accounts yet. Create your first account!
+            </p>
+            } @else {
+            <div class="accounts-grid">
+                @for(account of vm.accounts; track account.slug) {
+                <div class="account-card" (click)="viewAccount(account.slug)">
+                    <div class="card-content">
+                        <h3 class="account-name">{{ account.name }}</h3>
+                        <p class="account-slug text-muted">{{ account.slug }}</p>
+                        <p class="account-description">{{ account.description }}</p>
+                    </div>
+                    <div class="card-actions">
+                        <button class="btn-edit" (click)="editAccount($event, account.slug)"
+                            i18n="@@accounts-list-edit-button">
+                            Edit
+                        </button>
+                    </div>
+                </div>
+                }
+            </div>
+            }
+        </section>
+        }
+        }
+    </div>
+</div>

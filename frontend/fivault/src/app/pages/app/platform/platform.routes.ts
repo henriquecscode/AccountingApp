@@ -1,7 +1,6 @@
 import { Routes } from "@angular/router";
 import { PlatformCreate } from "./create/platform-create";
-import { DomainDetail } from "../domain/detail/domain-detail";
-import { redirectToCreateGuard } from "../../../guards/platform-guard/platform-guard-guard";
+import { redirectToCreateGuard, redirectToDetailGuard } from "../../../guards/platform-guard/platform-guard-guard";
 import { PlatformDetail } from "./detail/platform-detail";
 export const routes: Routes = [
     {
@@ -14,8 +13,20 @@ export const routes: Routes = [
     },
     {
         path: ':platformSlug',
-        component: PlatformDetail
+        children: [
+            { path: '', component: PlatformDetail, pathMatch: 'full' },
+            {
+                path: 'account',
+                loadChildren: () => import('../account/account.routes').then(m => m.routes)
+            },
+            {
+                path: '**',
+                canActivate: [redirectToDetailGuard],
+                children: []
+            }
+        ]
     },
+
     {
         path: '**', redirectTo: ''
     }

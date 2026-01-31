@@ -75,6 +75,13 @@ public sealed interface Output<T> permits Output.Success, Output.Failure {
         return (Output<U>) this;
     }
 
+    default <U> Output<U> flatMap(Function<T, Output<U>> mapper) {
+        if (this instanceof Success<T> success) {
+            return mapper.apply(success.data());
+        }
+        return (Output<U>) this; // It's a failure, just cast
+    }
+
     default void ifSuccess(Consumer<T> consumer) {
         if (this instanceof Success<T> success) {
             consumer.accept(success.data());

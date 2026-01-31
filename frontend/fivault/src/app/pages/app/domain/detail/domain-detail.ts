@@ -33,7 +33,7 @@ export class DomainDetail implements OnInit {
 
   ngOnInit(): void {
     const owner = this.route.snapshot.paramMap.get('owner');
-    const slug = this.route.snapshot.paramMap.get('slug');
+    const slug = this.route.snapshot.paramMap.get('domainSlug');
 
     if (!owner || !slug) {
       this.viewModel$ = of({

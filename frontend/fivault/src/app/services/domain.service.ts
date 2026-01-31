@@ -88,7 +88,7 @@ export class DomainService {
             map(response => ({
                 domain: this.mapDomain(response.domainDTO),
                 userRoles: this.mapUserRoles(response.domainAppUsers),
-                platforms: this.platformService.mapPlatforms(response.platformDTOS)
+                platforms: response.platformDTOS.map(this.platformService.mapPlatform)
             }))
         );
     }

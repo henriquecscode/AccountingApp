@@ -4,19 +4,20 @@ import { SlugGenerator } from '../../../../util/slug';
 
 import { BackendErrorLocalizationHandler, ErrorMessage } from '../../../../util/error-localization';
 import { ActivatedRoute, Router } from '@angular/router';
-import { PlatformService } from '../../../../services/platform.service';
+import { AccountService } from '../../../../services/account.service';
 
 @Component({
-  selector: 'app-platform-create',
+  selector: 'app-account-create',
   imports: [ReactiveFormsModule],
-  templateUrl: './platform-create.html',
-  styleUrl: './platform-create.scss',
+  templateUrl: './account-create.html',
+  styleUrl: './account-create.scss',
 })
-export class PlatformCreate {
+export class AccountCreate {
 
   owner: string;
   domainSlug: string;
-  platformCreateForm: FormGroup;
+  platformSlug: string;
+  accountCreateForm: FormGroup;
   submitted = false;
   backendError = '';
 
@@ -25,12 +26,12 @@ export class PlatformCreate {
 
     ],
     new ErrorMessage('UNKNOWN_ERROR', (error) =>
-      $localize`:@@platform-create-backend-error-unknown:Platform creation failed with error ${error}. Please try again`
+      $localize`:@@account-create-backend-error-unknown:Account creation failed with error ${error}. Please try again`
     )
   );
 
   constructor(
-    private platformService: PlatformService,
+    private accountService: AccountService,
     private fb: FormBuilder,
     private router: Router,
     private route: ActivatedRoute,
@@ -39,48 +40,49 @@ export class PlatformCreate {
   ) {
     this.owner = this.route.snapshot.paramMap.get('owner')!;
     this.domainSlug = this.route.snapshot.paramMap.get('domainSlug')!;
-    this.platformCreateForm = this.fb.group({
-      platformName: ['', Validators.required],
-      platformSlug: ['', Validators.required],
+    this.platformSlug = this.route.snapshot.paramMap.get('platformSlug')!;
+    this.accountCreateForm = this.fb.group({
+      accountName: ['', Validators.required],
+      accountSlug: ['', Validators.required],
       description: ['']
     })
 
-    this.platformCreateForm.get('platformName')?.valueChanges.subscribe(value => {
+    this.accountCreateForm.get('accountName')?.valueChanges.subscribe(value => {
       const slug = SlugGenerator.generateSlug(value);
-      const slugControl = this.platformCreateForm.get('platformSlug');
+      const slugControl = this.accountCreateForm.get('accountSlug');
       slugControl?.setValue(slug);
       slugControl?.markAsTouched();
     });
   }
 
 
-  get platformName() {
-    return this.platformCreateForm.get("platformName");
+  get accountName() {
+    return this.accountCreateForm.get("accountName");
   }
 
-  get platformSlug() {
-    return this.platformCreateForm.get("platformSlug");
+  get accountSlug() {
+    return this.accountCreateForm.get("accountSlug");
   }
 
   get description() {
-    return this.platformCreateForm.get("description");
+    return this.accountCreateForm.get("description");
   }
 
   onSubmit(): void {
     this.submitted = true;
     this.backendError = '';
 
-    if (this.platformCreateForm.invalid) {
-      this.platformCreateForm.markAllAsTouched();
+    if (this.accountCreateForm.invalid) {
+      this.accountCreateForm.markAllAsTouched();
       return;
     }
 
-    const { platformName, _, description } = this.platformCreateForm.value;
+    const { accountName, _, description } = this.accountCreateForm.value;
 
-    this.platformService.create(this.owner, this.domainSlug, platformName, description).subscribe({
+    this.accountService.create(this.owner, this.domainSlug, this.platformSlug, accountName, description).subscribe({
       next: (response) => {
-        console.log('Platform create success', response);
-        const slug: string = response.platformSlug
+        console.log('Account create success', response);
+        const slug: string = response.accountSlug
         this.router.navigate(['../', slug], { relativeTo: this.route });
       },
       error: (err) => {

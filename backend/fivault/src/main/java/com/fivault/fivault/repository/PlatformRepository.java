@@ -14,5 +14,11 @@ public interface PlatformRepository extends JpaRepository<Platform, Long> {
 
     List<Platform> findByDomainAndSlugStartingWith(Domain domain, String slugPrefix);
 
+    Optional<Platform> findByDomain_DomainIdAndSlug(Long domainId, String platformSlug);
+
     List<Platform> findByDomain(Domain domain);
+
+    Optional<Platform> findByPlatformId(Long platformId);
+
+    boolean existsByPlatformId(Long platformId);
 }

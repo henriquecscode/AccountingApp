@@ -15,12 +15,9 @@ import com.fivault.fivault.repository.DomainRepository;
 import com.fivault.fivault.repository.DomainRoleRepository;
 import com.fivault.fivault.service.data.AppUserDomainRoleData;
 import com.fivault.fivault.service.exception.ErrorCode;
-import com.fivault.fivault.service.result.Domain.CreateDomainResult;
-import com.fivault.fivault.service.result.Domain.GetDomainsResult;
-import com.fivault.fivault.service.result.Domain.HasDomainReadAccessResult;
-import com.fivault.fivault.service.result.Domain.ListDomainsResult;
-import com.fivault.fivault.service.result.Domain.DomainDetailResult;
+import com.fivault.fivault.service.result.Domain.*;
 import com.fivault.fivault.util.SlugUtil;
+import com.fivault.fivault.util.StringUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,6 +35,11 @@ public class DomainService {
             DomainRoleEnum.ADMIN,
             DomainRoleEnum.MEMBER,
             DomainRoleEnum.VIEWER);
+
+    private static List<DomainRoleEnum> adminRoles = Arrays.asList(
+            DomainRoleEnum.OWNER,
+            DomainRoleEnum.ADMIN
+    );
 
     private final AppUserRepository appUserRepository;
     private final DomainRepository domainRepository;
@@ -76,6 +78,10 @@ public class DomainService {
 
         if (baseSlug == null || baseSlug.isBlank()) {
             return Output.failure(ErrorCode.DOMAIN_CREATE_INVALID_SLUG);
+        }
+
+        if (StringUtil.isValidUUID(baseSlug)) {
+            return Output.failure(ErrorCode.PLATFORM_CREATE_INVALID_SLUG_UUID);
         }
         // Step 2: Fetch all slugs that start with this base for the owner
         List<Domain> existingDomains = domainRepository.findByOwnerAndSlugStartingWith(owner, baseSlug);
@@ -136,7 +142,7 @@ public class DomainService {
     }
 
     @Transactional(readOnly = true)
-    public Output<HasDomainReadAccessResult> assertDomainReadAccess(String owner, String slug, String username) {
+    public Output<DomainAccessResult> assertDomainReadAccess(String owner, String slug, String username) {
 
         var output = getAppUserDomainRole(owner, slug, username);
 
@@ -153,7 +159,28 @@ public class DomainService {
         if (!hasAccess) {
             return Output.failure(ErrorCode.DOMAIN_NO_VIEW_ACCESS);
         }
-        return Output.success(new HasDomainReadAccessResult(hasAccess, roleEnum, domain.getDomainId(), appUser.getAppUserId()));
+        return Output.success(new DomainAccessResult(hasAccess, roleEnum, domain.getDomainId(), appUser.getAppUserId()));
+    }
+
+    @Transactional(readOnly = true)
+    public Output<DomainAccessResult> assertDomainAdminAccess(String owner, String slug, String username) {
+
+        var output = getAppUserDomainRole(owner, slug, username);
+
+        if (output.isFailure()) {
+            return output.mapFailure();
+        }
+        AppUserDomainRoleData data = output.getData().get();
+        DomainRole role = data.role();
+        Domain domain = data.domain();
+        AppUser appUser = data.user();
+        DomainRoleEnum roleEnum = DomainRoleEnum.valueOf(role.getCode());
+        Boolean hasAccess = hasAdminAccess(roleEnum.name());
+
+        if (!hasAccess) {
+            return Output.failure(ErrorCode.DOMAIN_NO_ADMIN_ACCESS);
+        }
+        return Output.success(new DomainAccessResult(hasAccess, roleEnum, domain.getDomainId(), appUser.getAppUserId()));
     }
 
     private Output<AppUserDomainRoleData> getAppUserDomainRole(String owner, String slug, String username) {
@@ -212,28 +239,22 @@ public class DomainService {
      * returns "my-domain-3"
      */
     private String nextAvailableSlug(String baseSlug, List<Domain> existingDomains) {
-        int max = 0;
-        Pattern pattern = Pattern.compile(Pattern.quote(baseSlug) + "-(\\d+)$");
-
-        for (Domain d : existingDomains) {
-            String s = d.getSlug();
-            if (s.equals(baseSlug)) {
-                max = Math.max(max, 1);
-            } else {
-                Matcher m = pattern.matcher(s);
-                if (m.find()) {
-                    int n = Integer.parseInt(m.group(1));
-                    max = Math.max(max, n);
-                }
-            }
-        }
-
-        return (max == 0) ? baseSlug : baseSlug + "-" + (max + 1);
+        return SlugUtil.nextAvailableSlug(
+                baseSlug,
+                existingDomains.stream().map(
+                        Domain::getSlug
+                ).toList()
+        );
     }
 
     private Boolean hasViewAccess(String roleCode) {
         return viewRoles.stream().map(x -> x.name()).toList().contains(roleCode);
     }
+
+    private Boolean hasAdminAccess(String roleCode) {
+        return adminRoles.stream().map(x -> x.name()).toList().contains(roleCode);
+    }
+
 
     private Output<Domain> getDomain(String owner, String slug) {
         Optional<AppUser> ownerOptional = appUserRepository.findByUsername(owner);

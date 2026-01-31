@@ -5,13 +5,11 @@ import com.fivault.fivault.controller.response.BasicResponse;
 import com.fivault.fivault.controller.response.domain.DomainCreateResponse;
 import com.fivault.fivault.controller.response.domain.DomainDetailResponse;
 import com.fivault.fivault.controller.response.domain.DomainListResponse;
-import com.fivault.fivault.dto.DomainRoleEnum;
-import com.fivault.fivault.dto.PlatformDTO;
 import com.fivault.fivault.service.AppUserService;
 import com.fivault.fivault.service.DomainService;
 import com.fivault.fivault.service.PlatformService;
 import com.fivault.fivault.service.result.Domain.CreateDomainResult;
-import com.fivault.fivault.service.result.Domain.HasDomainReadAccessResult;
+import com.fivault.fivault.service.result.Domain.DomainAccessResult;
 import com.fivault.fivault.service.result.Domain.ListDomainsResult;
 import com.fivault.fivault.service.result.Domain.DomainDetailResult;
 import com.fivault.fivault.service.Output;
@@ -22,8 +20,6 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("api/domain")
@@ -90,7 +86,7 @@ public class DomainController {
 
         // Access
         String username = SecurityUtil.GetRequestAppUserUsername();
-        Output<HasDomainReadAccessResult> output = domainService.assertDomainReadAccess(owner, slug, username);
+        Output<DomainAccessResult> output = domainService.assertDomainReadAccess(owner, slug, username);
         if (output.isFailure()) {
             return OutputFailureHandler.handleOutputFailure(httpRequest, output);
         }
@@ -98,6 +94,10 @@ public class DomainController {
         Long domainId = output.getData().get().domainId();
         Long appUserId = output.getData().get().appUserId();
         Output<DomainDetailResult> outputDetail = domainService.getDomainDetail(domainId);
+
+        if (outputDetail.isFailure()) {
+            return OutputFailureHandler.handleOutputFailure(httpRequest, outputDetail);
+        }
         DomainDetailResult result = outputDetail.getData().get();
 
         // TODO Only get platforms with at least view access

@@ -1,0 +1,78 @@
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-5 col-lg-4">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h3 i18n="account create page @@account-create-page-title" class="card-title text-center mb-4">Create
+                        Account</h3>
+                    <!-- Backend Error Alert -->
+                    @if (backendError) {
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        {{ backendError }}
+                        <button type="button" class="btn-close" (click)="backendError = ''" aria-label="Close"></button>
+                    </div>
+                    }
+                    <form [formGroup]="accountCreateForm" (ngSubmit)="onSubmit()" novalidate>
+                        <!-- Account Name -->
+                        <div class="mb-3">
+                            <label i18n="account create form name@@account-create-name" for="accountName"
+                                class="form-label">Account name</label>
+                            <input
+                                i18n-placeholder="account create form accountName placeholder@@account-create-accountName-placeholder"
+                                type="text" class="form-control" id="accountName" formControlName="accountName"
+                                placeholder="Enter account name"
+                                [class.is-valid]="accountName?.valid && accountName?.touched"
+                                [class.is-invalid]="accountName?.invalid && (accountName?.touched || submitted)">
+                            <!-- accountName Errors -->
+                            @if (accountName?.invalid && (accountName?.touched || submitted)) {
+                            <div class="invalid-feedback">
+                                @if (accountName?.errors?.['required']) {
+                                <div i18n="required field error@@account-create-required-name-error">Account name is
+                                    required</div>
+                                }
+                            </div>
+                            }
+                        </div>
+                        <!-- Account Slug -->
+                        <div class="mb-3">
+                            <label i18n="account create form slug@@account-create-slug" class="form-label">Account
+                                slug</label>
+                            <input type="text" id="accountSlug" formControlName="accountSlug"
+                                class="slug-display form-control"
+                                [class.is-valid]="accountSlug?.valid && accountSlug?.touched"
+                                [class.is-invalid]="accountSlug?.invalid && (accountSlug?.touched || submitted)" readonly>
+                            <small class="form-text text-muted"
+                                i18n="account create form slug help@@account-create-slug-help">
+                                This will be used in the URL
+                            </small>
+                            @if (accountSlug?.invalid && (accountSlug?.touched || submitted)) {
+                            <div class="invalid-feedback">
+                                @if (accountSlug?.errors?.['required'] && !(accountName?.errors?.['required'])) {
+                                <div i18n="required field error@@account-create-required-slug-error">Slug must be non-empty</div>
+                                }
+                            </div>
+                            }
+                        </div>
+
+                        <div class="mb-3">
+                            <label i18n="account create form description@@account-create-description" for="description"
+                                class="form-label">Description</label>
+                            <input
+                                i18n-placeholder="account create form description placeholder@@account-create-description-placeholder"
+                                type="text" class="form-control" id="description" formControlName="description"
+                                placeholder="Enter description">
+                            <!-- description field (optional) -->
+                        </div>
+
+                        <!-- Submit button -->
+                        <div class="d-grid">
+                            <button i18n="account create submit@@account-create-form-create-button" type="submit"
+                                class="btn btn-primary">Create</button>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -30,19 +30,36 @@ public enum ErrorCode {
     DOMAIN_NO_ROLE_FOR_DOMAIN("DOMAIN_005", "Appuser has no role in given domain", ErrorCategory.AUTHORIZATION),
     DOMAIN_FIND_BY_DOMAIN_ID_ERROR("DOMAIN_006", "Cannot find domain by domain id", ErrorCategory.DATA),
     DOMAIN_NO_VIEW_ACCESS("DOMAIN_ACCESS_001", "Appuser has no read access", ErrorCategory.AUTHORIZATION),
+    DOMAIN_NO_ADMIN_ACCESS("DOMAIN_ACCESS_002", "Appuser has no admin access", ErrorCategory.AUTHORIZATION),
+    DOMAIN_CREATE_INVALID_SLUG_UUID("DOMAIN_003", "Cannot create domain with a name that replicates a UUID", ErrorCategory.VALIDATION),
 
     // AppUser
-    APPUSER_FAILURE_FETCHING_APPUSER("APP_USER_001","Could not fetch app user from authentication credentials",ErrorCategory.DATA),
-    APPUSER_FIND_BY_USERNAME_ERROR("APP_USER_002","Could not fetch app user from username",ErrorCategory.DATA),
+    APPUSER_FAILURE_FETCHING_APPUSER("APP_USER_001", "Could not fetch app user from authentication credentials", ErrorCategory.DATA),
+    APPUSER_FIND_BY_USERNAME_ERROR("APP_USER_002", "Could not fetch app user from username", ErrorCategory.DATA),
 
 
     // Platform
     PLATFORM_NO_OWNER_ROLE("PLATFORM_001", "Could not fetch role for Platform", ErrorCategory.DATABASE_CATALOG),
     PLATFORM_CREATE_NO_NAME("PLATFORM_002", "Cannot create platform with empty name", ErrorCategory.VALIDATION),
     PLATFORM_CREATE_INVALID_SLUG("PLATFORM_003", "Cannot create platform with that name. Results in invalid slug", ErrorCategory.VALIDATION),
+    PLATFORM_CREATE_INVALID_SLUG_UUID("PLATFORM_004", "Cannot create platform with a name that replicates a UUID", ErrorCategory.VALIDATION),
+    PLATFORM_NO_ADMIN_ACCESS("PLATFORM_ACCESS_001", "Appuser has no admin access", ErrorCategory.AUTHORIZATION),
+    PLATFORM_NO_READ_ACCESS("PLATFORM_ACCESS_002", "Appuser has no read access", ErrorCategory.AUTHORIZATION),
+    PLATFORM_FIND_BY_DOMAIN_SLUG_ERROR("PLATFORM_005", "Cannot find platform by domain and slug", ErrorCategory.DATA),
+    PLATFORM_FIND_BY_PLATFORM_ID_ERROR("PLATFORM_006", "Cannot find platform by platform id", ErrorCategory.DATA),
 
+
+    //ACCOUNT
+    ACCOUNT_NO_OWNER_ROLE("ACCOUNT_001", "Could not fetch role for Account", ErrorCategory.DATABASE_CATALOG),
+    ACCOUNT_CREATE_NO_NAME("ACCOUNT_002", "Cannot create account with empty name", ErrorCategory.VALIDATION),
+    ACCOUNT_CREATE_INVALID_SLUG("ACCOUNT_003", "Cannot create account with that name. Results in invalid slug", ErrorCategory.VALIDATION),
+    ACCOUNT_CREATE_INVALID_SLUG_UUID("ACCOUNT_004", "Cannot create account with a name that replicates a UUID", ErrorCategory.VALIDATION),
+    ACCOUNT_NO_ADMIN_ACCESS("ACCOUNT_ACCESS_001", "Appuser has no admin access", ErrorCategory.AUTHORIZATION),
+    ACCOUNT_NO_READ_ACCESS("ACCOUNT_ACCESS_002", "Appuser has no read access", ErrorCategory.AUTHORIZATION),
+    ACCOUNT_FIND_BY_PLATFORM_SLUG_ERROR("ACCOUNT_005", "Cannot find account by platform and slug", ErrorCategory.DATA),
+    ACCOUNT_FIND_BY_ACCOUNT_ID_ERROR("ACCOUNT_006", "Cannot find account by account id", ErrorCategory.DATA),
     // Generic
-    INTERNAL_ERROR("INT_001","An unexpected error occurred",ErrorCategory.SYSTEM);
+    INTERNAL_ERROR("INT_001", "An unexpected error occurred", ErrorCategory.SYSTEM);
 
     public final String code;
     private final String defaultMessage;
