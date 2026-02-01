@@ -1,5 +1,5 @@
 import { ApplicationConfig, provideBrowserGlobalErrorListeners } from '@angular/core';
-import { provideRouter } from '@angular/router';
+import { provideRouter, withRouterConfig } from '@angular/router';
 
 import { routes } from './app.routes';
 import { apiInterceptor } from './interceptors/api.interceptor';
@@ -19,6 +19,6 @@ export const appConfig: ApplicationConfig = {
       )
     ),
     provideBrowserGlobalErrorListeners(),
-    provideRouter(routes)
+    provideRouter(routes, withRouterConfig({ paramsInheritanceStrategy: 'always' }))
   ]
 };
