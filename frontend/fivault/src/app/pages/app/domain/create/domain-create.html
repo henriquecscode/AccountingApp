@@ -30,6 +30,13 @@
                                 <div i18n="required field error@@domain-create-required-name-error">Domain name is
                                     required</div>
                                 }
+                                @if (domainName?.errors?.['maxlength']) {
+                                <div i18n="max length error@@domain-create-maxlength-description-error">Domain name
+                                    cannot
+                                    exceed {{MAX_INPUT_LENGTH}}
+                                    characters
+                                </div>
+                                }
                             </div>
                             }
                         </div>
@@ -37,7 +44,7 @@
                         <div class="mb-3">
                             <label i18n="domain create form slug@@domain-create-slug" class="form-label">Domain
                                 slug</label>
-                            <input type="text" id="domainSlug" formControlName  ="domainSlug"
+                            <input type="text" id="domainSlug" formControlName="domainSlug"
                                 class="slug-display form-control"
                                 [class.is-valid]="domainSlug?.valid && domainSlug?.touched"
                                 [class.is-invalid]="domainSlug?.invalid && (domainSlug?.touched || submitted)" readonly>
@@ -48,7 +55,8 @@
                             @if (domainSlug?.invalid && (domainSlug?.touched || submitted)) {
                             <div class="invalid-feedback">
                                 @if (domainSlug?.errors?.['required'] && !(domainName?.errors?.['required'])) {
-                                <div i18n="required field error@@domain-create-required-name-error">Slug must be non-empty</div>
+                                <div i18n="required field error@@domain-create-required-name-error">Slug must be
+                                    non-empty</div>
                                 }
                             </div>
                             }
@@ -62,6 +70,17 @@
                                 type="text" class="form-control" id="description" formControlName="description"
                                 placeholder="Enter description">
                             <!-- domainName Errors -->
+                            @if (description?.invalid && (description?.touched || submitted)) {
+                            <div class="invalid-feedback">
+                                @if (description?.errors?.['maxlength']) {
+                                <div i18n="max length error@@domain-create-maxlength-description-error">Description
+                                    cannot
+                                    exceed {{MAX_INPUT_LENGTH}}
+                                    characters
+                                </div>
+                                }
+                            </div>
+                            }
                         </div>
 
                         <!-- Submit button -->

@@ -26,6 +26,13 @@
                 <div i18n="required field error@@login-form-required-username-error">Username is
                   required</div>
                 }
+                @if (username?.errors?.['maxlength']) {
+                <div i18n="max length error@@login-form-maxlength-username-error">Username
+                  cannot
+                  exceed {{MAX_INPUT_LENGTH}}
+                  characters
+                </div>
+                }
               </div>
               }
             </div>
@@ -66,8 +73,15 @@
               @if (password?.invalid && (password?.touched || submitted)) {
               <div class="invalid-feedback d-block">
                 @if (password?.errors?.['required']) {
-                <div i18n="required field error@@signup-form-required-password-error">Password is
+                <div i18n="required field error@@login-form-required-password-error">Password is
                   required</div>
+                }
+                @if (password?.errors?.['maxlength']) {
+                <div i18n="max length error@@login-form-maxlength-password-error">Password
+                  cannot
+                  exceed {{MAX_INPUT_LENGTH}}
+                  characters
+                </div>
                 }
               </div>
               }

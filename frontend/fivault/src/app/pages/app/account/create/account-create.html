@@ -3,7 +3,8 @@
         <div class="col-md-5 col-lg-4">
             <div class="card shadow-sm">
                 <div class="card-body">
-                    <h3 i18n="account create page @@account-create-page-title" class="card-title text-center mb-4">Create
+                    <h3 i18n="account create page @@account-create-page-title" class="card-title text-center mb-4">
+                        Create
                         Account</h3>
                     <!-- Backend Error Alert -->
                     @if (backendError) {
@@ -30,6 +31,12 @@
                                 <div i18n="required field error@@account-create-required-name-error">Account name is
                                     required</div>
                                 }
+                                @if (accountName?.errors?.['maxlength']) {
+                                <div i18n="max length error@@account-create-maxlength-name-error">Account name cannot
+                                    exceed {{MAX_INPUT_LENGTH}}
+                                    characters
+                                </div>
+                                }
                             </div>
                             }
                         </div>
@@ -40,7 +47,8 @@
                             <input type="text" id="accountSlug" formControlName="accountSlug"
                                 class="slug-display form-control"
                                 [class.is-valid]="accountSlug?.valid && accountSlug?.touched"
-                                [class.is-invalid]="accountSlug?.invalid && (accountSlug?.touched || submitted)" readonly>
+                                [class.is-invalid]="accountSlug?.invalid && (accountSlug?.touched || submitted)"
+                                readonly>
                             <small class="form-text text-muted"
                                 i18n="account create form slug help@@account-create-slug-help">
                                 This will be used in the URL
@@ -48,7 +56,8 @@
                             @if (accountSlug?.invalid && (accountSlug?.touched || submitted)) {
                             <div class="invalid-feedback">
                                 @if (accountSlug?.errors?.['required'] && !(accountName?.errors?.['required'])) {
-                                <div i18n="required field error@@account-create-required-slug-error">Slug must be non-empty</div>
+                                <div i18n="required field error@@account-create-required-slug-error">Slug must be
+                                    non-empty</div>
                                 }
                             </div>
                             }
@@ -62,6 +71,17 @@
                                 type="text" class="form-control" id="description" formControlName="description"
                                 placeholder="Enter description">
                             <!-- description field (optional) -->
+                            @if (description?.invalid && (description?.touched || submitted)) {
+                            <div class="invalid-feedback">
+                                @if (description?.errors?.['maxlength']) {
+                                <div i18n="max length error@@account-create-maxlength-description-error">Description
+                                    cannot
+                                    exceed {{MAX_INPUT_LENGTH}}
+                                    characters
+                                </div>
+                                }
+                            </div>
+                            }
                         </div>
 
                         <!-- Submit button -->

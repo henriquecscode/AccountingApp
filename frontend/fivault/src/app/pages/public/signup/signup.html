@@ -33,6 +33,13 @@
                                 <div i18n="required field error@@signup-form-required-username-error">Username is
                                     required</div>
                                 }
+                                @if (password?.errors?.['maxlength']) {
+                                <div i18n="username max length error@@signup-form-maxlength-username-error">Username
+                                    cannot
+                                    exceed {{MAX_INPUT_LENGTH}}
+                                    characters
+                                </div>
+                                }
                             </div>
                             }
                         </div>
@@ -108,6 +115,13 @@
                                 @if (password?.errors?.['minlength']) {
                                 <div i18n="password length@@signup-form-password-error-length">Password must be at least
                                     {{MIN_LENGTH}} characters long</div>
+                                }
+                                @if (password?.errors?.['maxlength']) {
+                                <div i18n="password max length error@@signup-form-maxlength-password-error">Password
+                                    cannot
+                                    exceed {{MAX_INPUT_LENGTH}}
+                                    characters
+                                </div>
                                 }
                                 @if (password?.errors?.['passwordStrength']) {
                                 <div>Password must contain:</div>

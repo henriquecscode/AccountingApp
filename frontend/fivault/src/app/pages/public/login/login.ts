@@ -13,7 +13,7 @@ import { BackendErrorLocalizationHandler, ErrorMessage } from '../../../util/err
   standalone: true
 })
 export class Login {
-
+  MAX_INPUT_LENGTH: number = 255;
   loginForm: FormGroup;
   submitted = false;
   backendError = '';
@@ -39,8 +39,8 @@ export class Login {
 
   ) {
     this.loginForm = this.fb.group({
-      username: ['', Validators.required],
-      password: ['', Validators.required]
+      username: ['', Validators.required, Validators.maxLength(this.MAX_INPUT_LENGTH)],
+      password: ['', Validators.required, Validators.maxLength(this.MAX_INPUT_LENGTH)]
     });
   }
 

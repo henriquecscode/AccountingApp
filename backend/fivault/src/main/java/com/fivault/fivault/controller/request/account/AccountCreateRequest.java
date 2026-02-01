@@ -5,9 +5,10 @@ import jakarta.validation.constraints.Size;
 
 public class AccountCreateRequest {
     @NotBlank()
+    @Size(max = 255)
     private String accountName;
 
-    @Size(max = 500)
+    @Size(max = 255)
     private String description;
 
     public String getAccountName() {

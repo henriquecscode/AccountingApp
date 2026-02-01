@@ -1,0 +1,92 @@
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-5 col-lg-4">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h3 i18n="event create page @@event-create-page-title" class="card-title text-center mb-4">Create
+                        Event</h3>
+                    <!-- Backend Error Alert -->
+                    @if (backendError) {
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        {{ backendError }}
+                        <button type="button" class="btn-close" (click)="backendError = ''" aria-label="Close"></button>
+                    </div>
+                    }
+                    <form [formGroup]="eventCreateForm" (ngSubmit)="onSubmit()" novalidate>
+                        <!-- Title -->
+                        <div class="mb-3">
+                            <label i18n="event create form title@@event-create-title" for="title"
+                                class="form-label">Title</label>
+                            <input
+                                i18n-placeholder="event create form title placeholder@@event-create-title-placeholder"
+                                type="text" class="form-control" id="title" formControlName="title"
+                                placeholder="Enter event title" [class.is-valid]="title?.valid && title?.touched"
+                                [class.is-invalid]="title?.invalid && (title?.touched || submitted)">
+                            @if (title?.invalid && (title?.touched || submitted)) {
+                            <div class="invalid-feedback">
+                                @if (title?.errors?.['required']) {
+                                <div i18n="required field error@@event-create-required-title-error">Title is
+                                    required</div>
+                                }
+                                @if (title?.errors?.['maxlength']) {
+                                <div i18n="max length error@@account-create-maxlength-title-error">Title
+                                    cannot
+                                    exceed {{MAX_INPUT_LENGTH}}
+                                    characters
+                                </div>
+                                }
+                            </div>
+                            }
+                        </div>
+
+                        <!-- Description -->
+                        <div class="mb-3">
+                            <label i18n="event create form description@@event-create-description" for="description"
+                                class="form-label">Description</label>
+                            <textarea
+                                i18n-placeholder="event create form description placeholder@@event-create-description-placeholder"
+                                class="form-control" id="description" formControlName="description"
+                                placeholder="Enter description" rows="3"></textarea>
+                        </div>
+
+                        <!-- Start Timestamp -->
+                        <div class="mb-3">
+                            <label i18n="event create form start@@event-create-start-timestamp" for="startTimestamp"
+                                class="form-label">Start</label>
+                            <input type="datetime-local" class="form-control" id="startTimestamp"
+                                formControlName="startTimestamp"
+                                [class.is-valid]="startTimestamp?.valid && startTimestamp?.touched"
+                                [class.is-invalid]="startTimestamp?.invalid && (startTimestamp?.touched || submitted)">
+                            @if (startTimestamp?.invalid && (startTimestamp?.touched || submitted)) {
+                            <div class="invalid-feedback">
+                                @if (startTimestamp?.errors?.['required']) {
+                                <div i18n="required field error@@event-create-required-start-error">Start date is
+                                    required</div>
+                                }
+                            </div>
+                            }
+                        </div>
+
+                        <!-- End Timestamp -->
+                        <div class="mb-3">
+                            <label i18n="event create form end@@event-create-end-timestamp" for="endTimestamp"
+                                class="form-label">End</label>
+                            <input type="datetime-local" class="form-control" id="endTimestamp"
+                                formControlName="endTimestamp">
+                            <small class="form-text text-muted"
+                                i18n="event create form end help@@event-create-end-timestamp-help">
+                                Optional
+                            </small>
+                        </div>
+
+                        <!-- Submit button -->
+                        <div class="d-grid">
+                            <button i18n="event create submit@@event-create-form-create-button" type="submit"
+                                class="btn btn-primary">Create Event</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

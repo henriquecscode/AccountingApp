@@ -1,2 +1,7 @@
 <domain-navbar></domain-navbar>
 <router-outlet></router-outlet>
+
+<!-- Floating Action Button -->
+<a class="fab" [routerLink]="['/app/domain', owner, domainSlug, 'event', 'create']" title="New Event">
+    <span class="fab-icon">+</span>
+</a>

@@ -25,6 +25,10 @@ export const routes: Routes = [
                 loadChildren: () => import('../platform/platform.routes').then(m => m.routes)
             },
             {
+                path: 'event',
+                loadChildren: () => import('./event/event.routes').then(m => m.routes)
+            },
+            {
                 path: '**',
                 canActivate: [redirectToDetailGuard],
                 children: []

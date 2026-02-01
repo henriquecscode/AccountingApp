@@ -13,7 +13,7 @@ import { PlatformService } from '../../../../services/platform.service';
   styleUrl: './platform-create.scss',
 })
 export class PlatformCreate {
-
+  MAX_INPUT_LENGTH: number = 255;
   owner: string;
   domainSlug: string;
   platformCreateForm: FormGroup;
@@ -40,9 +40,9 @@ export class PlatformCreate {
     this.owner = this.route.snapshot.paramMap.get('owner')!;
     this.domainSlug = this.route.snapshot.paramMap.get('domainSlug')!;
     this.platformCreateForm = this.fb.group({
-      platformName: ['', Validators.required],
+      platformName: ['', Validators.required, Validators.maxLength(this.MAX_INPUT_LENGTH)],
       platformSlug: ['', Validators.required],
-      description: ['']
+      description: ['', Validators.maxLength(this.MAX_INPUT_LENGTH)]
     })
 
     this.platformCreateForm.get('platformName')?.valueChanges.subscribe(value => {

@@ -1,6 +1,5 @@
 package com.fivault.fivault.controller.request.domain;
 
-import com.fivault.fivault.service.exception.ErrorCode;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
@@ -9,7 +8,7 @@ public class DomainCreateRequest {
     private String domainName;
 
 
-    @Size(max = 500)
+    @Size(max = 255)
     private String description;
 
     public String getDomainName() {

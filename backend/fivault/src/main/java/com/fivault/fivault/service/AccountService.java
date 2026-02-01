@@ -108,7 +108,7 @@ public class AccountService {
 
     @Transactional(readOnly = true)
     public Output<AccountAccessResult> assertAccountReadAccess(String username, String domainOwner, String domainSlug, String platformSlug, String accountSlug) {
-        return platformService.assertPlatformReadAccess(domainOwner, domainSlug, username, platformSlug)
+    return platformService.assertPlatformReadAccess(domainOwner, domainSlug, username, platformSlug)
                 .flatMap(platformAccess ->
                         getAccount(platformAccess.platformid(), accountSlug)
                                 .flatMap(account ->

@@ -47,9 +47,9 @@ public class AuthController {
             HttpServletResponse httpResponse
     ) {
         Output<SignUpResult> output = authService.signUp(
-                request.username(),
-                request.email(),
-                request.password(),
+                request.getUsername(),
+                request.getEmail(),
+                request.getPassword(),
                 httpRequest
         );
 
@@ -58,7 +58,7 @@ public class AuthController {
                     ErrorCode.AUTH_USER_EXISTS,
                     new OutputFailureHandler.ErrorConfiguration(
                             HttpStatus.CONFLICT, // Could also use DEFAULT_MAPPING here
-                            Map.of("username", request.username())
+                            Map.of("username", request.getUsername())
                     )
             );
 
@@ -94,8 +94,8 @@ public class AuthController {
     ) {
 
         var output = authService.logIn(
-                request.username(),
-                request.password(),
+                request.getUsername(),
+                request.getPassword(),
                 httpRequest
         );
 

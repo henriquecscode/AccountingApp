@@ -14,6 +14,7 @@ import { BackendErrorLocalizationHandler, ErrorMessage } from '../../../util/err
   standalone: true
 })
 export class Signup {
+  MAX_INPUT_LENGTH: number = 255;
   signupForm: FormGroup;
   submitted = false;
   backendError = '';
@@ -25,14 +26,14 @@ export class Signup {
   private errorHandler = new BackendErrorLocalizationHandler(
     [
       new ErrorMessage('AUTH_001', (params) =>
-        $localize `:user exists @@signup-backend-error-user-exists:The username ${params?.username} is already registered.`
+        $localize`:user exists @@signup-backend-error-user-exists:The username ${params?.username} is already registered.`
       ),
       new ErrorMessage('VAL_001', () =>
-        $localize `:@@signup-backend-error-invalid-input:Invalid input`
+        $localize`:@@signup-backend-error-invalid-input:Invalid input`
       ),
     ],
     new ErrorMessage('UNKNOWN_ERROR', (error) =>
-      $localize `:@@signup-backend-error-unknown:Signup failed with error ${error}. Please try again`
+      $localize`:@@signup-backend-error-unknown:Signup failed with error ${error}. Please try again`
     )
   );
 
@@ -43,11 +44,11 @@ export class Signup {
     private cdr: ChangeDetectorRef
   ) {
     this.signupForm = this.fb.group({
-      username: ['', Validators.required],
+      username: ['', Validators.required, Validators.maxLength(this.MAX_INPUT_LENGTH)],
       email: ['', [Validators.required, Validators.email]],
       password: ['', [
         Validators.required,
-        Validators.minLength(this.MIN_LENGTH),
+        Validators.minLength(this.MIN_LENGTH), Validators.maxLength(this.MAX_INPUT_LENGTH),
         this.passwordStrengthValidator
       ]],
       confirmPassword: ['', Validators.required]

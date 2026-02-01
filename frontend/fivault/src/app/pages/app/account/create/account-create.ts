@@ -13,7 +13,7 @@ import { AccountService } from '../../../../services/account.service';
   styleUrl: './account-create.scss',
 })
 export class AccountCreate {
-
+  MAX_INPUT_LENGTH: number = 255;
   owner: string;
   domainSlug: string;
   platformSlug: string;
@@ -42,9 +42,9 @@ export class AccountCreate {
     this.domainSlug = this.route.snapshot.paramMap.get('domainSlug')!;
     this.platformSlug = this.route.snapshot.paramMap.get('platformSlug')!;
     this.accountCreateForm = this.fb.group({
-      accountName: ['', Validators.required],
+      accountName: ['', Validators.required, Validators.maxLength(this.MAX_INPUT_LENGTH)],
       accountSlug: ['', Validators.required],
-      description: ['']
+      description: ['', Validators.maxLength(this.MAX_INPUT_LENGTH)]
     })
 
     this.accountCreateForm.get('accountName')?.valueChanges.subscribe(value => {

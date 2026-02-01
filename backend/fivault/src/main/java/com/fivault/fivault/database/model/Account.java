@@ -15,13 +15,13 @@ public class Account {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long accountId;
 
-    @Column(nullable = false)
+    @Column(name="name", nullable = false)
     private String name;
 
-    @Column(nullable = false)
+    @Column(name="slug", nullable = false)
     private String slug;
 
-    @Column
+    @Column(name="description")
     private String description;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
