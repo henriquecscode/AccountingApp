@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { map, Observable } from 'rxjs';
 
 export interface EventCreateRequest {
     title: string;
@@ -13,6 +13,10 @@ export interface EventCreateResponse {
     eventId: string;
 }
 
+export interface EventCreateResult {
+    eventId: string;
+}
+
 @Injectable({
     providedIn: 'root'
 })
@@ -20,10 +24,12 @@ export class EventService {
 
     constructor(private http: HttpClient) { }
 
-    create(owner: string, domainSlug: string, event: EventCreateRequest): Observable<EventCreateResponse> {
+    create(owner: string, domainSlug: string, event: EventCreateRequest): Observable<EventCreateResult> {
         return this.http.post<EventCreateResponse>(
-            `/api/domain/${owner}/${domainSlug}/event`,
+            `/domain/${owner}/${domainSlug}/event/create`,
             event
+        ).pipe(
+            map(response => ({ eventId: response.eventId }))
         );
     }
 }

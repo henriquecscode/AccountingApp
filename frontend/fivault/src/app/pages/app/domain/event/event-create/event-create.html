@@ -55,7 +55,6 @@
                                 class="form-label">Start</label>
                             <input type="datetime-local" class="form-control" id="startTimestamp"
                                 formControlName="startTimestamp"
-                                [class.is-valid]="startTimestamp?.valid && startTimestamp?.touched"
                                 [class.is-invalid]="startTimestamp?.invalid && (startTimestamp?.touched || submitted)">
                             @if (startTimestamp?.invalid && (startTimestamp?.touched || submitted)) {
                             <div class="invalid-feedback">
@@ -68,15 +67,23 @@
                         </div>
 
                         <!-- End Timestamp -->
+                        <!-- End Timestamp -->
                         <div class="mb-3">
                             <label i18n="event create form end@@event-create-end-timestamp" for="endTimestamp"
                                 class="form-label">End</label>
                             <input type="datetime-local" class="form-control" id="endTimestamp"
-                                formControlName="endTimestamp">
+                                formControlName="endTimestamp"
+                                [class.is-invalid]="eventCreateForm.errors?.['endBeforeStart'] && endTimestamp?.touched">
                             <small class="form-text text-muted"
                                 i18n="event create form end help@@event-create-end-timestamp-help">
                                 Optional
                             </small>
+                            @if (eventCreateForm.errors?.['endBeforeStart'] && endTimestamp?.touched) {
+                            <div class="invalid-feedback" style="display: block;">
+                                <div i18n="end before start error@@event-create-end-before-start-error">End must be
+                                    after start</div>
+                            </div>
+                            }
                         </div>
 
                         <!-- Submit button -->

@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, Component } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BackendErrorLocalizationHandler, ErrorMessage } from '../../../../../util/error-localization';
 import { EventService } from '../../../../../services/event.service';
@@ -9,6 +9,7 @@ import { EventService } from '../../../../../services/event.service';
   imports: [ReactiveFormsModule],
   templateUrl: './event-create.html',
   styleUrl: './event-create.scss',
+  standalone: true
 })
 export class EventCreate {
   MAX_INPUT_LENGTH: number = 500;
@@ -37,11 +38,11 @@ export class EventCreate {
     this.owner = this.route.snapshot.paramMap.get('owner')!;
     this.domainSlug = this.route.snapshot.paramMap.get('domainSlug')!;
     this.eventCreateForm = this.fb.group({
-      title: ['', Validators.required, Validators.maxLength(this.MAX_INPUT_LENGTH)],
+      title: ['', [Validators.required, Validators.maxLength(this.MAX_INPUT_LENGTH)]],
       description: [''],
-      startTimestamp: ['', Validators.required],
+      startTimestamp: ['', [Validators.required]],
       endTimestamp: ['']
-    });
+    }, { validators: this.endAfterStartValidator });
   }
 
   get title() {
@@ -60,6 +61,17 @@ export class EventCreate {
     return this.eventCreateForm.get('endTimestamp');
   }
 
+  endAfterStartValidator(control: AbstractControl): ValidationErrors | null {
+    const start = control.get('startTimestamp')?.value;
+    const end = control.get('endTimestamp')?.value;
+
+    if (!start || !end) {
+      return null; // No validation needed if either is empty
+    }
+
+    return end < start ? { endBeforeStart: true } : null;
+  };
+
   onSubmit(): void {
     this.submitted = true;
     this.backendError = '';
@@ -71,15 +83,19 @@ export class EventCreate {
 
     const { title, description, startTimestamp, endTimestamp } = this.eventCreateForm.value;
 
+      // Convert local datetime-local values to ISO strings with UTC offset
+  const startIso = startTimestamp ? new Date(startTimestamp).toISOString() : null;
+  const endIso = endTimestamp ? new Date(endTimestamp).toISOString() : null;
+
     this.eventService.create(this.owner, this.domainSlug, {
       title,
       description,
-      startTimestamp: startTimestamp || null,
-      endTimestamp: endTimestamp || null
+      startTimestamp: startIso,
+      endTimestamp: endIso
     }).subscribe({
       next: (response) => {
         console.log('Event create success', response);
-        this.router.navigate(['/app/domain', this.owner, this.domainSlug]);
+        this.router.navigate(['/app/domain', this.owner, this.domainSlug, 'event', response.eventId]);
       },
       error: (err) => {
         const errorCode: string = err.error?.errorCode || 'UNKNOWN_ERROR';

@@ -40,9 +40,9 @@ export class PlatformCreate {
     this.owner = this.route.snapshot.paramMap.get('owner')!;
     this.domainSlug = this.route.snapshot.paramMap.get('domainSlug')!;
     this.platformCreateForm = this.fb.group({
-      platformName: ['', Validators.required, Validators.maxLength(this.MAX_INPUT_LENGTH)],
-      platformSlug: ['', Validators.required],
-      description: ['', Validators.maxLength(this.MAX_INPUT_LENGTH)]
+      platformName: ['', [Validators.required, Validators.maxLength(this.MAX_INPUT_LENGTH)]],
+      platformSlug: ['', [Validators.required]],
+      description: ['', [Validators.maxLength(this.MAX_INPUT_LENGTH)]]
     })
 
     this.platformCreateForm.get('platformName')?.valueChanges.subscribe(value => {

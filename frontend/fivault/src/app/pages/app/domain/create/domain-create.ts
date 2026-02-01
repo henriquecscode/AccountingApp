@@ -35,9 +35,9 @@ export class DomainCreate {
 
   ) {
     this.domainCreateForm = this.fb.group({
-      domainName: ['', Validators.required, Validators.maxLength(this.MAX_INPUT_LENGTH)],
-      domainSlug: ['', Validators.required],
-      description: ['', Validators.maxLength(this.MAX_INPUT_LENGTH)]
+      domainName: ['', [Validators.required, Validators.maxLength(this.MAX_INPUT_LENGTH)]],
+      domainSlug: ['', [Validators.required]],
+      description: ['', [Validators.maxLength(this.MAX_INPUT_LENGTH)]]
     })
 
     this.domainCreateForm.get('domainName')?.valueChanges.subscribe(value => {

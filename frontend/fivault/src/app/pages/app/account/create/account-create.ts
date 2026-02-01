@@ -42,9 +42,9 @@ export class AccountCreate {
     this.domainSlug = this.route.snapshot.paramMap.get('domainSlug')!;
     this.platformSlug = this.route.snapshot.paramMap.get('platformSlug')!;
     this.accountCreateForm = this.fb.group({
-      accountName: ['', Validators.required, Validators.maxLength(this.MAX_INPUT_LENGTH)],
-      accountSlug: ['', Validators.required],
-      description: ['', Validators.maxLength(this.MAX_INPUT_LENGTH)]
+      accountName: ['', [Validators.required, Validators.maxLength(this.MAX_INPUT_LENGTH)]],
+      accountSlug: ['', [Validators.required]],
+      description: ['', [Validators.maxLength(this.MAX_INPUT_LENGTH)]]
     })
 
     this.accountCreateForm.get('accountName')?.valueChanges.subscribe(value => {

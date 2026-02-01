@@ -44,14 +44,14 @@ export class Signup {
     private cdr: ChangeDetectorRef
   ) {
     this.signupForm = this.fb.group({
-      username: ['', Validators.required, Validators.maxLength(this.MAX_INPUT_LENGTH)],
+      username: ['', [Validators.required, Validators.maxLength(this.MAX_INPUT_LENGTH)]],
       email: ['', [Validators.required, Validators.email]],
       password: ['', [
         Validators.required,
         Validators.minLength(this.MIN_LENGTH), Validators.maxLength(this.MAX_INPUT_LENGTH),
         this.passwordStrengthValidator
       ]],
-      confirmPassword: ['', Validators.required]
+      confirmPassword: ['', [Validators.required]]
     }, {
       validators: this.passwordMatchValidator  // Form-level validator
     });
