@@ -3,17 +3,21 @@ import { DomainList } from "./list/domain-list";
 import { DomainCreate } from "./create/domain-create";
 import { DomainDetail } from "./detail/domain-detail";
 import { redirectToDetailGuard } from "../../../guards/domain-guard/domain-guard-guard";
+import { DomainLayout } from "./domain-layout/domain-layout/domain-layout";
+import { AppLayout } from "../app-layout/app-layout";
 
 export const routes: Routes = [
-
     {
-        path: '', component: DomainList
-    },
-    {
-        path: 'create', component: DomainCreate
+        path: '',
+        component: AppLayout,
+        children: [
+            { path: '', component: DomainList },
+            { path: 'create', component: DomainCreate },
+        ]
     },
     {
         path: ':owner/:domainSlug',
+        component: DomainLayout,
         children: [
             { path: '', component: DomainDetail, pathMatch: 'full' },
             {
@@ -24,11 +28,8 @@ export const routes: Routes = [
                 path: '**',
                 canActivate: [redirectToDetailGuard],
                 children: []
-            } // Catch-all redirects to domain detail
-
+            }
         ]
     },
-    {
-        path: '**', redirectTo: ''
-    }
+    { path: '**', redirectTo: '' }
 ];

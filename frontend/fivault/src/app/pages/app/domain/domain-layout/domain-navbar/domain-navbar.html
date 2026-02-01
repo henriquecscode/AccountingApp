@@ -1,0 +1,13 @@
+<nav class="bg-secondary text-white py-2">
+    <div class="container">
+        <div class="d-flex justify-content-end gap-2">
+            <p>
+                DOMAIN NAVBAR
+            </p>
+            <a class="nav-button" [routerLink]="['/app/domain', owner, domainSlug]" routerLinkActive="active">Home</a>
+            <button class="btn btn-outline-danger" (click)="leaveDomain()">
+                Leave domain
+            </button>
+        </div>
+    </div>
+</nav>

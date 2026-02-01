@@ -9,11 +9,11 @@ export const routes: Routes = [
         children: [
             { path: '', redirectTo: 'home', pathMatch: 'full' },
             { path: 'home', component: HomeComponent },
-            {
-                path: 'domain',
-                loadChildren: () => import('./domain/domain.routes').then(m => m.routes)
-            },
-            { path: '**', redirectTo: 'home' }
         ]
-    }
-]
+    },
+    {
+        path: 'domain',
+        loadChildren: () => import('./domain/domain.routes').then(m => m.routes)
+    },
+    { path: '**', redirectTo: 'home' }
+];
