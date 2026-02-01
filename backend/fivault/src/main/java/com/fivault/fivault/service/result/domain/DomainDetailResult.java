@@ -1,4 +1,4 @@
-package com.fivault.fivault.service.result.Domain;
+package com.fivault.fivault.service.result.domain;
 
 import com.fivault.fivault.dto.AppUserDomainRole;
 import com.fivault.fivault.dto.DomainDTO;

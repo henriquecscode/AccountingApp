@@ -4,6 +4,7 @@ import { redirectToCreateGuard, redirectToDetailGuard } from "../../../guards/pl
 import { PlatformDetail } from "./detail/platform-detail";
 export const routes: Routes = [
     {
+        // TODO: Go to platform list?
         path: '',
         canActivate: [redirectToCreateGuard],
         children: [] // Dummy component (won't be rendered)

@@ -15,7 +15,7 @@ import com.fivault.fivault.repository.DomainRepository;
 import com.fivault.fivault.repository.DomainRoleRepository;
 import com.fivault.fivault.service.data.AppUserDomainRoleData;
 import com.fivault.fivault.service.exception.ErrorCode;
-import com.fivault.fivault.service.result.Domain.*;
+import com.fivault.fivault.service.result.domain.*;
 import com.fivault.fivault.util.SlugUtil;
 import com.fivault.fivault.util.StringUtil;
 import org.springframework.stereotype.Service;
@@ -24,8 +24,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @Service
 public class DomainService {
@@ -35,6 +33,11 @@ public class DomainService {
             DomainRoleEnum.ADMIN,
             DomainRoleEnum.MEMBER,
             DomainRoleEnum.VIEWER);
+
+    private static List<DomainRoleEnum> memberRoles = Arrays.asList(
+            DomainRoleEnum.OWNER,
+            DomainRoleEnum.ADMIN,
+            DomainRoleEnum.MEMBER);
 
     private static List<DomainRoleEnum> adminRoles = Arrays.asList(
             DomainRoleEnum.OWNER,
@@ -163,6 +166,27 @@ public class DomainService {
     }
 
     @Transactional(readOnly = true)
+    public Output<DomainAccessResult> assertDomainMemberAccess(String owner, String slug, String username) {
+
+        var output = getAppUserDomainRole(owner, slug, username);
+
+        if (output.isFailure()) {
+            return output.mapFailure();
+        }
+        AppUserDomainRoleData data = output.getData().get();
+        DomainRole role = data.role();
+        Domain domain = data.domain();
+        AppUser appUser = data.user();
+        DomainRoleEnum roleEnum = DomainRoleEnum.valueOf(role.getCode());
+        Boolean hasAccess = hasAdminAccess(roleEnum.name());
+
+        if (!hasAccess) {
+            return Output.failure(ErrorCode.DOMAIN_NO_MEMBER_ACCESS);
+        }
+        return Output.success(new DomainAccessResult(hasAccess, roleEnum, domain.getDomainId(), appUser.getAppUserId()));
+    }
+
+    @Transactional(readOnly = true)
     public Output<DomainAccessResult> assertDomainAdminAccess(String owner, String slug, String username) {
 
         var output = getAppUserDomainRole(owner, slug, username);
@@ -249,6 +273,10 @@ public class DomainService {
 
     private Boolean hasViewAccess(String roleCode) {
         return viewRoles.stream().map(x -> x.name()).toList().contains(roleCode);
+    }
+
+    private Boolean hasMemberAccess(String roleCode) {
+        return memberRoles.stream().map(x -> x.name()).toList().contains(roleCode);
     }
 
     private Boolean hasAdminAccess(String roleCode) {

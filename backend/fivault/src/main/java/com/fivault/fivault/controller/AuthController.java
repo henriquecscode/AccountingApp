@@ -11,7 +11,7 @@ import com.fivault.fivault.service.AuthService;
 import com.fivault.fivault.service.JwtService;
 import com.fivault.fivault.service.exception.ErrorCode;
 import com.fivault.fivault.service.Output;
-import com.fivault.fivault.service.result.Auth.SignUpResult;
+import com.fivault.fivault.service.result.auth.SignUpResult;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.*;

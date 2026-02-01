@@ -1,4 +1,4 @@
-package com.fivault.fivault.service.result.Account;
+package com.fivault.fivault.service.result.account;
 
 public record AccountCreateResult(String accountSlug) {
 }

@@ -31,6 +31,7 @@ public enum ErrorCode {
     DOMAIN_FIND_BY_DOMAIN_ID_ERROR("DOMAIN_006", "Cannot find domain by domain id", ErrorCategory.DATA),
     DOMAIN_NO_VIEW_ACCESS("DOMAIN_ACCESS_001", "Appuser has no read access", ErrorCategory.AUTHORIZATION),
     DOMAIN_NO_ADMIN_ACCESS("DOMAIN_ACCESS_002", "Appuser has no admin access", ErrorCategory.AUTHORIZATION),
+    DOMAIN_NO_MEMBER_ACCESS("DOMAIN_ACCESS_003", "Appuser has no member access", ErrorCategory.AUTHORIZATION),
     DOMAIN_CREATE_INVALID_SLUG_UUID("DOMAIN_003", "Cannot create domain with a name that replicates a UUID", ErrorCategory.VALIDATION),
 
     // AppUser
@@ -58,6 +59,11 @@ public enum ErrorCode {
     ACCOUNT_NO_READ_ACCESS("ACCOUNT_ACCESS_002", "Appuser has no read access", ErrorCategory.AUTHORIZATION),
     ACCOUNT_FIND_BY_PLATFORM_SLUG_ERROR("ACCOUNT_005", "Cannot find account by platform and slug", ErrorCategory.DATA),
     ACCOUNT_FIND_BY_ACCOUNT_ID_ERROR("ACCOUNT_006", "Cannot find account by account id", ErrorCategory.DATA),
+
+    //EVENT
+    EVENT_CREATE_NO_TITLE("EVENT_001", "Cannot create event with empty title", ErrorCategory.VALIDATION),
+    EVENT_CREATE_NO_START_TIMESTAMP("EVENT_002", "Cannot create event with empty start timestamp", ErrorCategory.VALIDATION),
+    EVENT_CREATE_INVALID_END_TIMESTAMP("EVENT_002", "Cannot create event where start timestamp is after end timestamp", ErrorCategory.VALIDATION),
     // Generic
     INTERNAL_ERROR("INT_001", "An unexpected error occurred", ErrorCategory.SYSTEM);
 

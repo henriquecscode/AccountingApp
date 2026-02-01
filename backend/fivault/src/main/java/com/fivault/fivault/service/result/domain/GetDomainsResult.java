@@ -1,4 +1,4 @@
-package com.fivault.fivault.service.result.Domain;
+package com.fivault.fivault.service.result.domain;
 
 public class GetDomainsResult {
 }

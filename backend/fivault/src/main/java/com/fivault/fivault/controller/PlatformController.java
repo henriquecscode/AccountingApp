@@ -6,11 +6,11 @@ import com.fivault.fivault.controller.response.platform.PlatformCreateResponse;
 import com.fivault.fivault.controller.response.platform.PlatformDetailResponse;
 import com.fivault.fivault.controller.response.platform.PlatformListResponse;
 import com.fivault.fivault.service.*;
-import com.fivault.fivault.service.result.Account.AccountListResult;
-import com.fivault.fivault.service.result.Domain.DomainAccessResult;
-import com.fivault.fivault.service.result.Platform.PlatformAccessResult;
-import com.fivault.fivault.service.result.Platform.PlatformCreateResult;
-import com.fivault.fivault.service.result.Platform.PlatformDetailResult;
+import com.fivault.fivault.service.result.account.AccountListResult;
+import com.fivault.fivault.service.result.domain.DomainAccessResult;
+import com.fivault.fivault.service.result.platform.PlatformAccessResult;
+import com.fivault.fivault.service.result.platform.PlatformCreateResult;
+import com.fivault.fivault.service.result.platform.PlatformDetailResult;
 import com.fivault.fivault.util.SecurityUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -77,7 +77,7 @@ public class PlatformController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<BasicResponse<PlatformCreateResponse>> create(
+    public ResponseEntity<BasicResponse<PlatformCreateResponse>> createEvent(
             @PathVariable String owner,
             @PathVariable String domainSlug,
             @Valid @RequestBody PlatformCreateRequest request,
@@ -108,7 +108,7 @@ public class PlatformController {
     }
 
     @GetMapping("/list")
-    public ResponseEntity<BasicResponse<PlatformListResponse>> create(
+    public ResponseEntity<BasicResponse<PlatformListResponse>> list(
             @PathVariable String owner,
             @PathVariable String domainSlug,
             HttpServletRequest httpRequest

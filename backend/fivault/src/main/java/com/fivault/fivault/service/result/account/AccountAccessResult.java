@@ -1,4 +1,4 @@
-package com.fivault.fivault.service.result.Account;
+package com.fivault.fivault.service.result.account;
 
 import com.fivault.fivault.dto.DomainRoleEnum;
 

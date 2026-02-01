@@ -1,4 +1,4 @@
-package com.fivault.fivault.service.result.AppUser;
+package com.fivault.fivault.service.result.appUser;
 
 import com.fivault.fivault.dto.AppUserDTO;
 

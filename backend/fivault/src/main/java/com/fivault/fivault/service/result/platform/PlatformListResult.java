@@ -1,4 +1,4 @@
-package com.fivault.fivault.service.result.Platform;
+package com.fivault.fivault.service.result.platform;
 
 import com.fivault.fivault.dto.PlatformDTO;
 

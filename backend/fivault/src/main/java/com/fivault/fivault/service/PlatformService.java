@@ -6,8 +6,8 @@ import com.fivault.fivault.mapper.PlatformMapper;
 import com.fivault.fivault.repository.DomainRepository;
 import com.fivault.fivault.repository.PlatformRepository;
 import com.fivault.fivault.service.exception.ErrorCode;
-import com.fivault.fivault.service.result.Domain.DomainAccessResult;
-import com.fivault.fivault.service.result.Platform.*;
+import com.fivault.fivault.service.result.domain.DomainAccessResult;
+import com.fivault.fivault.service.result.platform.*;
 import com.fivault.fivault.util.SlugUtil;
 import com.fivault.fivault.util.StringUtil;
 import org.springframework.stereotype.Service;
@@ -35,6 +35,8 @@ public class PlatformService {
     @Transactional(readOnly = false)
     public Output<PlatformCreateResult> createPlatform(Long domainId, String platformName, String description) {
         // Step 1: Generate base slug
+
+        // TODO change to Entity Manager reference
         Optional<Domain> domainOptional = domainRepository.findByDomainId(domainId);
 
         if (domainOptional.isEmpty()) {

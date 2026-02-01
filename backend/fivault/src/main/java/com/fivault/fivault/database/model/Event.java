@@ -49,4 +49,68 @@ public class Event {
     protected void onCreate() {
         createdAt = LocalDateTime.now();
     }
+
+    public UUID getEventId() {
+        return eventId;
+    }
+
+    public void setEventId(UUID eventId) {
+        this.eventId = eventId;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public OffsetDateTime getStartTimestamp() {
+        return startTimestamp;
+    }
+
+    public void setStartTimestamp(OffsetDateTime startTimestamp) {
+        this.startTimestamp = startTimestamp;
+    }
+
+    public OffsetDateTime getEndTimestamp() {
+        return endTimestamp;
+    }
+
+    public void setEndTimestamp(OffsetDateTime endTimestamp) {
+        this.endTimestamp = endTimestamp;
+    }
+
+    public Domain getDomain() {
+        return domain;
+    }
+
+    public void setDomain(Domain domain) {
+        this.domain = domain;
+    }
+
+    public Event getParentEvent() {
+        return parentEvent;
+    }
+
+    public void setParentEvent(Event parentEvent) {
+        this.parentEvent = parentEvent;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
 }
