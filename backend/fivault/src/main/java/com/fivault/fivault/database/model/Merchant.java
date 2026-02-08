@@ -16,6 +16,7 @@ public class Merchant {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "merchant_id")
     private Long merchantId;
 
     @Column(name = "name", nullable = false)

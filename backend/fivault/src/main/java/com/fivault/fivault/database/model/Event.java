@@ -19,6 +19,7 @@ public class Event {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(name = "event_id")
     private UUID eventId;
 
     @Column(name="title", length = 500, nullable = false)

@@ -13,6 +13,7 @@ public class Platform {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "platform_id")
     private Long platformId;
 
     @Column(nullable = false)

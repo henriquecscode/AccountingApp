@@ -17,6 +17,7 @@ import java.util.UUID;
 public class EventTag {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(name = "event_tag_id")
     private UUID eventTagId;
 
     @Column(name = "name", nullable = false)
@@ -26,12 +27,15 @@ public class EventTag {
     private String description;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="domain_id", nullable = false)
+    @JoinColumn(name = "domain_id", nullable = false)
     private Domain domain;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_event_tag_id", nullable = true)
     private EventTag parentEventTag;
+
+    @Column(name = "is_removed", nullable = false)
+    private Boolean isRemoved;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
@@ -80,6 +84,14 @@ public class EventTag {
 
     public void setParentEventTag(EventTag parentEventTag) {
         this.parentEventTag = parentEventTag;
+    }
+
+    public Boolean getRemoved() {
+        return isRemoved;
+    }
+
+    public void setRemoved(Boolean removed) {
+        isRemoved = removed;
     }
 
     public LocalDateTime getCreatedAt() {

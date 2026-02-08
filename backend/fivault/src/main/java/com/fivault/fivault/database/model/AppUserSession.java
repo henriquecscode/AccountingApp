@@ -2,7 +2,6 @@ package com.fivault.fivault.database.model;
 
 import jakarta.persistence.*;
 
-import java.time.Instant;
 import java.time.LocalDateTime;
 
 @Entity
@@ -11,7 +10,8 @@ public class AppUserSession {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long app_user_session_id;
+    @Column(name = "app_user_session_id")
+    private Long appUserSessionId;
 
     @Column(nullable = false, unique = true, length = 512)
     private String tokenHash;  // Store hash, not plain token
@@ -49,12 +49,12 @@ public class AppUserSession {
         createdAt = LocalDateTime.now();
     }
 
-    public Long getApp_user_session_id() {
-        return app_user_session_id;
+    public Long getAppUserSessionId() {
+        return appUserSessionId;
     }
 
-    public void setApp_user_session_id(Long app_user_session_id) {
-        this.app_user_session_id = app_user_session_id;
+    public void setAppUserSessionId(Long appUserSessionId) {
+        this.appUserSessionId = appUserSessionId;
     }
 
     public String getTokenHash() {

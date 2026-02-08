@@ -8,6 +8,7 @@ import java.io.Serializable;
 public class DomainRole implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "domain_role_id")
     private Long domainRoleId;
 
     @Column(length = 10, nullable = false, unique = true, updatable = false)

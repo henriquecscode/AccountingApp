@@ -11,6 +11,7 @@ public class AppUser implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "app_user_id")
     private Long appUserId;
 
     @Column(unique = true, nullable = false)
