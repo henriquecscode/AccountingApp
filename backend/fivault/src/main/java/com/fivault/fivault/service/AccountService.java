@@ -83,7 +83,7 @@ public class AccountService {
         Optional<Account> accountOptional = accountRepository.findByAccountId(accountId);
 
         if (accountOptional.isEmpty()) {
-            return Output.failure(ErrorCode.ACCOUNT_FIND_BY_ACCOUNT_ID_ERROR);
+            return Output.failure(ErrorCode.EVENTTAG_FIND_BY_ID_ERROR);
         }
         Account account = accountOptional.get();
         // Get Information

@@ -5,7 +5,7 @@ import jakarta.validation.constraints.Size;
 
 import java.util.UUID;
 
-public class EventTagCreateRequest {
+public class EventTagCreateUpdateRequest {
     @NotBlank
     @Size(max = 255)
     private String name;

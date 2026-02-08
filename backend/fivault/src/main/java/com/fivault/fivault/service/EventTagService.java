@@ -6,7 +6,7 @@ import com.fivault.fivault.dto.EventTagDTO;
 import com.fivault.fivault.mapper.EventTagMapper;
 import com.fivault.fivault.repository.EventTagRepository;
 import com.fivault.fivault.service.exception.ErrorCode;
-import com.fivault.fivault.service.result.eventTag.EventTagCreateResult;
+import com.fivault.fivault.service.result.eventTag.EventTagCreateUpdateResult;
 import com.fivault.fivault.service.result.eventTag.EventTagListResult;
 import jakarta.persistence.EntityManager;
 import org.springframework.stereotype.Service;
@@ -29,23 +29,44 @@ public class EventTagService {
     }
 
 
-    public Output<EventTagCreateResult> create(Long domainId, String name, String description, UUID parentEventTagId) {
+    public Output<EventTagCreateUpdateResult> create(Long domainId, String name, String description, UUID parentEventTagId) {
 
-        if(name == null || name.isBlank()){
-            return Output.failure(ErrorCode.EVENT_CREATE_NO_NAME);
+        if (name == null || name.isBlank()) {
+            return Output.failure(ErrorCode.EVENTTAG_CREATE_NO_NAME);
         }
 
         Domain domain = entityManager.getReference(Domain.class, domainId);
-        Optional<EventTag> parentEventTagOptional = eventTagRepository.findByEventTagId(parentEventTagId);
-        EventTag parentEventTag = parentEventTagOptional.orElse(null);
+        EventTag parentEventTag = parentEventTagId != null ? entityManager.getReference(EventTag.class, parentEventTagId) : null;
         EventTag eventTag = new EventTag();
         eventTag.setDomain(domain);
         eventTag.setName(name);
         eventTag.setDescription(description);
         eventTag.setParentEventTag(parentEventTag);
         eventTagRepository.save(eventTag);
-        EventTagDTO eventTagDTO = new EventTagDTO(eventTag.getEventTagId(), name, description, parentEventTagId);
-        return Output.success(new EventTagCreateResult(eventTagDTO));
+        EventTagDTO eventTagDTO = eventTagMapper.toDTO(eventTag);
+        return Output.success(new EventTagCreateUpdateResult(eventTagDTO));
+    }
+
+    public Output<EventTagCreateUpdateResult> update(Long domainId, UUID eventTagId, String name, String description, UUID parentEventTagId) {
+
+        if (name == null || name.isBlank()) {
+            return Output.failure(ErrorCode.EVENTTAG_CREATE_NO_NAME);
+        }
+
+        Optional<EventTag> eventTagOptional = eventTagRepository.findByEventTagId(eventTagId);
+        if (eventTagOptional.isEmpty()) {
+            return Output.failure(ErrorCode.EVENTTAG_FIND_BY_ID_ERROR);
+        }
+        EventTag eventTag = eventTagOptional.get();
+        Domain domain = entityManager.getReference(Domain.class, domainId);
+        EventTag parentEventTag = parentEventTagId != null ? entityManager.getReference(EventTag.class, parentEventTagId) : null;
+        eventTag.setDomain(domain);
+        eventTag.setName(name);
+        eventTag.setDescription(description);
+        eventTag.setParentEventTag(parentEventTag);
+        eventTagRepository.save(eventTag);
+        EventTagDTO eventTagDTO = eventTagMapper.toDTO(eventTag);
+        return Output.success(new EventTagCreateUpdateResult(eventTagDTO));
     }
 
     public Output<EventTagListResult> list(Long domainId) {

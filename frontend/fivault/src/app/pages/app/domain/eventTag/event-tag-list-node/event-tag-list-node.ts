@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { EventTagNode } from '../eventTag.model';
+import { EventTag, EventTagNode } from '../eventTag.model';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
@@ -12,39 +12,34 @@ import { FormsModule } from '@angular/forms';
 export class EventTagListNode {
   @Input({ required: true }) tag!: EventTagNode;
   @Output() addChild = new EventEmitter<string>();
+  @Output() editNode = new EventEmitter<EventTag>();
 
   expanded = true;
-  editing = false;
-
-  editName = '';
-  editDescription = '';
 
   toggle() {
     this.expanded = !this.expanded;
   }
 
-  startEdit() {
-    this.editing = true;
-    this.editName = this.tag.name;
-    this.editDescription = this.tag.description ?? '';
+  onClickAddChild() {
+    this.addChild.emit(this.tag.id);
   }
 
-  cancelEdit() {
-    this.editing = false;
-  }
-
-  saveEdit() {
-    this.tag.name = this.editName;
-    this.tag.description = this.editDescription;
-    this.editing = false;
-
-    // TODO: call backend update
-  }
-
-    onAddChild(childId?: string) {
+  onAddChild(childId?: string) {
     // If childId is provided (from nested child), bubble it up
     // Otherwise emit this tag's ID
     this.addChild.emit(childId || this.tag.id);
+  }
+
+  onClickEditNode() {
+    this.editNode.emit({
+      eventTagId: this.tag.id,
+      name: this.tag.name,
+      description: this.tag.description,
+      parentEventTagId: this.tag.parentEventTagId
+    });
+  }
+  onEditNode(data: EventTag) {
+    this.editNode.emit(data);
   }
 
   remove() {

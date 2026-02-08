@@ -132,7 +132,7 @@ public class GlobalExceptionHandler {
         HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(
                 status,
-                "An unexpected error occurred"
+                "An unexpected  error occurred"
         );
 
         problemDetail.setTitle(status.getReasonPhrase());

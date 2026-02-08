@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { EventTagNode } from '../eventTag.model';
+import { EventTag, EventTagNode } from '../eventTag.model';
 import { CommonModule } from '@angular/common';
 import { EventTagListContainer } from '../event-tag-list-container/event-tag-list-container';
 import { ActivatedRoute } from '@angular/router';
@@ -13,6 +13,7 @@ interface ViewModel {
   loading: boolean;
   error: string;
 }
+
 
 @Component({
   selector: 'app-event-tag-list',
@@ -30,8 +31,10 @@ export class EventTagList implements OnInit {
   createTagForm: FormGroup;
   submitted = false;
   saving = false;
-  backendError = '';
   creating = false;
+  editing = false;
+  backendError = '';
+  eventTagId: string | null = null
   parentEventTagId: string | null = null;  // Track parent when creating child tag
 
   private errorHandler = new BackendErrorLocalizationHandler(
@@ -97,20 +100,38 @@ export class EventTagList implements OnInit {
 
   startCreate(parentId: string | null = null) {
     this.creating = true;
-    this.parentEventTagId = parentId;
+    this.editing = false;
+    this.startForms(null, parentId);
+  }
+
+  startEdit(data: EventTag) {
+    this.editing = true;
+    this.creating = false;
+    this.startForms(data.eventTagId, data.parentEventTagId);
+    this.createTagForm.patchValue({
+      name: data.name,
+      description: data.description
+    });
+  }
+
+  startForms(eventTagId: string | null = null, parentEventTagId: string | null = null) {
+    this.eventTagId = eventTagId;
+    this.parentEventTagId = parentEventTagId;
     this.submitted = false;
     this.backendError = '';
     this.createTagForm.reset();
+
   }
 
   cancelCreate() {
-    this.creating = false;
     this.parentEventTagId = null;
     this.backendError = '';
     this.createTagForm.reset();
+    this.creating = false;
+    this.editing = false;
   }
 
-  saveCreate() {
+  saveForms() {
     this.submitted = true;
     this.backendError = '';
 
@@ -123,46 +144,90 @@ export class EventTagList implements OnInit {
 
     const { name, description } = this.createTagForm.value;
 
-    this.eventTagService.create(this.owner, this.domainSlug, name, description, this.parentEventTagId).subscribe({
-      next: (response) => {
-        console.log('Event Tag create success', response);
-        this.saving = false;
-        this.creating = false;
-        this.createTagForm.reset();
-        this.submitted = false;
+    if (this.creating) {
+      this.eventTagService.create(this.owner, this.domainSlug, name, description, this.parentEventTagId).subscribe({
+        next: (response) => {
+          console.log('Event Tag create success', response);
+          this.saving = false;
+          this.creating = false;
+          this.editing = false;
+          this.createTagForm.reset();
+          this.submitted = false;
 
-        // Create the new tag node
-        const newTag: EventTagNode = {
-          id: response.eventTag.eventTagId,
-          name: response.eventTag.name,
-          description: response.eventTag.description,
-          children: []
-        };
+          // Create the new tag node
+          const newTag: EventTagNode = {
+            id: response.eventTag.eventTagId,
+            name: response.eventTag.name,
+            description: response.eventTag.description,
+            parentEventTagId: response.eventTag.parentEventTagId,
+            children: []
+          };
 
-        // Update the viewModel by adding the new tag to the existing tags
-        var parentEventTagId = response.eventTag.eventTagParentId
-        this.viewModel$ = this.viewModel$.pipe(
-          map(vm => ({
-            ...vm,
-            tags: parentEventTagId
-              ? this.insertChildTag(vm.tags, parentEventTagId, newTag)
-              : [...vm.tags, newTag]
-          }))
-        );
-        
-      },
-      error: (err) => {
-        const errorCode: string = err.error?.errorCode || 'UNKNOWN_ERROR';
-        const params: any = err.error?.params;
-        const paramsString = params ? JSON.stringify(params, null, 2) : '';
-        this.backendError = this.errorHandler.localize(errorCode, paramsString);
-        this.saving = false;
-        this.cdr.detectChanges();
-      }
-    });
+          // Update the viewModel by adding the new tag to the existing tags
+          var parentEventTagId = response.eventTag.parentEventTagId
+          this.viewModel$ = this.viewModel$.pipe(
+            map(vm => ({
+              ...vm,
+              tags: parentEventTagId
+                ? this.insertChildTag(vm.tags, parentEventTagId, newTag)
+                : [newTag, ...vm.tags]
+            }))
+          );
+        },
+        error: (err) => {
+          const errorCode: string = err.error?.errorCode || 'UNKNOWN_ERROR';
+          const params: any = err.error?.params;
+          const paramsString = params ? JSON.stringify(params, null, 2) : '';
+          this.backendError = this.errorHandler.localize(errorCode, paramsString);
+          this.saving = false;
+          this.cdr.detectChanges();
+          this.udpateVM();
+        }
+      });
+    }
+    if (this.editing) {
+      this.eventTagService.update(this.owner, this.domainSlug, this.eventTagId!, name, description, this.parentEventTagId).subscribe({
+        next: (response) => {
+          console.log('Event Tag update success', response);
+          this.saving = false;
+          this.creating = false;
+          this.editing = false;
+          this.createTagForm.reset();
+          this.submitted = false;
+
+
+          // Create the new tag node
+          const newTag: EventTagNode = {
+            id: response.eventTag.eventTagId,
+            name: response.eventTag.name,
+            description: response.eventTag.description,
+            parentEventTagId: response.eventTag.parentEventTagId,
+            children: []
+          };
+
+          // Update static details
+          // Does not cover changes in hierarchy // TODO
+          this.viewModel$ = this.viewModel$.pipe(
+            map(vm => ({
+              ...vm,
+              tags: this.updateTagNode(vm.tags, newTag)
+            }))
+          );
+        },
+        error: (err) => {
+          const errorCode: string = err.error?.errorCode || 'UNKNOWN_ERROR';
+          const params: any = err.error?.params;
+          const paramsString = params ? JSON.stringify(params, null, 2) : '';
+          this.backendError = this.errorHandler.localize(errorCode, paramsString);
+          this.saving = false;
+          this.cdr.detectChanges();
+          this.udpateVM();
+        }
+      });
+    }
   }
 
-  private listToTree(list: any[]): EventTagNode[] {
+  private listToTree(list: EventTag[]): EventTagNode[] {
     // Build a map for quick lookup
     const map = new Map<string, EventTagNode>();
     const roots: EventTagNode[] = [];
@@ -173,6 +238,7 @@ export class EventTagList implements OnInit {
         id: item.eventTagId,
         name: item.name,
         description: item.description,
+        parentEventTagId: item.parentEventTagId,
         children: []
       });
     });
@@ -180,8 +246,8 @@ export class EventTagList implements OnInit {
     // Second pass: build the tree
     list.forEach(item => {
       const node = map.get(item.eventTagId)!;
-      if (item.eventTagParentId) {
-        const parent = map.get(item.eventTagParentId);
+      if (item.parentEventTagId) {
+        const parent = map.get(item.parentEventTagId);
         if (parent) {
           parent.children.push(node);
         } else {
@@ -209,7 +275,7 @@ export class EventTagList implements OnInit {
       if (node.id === parentId) {
         return {
           ...node,
-          children: [...(node.children ?? []), newTag]
+          children: [newTag, ...(node.children ?? [])]
         };
       }
 
@@ -223,6 +289,41 @@ export class EventTagList implements OnInit {
 
       return node;
     });
+  }
+
+  private updateTagNode(
+    nodes: EventTagNode[],
+    updatedTag: EventTagNode
+  ): EventTagNode[] {
+
+    return nodes.map(node => {
+
+      // ✅ Found the node → replace its editable fields
+      if (node.id === updatedTag.id) {
+        return {
+          ...node,
+          name: updatedTag.name,
+          description: updatedTag.description
+          // keep children untouched
+        };
+      }
+
+      // ✅ Otherwise recurse into children
+      if (node.children?.length) {
+        return {
+          ...node,
+          children: this.updateTagNode(node.children, updatedTag)
+        };
+      }
+
+      return node;
+    });
+  }
+
+  private udpateVM() {
+    this.viewModel$ = this.viewModel$.pipe(
+      map(vm => vm)
+    );
   }
 
 }

@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { EventTagListNode } from '../event-tag-list-node/event-tag-list-node';
-import { EventTagNode } from '../eventTag.model';
+import { EventTag, EventTagNode } from '../eventTag.model';
 
 @Component({
   selector: 'app-event-tag-list-container',
@@ -13,9 +13,13 @@ import { EventTagNode } from '../eventTag.model';
 export class EventTagListContainer {
   @Input({ required: true }) tags!: EventTagNode[];
   @Output() addChild = new EventEmitter<string>();
+  @Output() editNode = new EventEmitter<EventTag>();
 
   onAddChild(tagId: string) {
     this.addChild.emit(tagId);
   }
 
+  onEditNode(data: EventTag) {
+    this.editNode.emit(data);
+  }
 }

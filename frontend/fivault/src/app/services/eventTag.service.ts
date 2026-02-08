@@ -12,10 +12,10 @@ interface eventTagDTO {
 
 }
 
-interface EventTagCreateResult {
+interface EventTagCreateUpdateResult {
     eventTag: EventTag;
 }
-interface EventTagCreateResponse {
+interface EventTagCreateUpdateResponse {
     eventTagDTO: eventTagDTO;
 }
 
@@ -32,8 +32,8 @@ export class EventTagService {
 
     constructor(private http: HttpClient) { }
 
-    create(owner: string, domainSlug: string, name: string, description: string, parentEventTagId: string | null): Observable<EventTagCreateResult> {
-        return this.http.post<EventTagCreateResponse>(
+    create(owner: string, domainSlug: string, name: string, description: string, parentEventTagId: string | null): Observable<EventTagCreateUpdateResult> {
+        return this.http.post<EventTagCreateUpdateResponse>(
             `/domain/${owner}/${domainSlug}/eventTag/create`,
             {
                 name,
@@ -46,7 +46,21 @@ export class EventTagService {
             );
     }
 
-    getList(owner: string, domainSlug: string) {
+    update(owner: string, domainSlug: string, eventTagId: string, name: string, description: string, parentEventTagId: string | null): Observable<EventTagCreateUpdateResult> {
+        return this.http.post<EventTagCreateUpdateResponse>(
+            `/domain/${owner}/${domainSlug}/eventTag/update/${eventTagId}`,
+            {
+                name,
+                description,
+                parentEventTagId: parentEventTagId
+            }).pipe(
+                map(response => ({
+                    eventTag: this.mapEventTag(response.eventTagDTO)
+                }))
+            );
+    }
+
+    getList(owner: string, domainSlug: string): Observable<EventTagListResult> {
         return this.http.get<EventTagListResponse>(
             `/domain/${owner}/${domainSlug}/eventTag/list`
         ).pipe(
@@ -63,7 +77,7 @@ export class EventTagService {
             eventTagId: dto.eventTagId,
             name: dto.name,
             description: dto.description,
-            eventTagParentId: dto.parentEventTagId
+            parentEventTagId: dto.parentEventTagId
         }
     }
 }

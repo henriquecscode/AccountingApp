@@ -66,7 +66,9 @@ public enum ErrorCode {
     EVENT_CREATE_INVALID_END_TIMESTAMP("EVENT_002", "Cannot create event where start timestamp is after end timestamp", ErrorCategory.VALIDATION),
 
     //EVENT TAG
-    EVENT_CREATE_NO_NAME("EVENTTAG_001", "Cannot create event tag with empty name", ErrorCategory.VALIDATION),
+    EVENTTAG_CREATE_NO_NAME("EVENTTAG_001", "Cannot create event tag with empty name", ErrorCategory.VALIDATION),
+    EVENTTAG_FIND_BY_ID_ERROR("ACCOUNT_006", "Cannot find event tag by event tag id", ErrorCategory.DATA),
+
 
 
     // Generic

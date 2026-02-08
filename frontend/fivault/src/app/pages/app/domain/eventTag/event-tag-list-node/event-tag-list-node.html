@@ -13,11 +13,11 @@
       }
     </div>
     <div class="tag-actions">
-      <button class="btn btn-sm btn-outline-primary" (click)="onAddChild(); $event.stopPropagation()"
+      <button class="btn btn-sm btn-outline-primary" (click)="onClickAddChild(); $event.stopPropagation()"
         title="Add child tag">
         + Child
       </button>
-      <button class="btn btn-sm btn-outline-secondary" (click)="$event.stopPropagation()" title="Edit">
+      <button class="btn btn-sm btn-outline-secondary" (click)="onClickEditNode(); $event.stopPropagation()" title="Edit">
         Edit
       </button>
       @if(!tag.children || tag.children.length == 0){
@@ -31,7 +31,7 @@
   @if (expanded && tag.children && tag.children.length > 0) {
   <div class="tag-children">
     @for (child of tag.children; track child.id) {
-    <app-event-tag-list-node [tag]="child" (addChild)="onAddChild($event)" />
+    <app-event-tag-list-node [tag]="child" (addChild)="onAddChild($event)" (editNode)="onEditNode($event)" />
     }
   </div>
   }

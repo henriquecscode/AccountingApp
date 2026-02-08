@@ -22,16 +22,6 @@
     <div class="text-muted">Loading tags…</div>
     }
 
-    <!-- Tree -->
-    @if (!vm.loading && vm.tags.length > 0) {
-    <app-event-tag-list-container [tags]="vm.tags" (addChild)="startCreate($event)" />
-    }
-
-    <!-- Empty -->
-    @if (!vm.loading && vm.tags.length === 0 && !vm.error) {
-    <div class="text-muted mb-3">No tags yet</div>
-    }
-
     <!-- Create button (when not creating) -->
     @if (!creating && !vm.loading) {
     <div class="mt-3">
@@ -41,28 +31,49 @@
     </div>
     }
 
+    <!-- Tree -->
+    @if (!vm.loading && vm.tags.length > 0) {
+    <app-event-tag-list-container [tags]="vm.tags" (addChild)="startCreate($event)" (editNode)="startEdit($event)" />
+    }
+
+    <!-- Empty -->
+    @if (!vm.loading && vm.tags.length === 0 && !vm.error) {
+    <div class="text-muted mb-3">No tags yet</div>
+    }
+
+
+
     }
 
     <!-- Fixed Create form at bottom -->
-    @if (creating) {
+    @if (creating || editing) {
     <div class="create-tag-fixed">
         <div class="create-tag-content">
-            <!-- Backend Error Alert -->
-            @if (backendError) {
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                {{ backendError }}
-            </div>
-            }
 
-            <form [formGroup]="createTagForm" (ngSubmit)="saveCreate()" novalidate>
+            <form [formGroup]="createTagForm" (ngSubmit)="saveForms()" novalidate>
 
-                <h5 i18n="event tag create title@@event-tag-create-title">
-                    @if (parentEventTagId) {
-                    Create Child Tag
-                    } @else {
-                    Create Root Tag
+                <h5>
+
+                    @if (creating && parentEventTagId) {
+                    <span i18n="event tag create child title@@event-tag-create-child-title">
+                        Create Child Tag
+                    </span>
                     }
+
+                    @if (creating && !parentEventTagId) {
+                    <span i18n="event tag create root title@@event-tag-create-root-title">
+                        Create Root Tag
+                    </span>
+                    }
+
+                    @if (editing) {
+                    <span i18n="event tag edit title@@event-tag-edit-title">
+                        Editing Node
+                    </span>
+                    }
+
                 </h5>
+
 
                 <!-- Tag Name -->
                 <div class="mb-3">
@@ -117,16 +128,27 @@
 
                 <!-- Actions -->
                 <div class="d-grid gap-2">
-                    <button i18n="event tag create submit@@event-tag-create-submit" type="submit"
-                        class="btn btn-primary" [disabled]="saving">
+
+                    <button type="submit" class="btn btn-primary" [disabled]="saving">
                         @if (saving) {
                         <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
                         }
-                        Create
+                        @if (creating) {
+                        <span i18n="event tag create submit@@event-tag-create-submit">
+                            Create
+                        </span>
+                        }
+                        @if (editing) {
+                        <span i18n="event tag edit submit@@event-tag-edit-submit">
+                            Save Changes
+                        </span>
+                        }
                     </button>
 
                     <button type="button" class="btn btn-secondary" [disabled]="saving" (click)="cancelCreate()">
-                        Cancel
+                        <span i18n="event tag cancel@@event-tag-cancel">
+                            Cancel
+                        </span>
                     </button>
                 </div>
 
