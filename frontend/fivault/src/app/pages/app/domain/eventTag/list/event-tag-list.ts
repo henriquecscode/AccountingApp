@@ -62,7 +62,6 @@ export class EventTagList implements OnInit {
     if (!this.owner || !this.domainSlug) {
       this.viewModel$ = of({
         tags: [],
-        creating: false,
         loading: false,
         error: 'Invalid route parameters'
       });
@@ -227,6 +226,29 @@ export class EventTagList implements OnInit {
     }
   }
 
+  deleteNode(eventTagId: string) {
+    this.eventTagService.delete(this.owner, this.domainSlug, eventTagId).subscribe({
+      next: (response) => {
+        this.viewModel$ = this.viewModel$.pipe(
+          map(vm => ({
+            ...vm,
+            tags: this.deleteTagNode(vm.tags, eventTagId)
+          }))
+        );
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        const errorCode: string = err.error?.errorCode || 'UNKNOWN_ERROR';
+        const params: any = err.error?.params;
+        const paramsString = params ? JSON.stringify(params, null, 2) : '';
+        this.backendError = this.errorHandler.localize(errorCode, paramsString);
+        this.saving = false;
+        this.cdr.detectChanges();
+        this.udpateVM();
+      }
+    })
+  }
+
   private listToTree(list: EventTag[]): EventTagNode[] {
     // Build a map for quick lookup
     const map = new Map<string, EventTagNode>();
@@ -319,6 +341,27 @@ export class EventTagList implements OnInit {
       return node;
     });
   }
+
+  private deleteTagNode(
+    nodes: EventTagNode[],
+    tagId: string
+  ): EventTagNode[] {
+
+    var newNodes = nodes
+      // ✅ Remove the node if it matches
+      .filter(node => node.id !== tagId)
+
+      // ✅ Recurse into children
+      .map(node => ({
+        ...node,
+        children: node.children?.length
+          ? this.deleteTagNode(node.children, tagId)
+          : node.children
+      }));
+    return newNodes;
+  }
+
+
 
   private udpateVM() {
     this.viewModel$ = this.viewModel$.pipe(

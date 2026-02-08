@@ -10,8 +10,7 @@ import java.util.UUID;
         name = "domain_event_tags",
         indexes = {
                 @Index(name = "idx_event_tags_parent_event_tag", columnList = "parent_event_tag_id"),
-                @Index(name = "idx_event_tags_domain", columnList = "domain_id"),
-                @Index(name = "idx_event_tags_start_timestamp", columnList = "start_timestamp")
+                @Index(name = "idx_event_tags_domain", columnList = "domain_id")
         }
 )
 public class EventTag {

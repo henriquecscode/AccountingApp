@@ -68,6 +68,7 @@ public enum ErrorCode {
     //EVENT TAG
     EVENTTAG_CREATE_NO_NAME("EVENTTAG_001", "Cannot create event tag with empty name", ErrorCategory.VALIDATION),
     EVENTTAG_FIND_BY_ID_ERROR("ACCOUNT_006", "Cannot find event tag by event tag id", ErrorCategory.DATA),
+    EVENTTAG_DELETE_TAG_NOT_LEAF_ERROR("ACCOUNT_006", "Cannot delete tag with non deleted subtags", ErrorCategory.DATA),
 
 
 

@@ -1,6 +1,7 @@
 package com.fivault.fivault.service;
 
 import com.fivault.fivault.database.model.Domain;
+import com.fivault.fivault.database.model.Event;
 import com.fivault.fivault.database.model.EventTag;
 import com.fivault.fivault.dto.EventTagDTO;
 import com.fivault.fivault.mapper.EventTagMapper;
@@ -75,5 +76,18 @@ public class EventTagService {
                 eventTagMapper::toDTO
         ).toList();
         return Output.success(new EventTagListResult(eventTagDTOList));
+    }
+
+    public Output<Void> delete(UUID eventTagId) {
+        List<EventTag> eventTagList = eventTagRepository.findAllTagsRecursiveByEventTagId(eventTagId);
+        if (eventTagList.size() > 1) {
+            return Output.failure(ErrorCode.EVENTTAG_DELETE_TAG_NOT_LEAF_ERROR);
+        }
+
+        EventTag eventTag = eventTagList.getFirst();
+        eventTag.setRemoved(true);
+        eventTagRepository.save(eventTag);
+
+        return Output.success(null);
     }
 }

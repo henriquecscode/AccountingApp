@@ -13,6 +13,7 @@ export class EventTagListNode {
   @Input({ required: true }) tag!: EventTagNode;
   @Output() addChild = new EventEmitter<string>();
   @Output() editNode = new EventEmitter<EventTag>();
+  @Output() deleteNode = new EventEmitter<string>();
 
   expanded = true;
 
@@ -24,10 +25,8 @@ export class EventTagListNode {
     this.addChild.emit(this.tag.id);
   }
 
-  onAddChild(childId?: string) {
-    // If childId is provided (from nested child), bubble it up
-    // Otherwise emit this tag's ID
-    this.addChild.emit(childId || this.tag.id);
+  onAddChild(eventTagId: string) {
+    this.addChild.emit(eventTagId);
   }
 
   onClickEditNode() {
@@ -40,6 +39,14 @@ export class EventTagListNode {
   }
   onEditNode(data: EventTag) {
     this.editNode.emit(data);
+  }
+
+  onClickDeleteNode() {
+    this.deleteNode.emit(this.tag.id)
+  }
+
+  onDeleteNode(eventTagId: string){
+    this.deleteNode.emit(eventTagId);
   }
 
   remove() {

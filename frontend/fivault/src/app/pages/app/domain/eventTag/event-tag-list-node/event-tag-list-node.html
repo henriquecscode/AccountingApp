@@ -21,7 +21,7 @@
         Edit
       </button>
       @if(!tag.children || tag.children.length == 0){
-      <button class="btn btn-sm btn-outline-danger" (click)="$event.stopPropagation()" title="Delete">
+      <button class="btn btn-sm btn-outline-danger" (click)="onClickDeleteNode(); $event.stopPropagation()" title="Delete">
         Delete
       </button>
       }
@@ -31,7 +31,7 @@
   @if (expanded && tag.children && tag.children.length > 0) {
   <div class="tag-children">
     @for (child of tag.children; track child.id) {
-    <app-event-tag-list-node [tag]="child" (addChild)="onAddChild($event)" (editNode)="onEditNode($event)" />
+    <app-event-tag-list-node [tag]="child" (addChild)="onAddChild($event)" (editNode)="onEditNode($event)" (deleteNode)="onDeleteNode($event)"/>
     }
   </div>
   }

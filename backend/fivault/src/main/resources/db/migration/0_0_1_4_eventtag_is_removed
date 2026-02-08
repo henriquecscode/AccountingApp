@@ -1,0 +1,1 @@
+ALTER TABLE domain_event_tags ADD COLUMN is_removed BOOLEAN DEFAULT FALSE;

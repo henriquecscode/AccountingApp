@@ -72,6 +72,13 @@ export class EventTagService {
         )
     }
 
+
+    delete(owner: string, domainSlug: string, eventTagId: string): Observable<void> {
+        return this.http.delete<void>(
+            `/domain/${owner}/${domainSlug}/eventTag/delete/${eventTagId}`
+        );
+    }
+
     private mapEventTag(dto: eventTagDTO) {
         return {
             eventTagId: dto.eventTagId,

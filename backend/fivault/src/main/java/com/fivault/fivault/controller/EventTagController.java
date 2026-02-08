@@ -112,11 +112,37 @@ public class EventTagController {
         }
 
         EventTagCreateUpdateResult eventTagCreateUpdateResult = eventTagCreateResultOutput.getData().get();
-        return ResponseEntity.status(HttpStatus.CREATED).body(
+        return ResponseEntity.ok(
                 BasicResponse.success(
                         new EventTagCreateUpdateResponse(
                                 eventTagCreateUpdateResult.eventTag()
                         )
                 ));
+    }
+
+    @DeleteMapping("/delete/{eventTagId}")
+    public ResponseEntity<BasicResponse<Void>> delete(
+            @PathVariable String owner,
+            @PathVariable String domainSlug,
+            @PathVariable UUID eventTagId,
+            HttpServletRequest httpRequest
+    ) {
+        String username = SecurityUtil.GetRequestAppUserUsername();
+
+        Output<DomainAccessResult> domainAccessResultOutput = domainService.assertDomainAdminAccess(owner, domainSlug, username);
+
+        if (domainAccessResultOutput.isFailure()) {
+            return OutputFailureHandler.handleOutputFailure(httpRequest, domainAccessResultOutput);
+        }
+
+        DomainAccessResult result = domainAccessResultOutput.getData().get();
+        Long domainId = result.domainId();
+
+        Output<Void> eventTagCreateResultOutput = eventTagService.delete(eventTagId);
+        if (eventTagCreateResultOutput.isFailure()) {
+            return OutputFailureHandler.handleOutputFailure(httpRequest, eventTagCreateResultOutput);
+        }
+
+        return ResponseEntity.ok(BasicResponse.success(null));
     }
 }

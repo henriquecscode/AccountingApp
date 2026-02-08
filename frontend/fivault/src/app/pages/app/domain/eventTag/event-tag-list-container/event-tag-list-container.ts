@@ -13,7 +13,8 @@ import { EventTag, EventTagNode } from '../eventTag.model';
 export class EventTagListContainer {
   @Input({ required: true }) tags!: EventTagNode[];
   @Output() addChild = new EventEmitter<string>();
-  @Output() editNode = new EventEmitter<EventTag>();
+  @Output() editNode = new EventEmitter<EventTag>();  
+  @Output() deleteNode = new EventEmitter<string>();
 
   onAddChild(tagId: string) {
     this.addChild.emit(tagId);
@@ -21,5 +22,9 @@ export class EventTagListContainer {
 
   onEditNode(data: EventTag) {
     this.editNode.emit(data);
+  }  
+
+  onDeleteNode(eventTagId: string){
+    this.deleteNode.emit(eventTagId);
   }
 }

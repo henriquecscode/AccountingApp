@@ -33,7 +33,8 @@
 
     <!-- Tree -->
     @if (!vm.loading && vm.tags.length > 0) {
-    <app-event-tag-list-container [tags]="vm.tags" (addChild)="startCreate($event)" (editNode)="startEdit($event)" />
+    <app-event-tag-list-container [tags]="vm.tags" (addChild)="startCreate($event)" (editNode)="startEdit($event)"
+        (deleteNode)="deleteNode($event)" />
     }
 
     <!-- Empty -->
