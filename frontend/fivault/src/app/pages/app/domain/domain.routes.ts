@@ -5,6 +5,7 @@ import { DomainDetail } from "./detail/domain-detail";
 import { redirectToDetailGuard } from "../../../guards/domain-guard/domain-guard-guard";
 import { DomainLayout } from "./domain-layout/domain-layout/domain-layout";
 import { AppLayout } from "../app-layout/app-layout";
+import { EventTagList } from "./eventTag/list/event-tag-list";
 
 export const routes: Routes = [
     {
@@ -27,6 +28,10 @@ export const routes: Routes = [
             {
                 path: 'event',
                 loadChildren: () => import('./event/event.routes').then(m => m.routes)
+            },
+            {
+                path: 'eventTags',
+                component: EventTagList
             },
             {
                 path: '**',

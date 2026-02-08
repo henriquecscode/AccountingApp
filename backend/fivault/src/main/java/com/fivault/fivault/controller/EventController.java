@@ -13,6 +13,7 @@ import com.fivault.fivault.service.result.event.EventCreateResult;
 import com.fivault.fivault.util.SecurityUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -52,8 +53,9 @@ public class EventController {
             return OutputFailureHandler.handleOutputFailure(httpRequest, resultOutput);
         }
 
-        return ResponseEntity.ok(BasicResponse.success(
-                new EventCreateResponse(resultOutput.getData().get().eventId())
-        ));
+        return ResponseEntity.status(HttpStatus.CREATED).body(
+                BasicResponse.success(
+                        new EventCreateResponse(resultOutput.getData().get().eventId())
+                ));
     }
 }

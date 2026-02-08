@@ -64,8 +64,14 @@ public enum ErrorCode {
     EVENT_CREATE_NO_TITLE("EVENT_001", "Cannot create event with empty title", ErrorCategory.VALIDATION),
     EVENT_CREATE_NO_START_TIMESTAMP("EVENT_002", "Cannot create event with empty start timestamp", ErrorCategory.VALIDATION),
     EVENT_CREATE_INVALID_END_TIMESTAMP("EVENT_002", "Cannot create event where start timestamp is after end timestamp", ErrorCategory.VALIDATION),
+
+    //EVENT TAG
+    EVENT_CREATE_NO_NAME("EVENTTAG_001", "Cannot create event tag with empty name", ErrorCategory.VALIDATION),
+
+
     // Generic
     INTERNAL_ERROR("INT_001", "An unexpected error occurred", ErrorCategory.SYSTEM);
+
 
     public final String code;
     private final String defaultMessage;

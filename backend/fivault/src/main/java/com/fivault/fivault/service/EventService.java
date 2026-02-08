@@ -10,7 +10,6 @@ import jakarta.persistence.EntityManager;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.xml.stream.events.EntityReference;
 
 @Service
 public class EventService {

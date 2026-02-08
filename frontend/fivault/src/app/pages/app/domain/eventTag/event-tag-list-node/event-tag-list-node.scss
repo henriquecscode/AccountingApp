@@ -1,0 +1,30 @@
+.tag-node {
+  margin-left: 1rem;
+}
+
+.tag-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.5rem;
+  border-left: 2px solid #ddd;
+  cursor: pointer;
+}
+
+.tag-main {
+  display: flex;
+  flex-direction: column;
+}
+
+.description {
+  color: #666;
+  font-size: 0.85rem;
+}
+
+.tag-actions button {
+  margin-left: 0.25rem;
+}
+
+.tag-children {
+  margin-left: 1.5rem;
+}

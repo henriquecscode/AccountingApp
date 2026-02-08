@@ -1,0 +1,43 @@
+<div class="tag-node">
+
+  <!-- Header -->
+  <div class="tag-header" (click)="toggle()">
+
+    <!-- Display mode -->
+    @if (!editing) {
+      <div class="tag-main">
+        <strong>{{ tag.name }}</strong>
+        <small class="description">{{ tag.description }}</small>
+      </div>
+    }
+
+    <!-- Edit mode -->
+    @if (editing) {
+      <div class="tag-edit">
+        <input [(ngModel)]="editName" placeholder="Name" />
+        <textarea [(ngModel)]="editDescription" placeholder="Description"></textarea>
+      </div>
+    }
+
+    <!-- Actions -->
+    <div class="tag-actions" (click)="$event.stopPropagation()">
+      @if (!editing) {
+        <button (click)="startEdit()">Edit</button>
+        <button (click)="addChild()">+</button>
+        <button (click)="remove()">✕</button>
+      } @else {
+        <button (click)="saveEdit()">Save</button>
+        <button (click)="cancelEdit()">Cancel</button>
+      }
+    </div>
+  </div>
+
+  <!-- Children -->
+  @if (expanded && tag.children.length > 0) {
+    <div class="tag-children">
+      @for (child of tag.children; track child.id) {
+        <app-event-tag-list-node [tag]="child" />
+      }
+    </div>
+  }
+</div>

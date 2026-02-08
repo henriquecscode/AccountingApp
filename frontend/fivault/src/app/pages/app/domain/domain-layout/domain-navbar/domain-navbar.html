@@ -5,6 +5,7 @@
                 DOMAIN NAVBAR
             </p>
             <a class="nav-button" [routerLink]="['/app/domain', owner, domainSlug]" routerLinkActive="active">Home</a>
+            <a class="nav-button" [routerLink]="['/app/domain', owner, domainSlug, 'eventTags']" routerLinkActive="active">Event Tags</a>
             <button class="btn btn-outline-danger" (click)="leaveDomain()">
                 Leave domain
             </button>
