@@ -1,5 +1,6 @@
 .event-tag-list {
   padding: 1rem;
+  padding-bottom: 350px; /* Space for fixed create box */
 }
 
 .header {
@@ -7,4 +8,23 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 1rem;
+}
+
+.create-tag-fixed {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: white;
+  border-top: 2px solid #dee2e6;
+  box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
+  z-index: 100;
+  max-height: 320px;
+  overflow-y: auto;
+}
+
+.create-tag-content {
+  max-width: 600px;
+  margin: 0 auto;
 }

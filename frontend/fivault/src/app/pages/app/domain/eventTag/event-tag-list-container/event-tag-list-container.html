@@ -1,5 +1,5 @@
 <div class="tag-tree">
   @for (tag of tags; track tag.id) {
-    <app-event-tag-list-node [tag]="tag" />
+  <app-event-tag-list-node [tag]="tag" (addChild)="onAddChild($event)" />
   }
 </div>

@@ -5,24 +5,34 @@
 .tag-header {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   gap: 1rem;
-  padding: 0.5rem;
-  border-left: 2px solid #ddd;
-  cursor: pointer;
+  padding: 0.75rem;
+  margin-bottom: 0.5rem;
+  border-left: 3px solid #0d6efd;
+  background-color: #f8f9fa;
+  border-radius: 0.25rem;
 }
 
 .tag-main {
   display: flex;
   flex-direction: column;
+  flex: 1;
+}
+
+.tag-name {
+  font-weight: 500;
+  margin-bottom: 0.25rem;
 }
 
 .description {
-  color: #666;
-  font-size: 0.85rem;
+  color: #6c757d;
+  font-size: 0.875rem;
 }
 
-.tag-actions button {
-  margin-left: 0.25rem;
+.tag-actions {
+  display: flex;
+  gap: 0.5rem;
 }
 
 .tag-children {

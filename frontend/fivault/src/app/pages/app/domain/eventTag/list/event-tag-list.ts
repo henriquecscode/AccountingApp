@@ -30,8 +30,9 @@ export class EventTagList implements OnInit {
   createTagForm: FormGroup;
   submitted = false;
   saving = false;
-  creating = false;
   backendError = '';
+  creating = false;
+  parentEventTagId: string | null = null;  // Track parent when creating child tag
 
   private errorHandler = new BackendErrorLocalizationHandler(
     [],
@@ -94,18 +95,19 @@ export class EventTagList implements OnInit {
     );
   }
 
-  startCreate() {
+  startCreate(parentId: string | null = null) {
+    this.creating = true;
+    this.parentEventTagId = parentId;
     this.submitted = false;
     this.backendError = '';
     this.createTagForm.reset();
-    this.creating = true;
   }
 
   cancelCreate() {
+    this.creating = false;
+    this.parentEventTagId = null;
     this.backendError = '';
     this.createTagForm.reset();
-    this.creating = false;
-    this.submitted = false;
   }
 
   saveCreate() {
@@ -121,10 +123,11 @@ export class EventTagList implements OnInit {
 
     const { name, description } = this.createTagForm.value;
 
-    this.eventTagService.create(this.owner, this.domainSlug, name, description, null).subscribe({
+    this.eventTagService.create(this.owner, this.domainSlug, name, description, this.parentEventTagId).subscribe({
       next: (response) => {
         console.log('Event Tag create success', response);
         this.saving = false;
+        this.creating = false;
         this.createTagForm.reset();
         this.submitted = false;
 
@@ -137,12 +140,16 @@ export class EventTagList implements OnInit {
         };
 
         // Update the viewModel by adding the new tag to the existing tags
+        var parentEventTagId = response.eventTag.eventTagParentId
         this.viewModel$ = this.viewModel$.pipe(
           map(vm => ({
             ...vm,
-            tags: [...vm.tags, newTag]
+            tags: parentEventTagId
+              ? this.insertChildTag(vm.tags, parentEventTagId, newTag)
+              : [...vm.tags, newTag]
           }))
         );
+        
       },
       error: (err) => {
         const errorCode: string = err.error?.errorCode || 'UNKNOWN_ERROR';
@@ -189,4 +196,33 @@ export class EventTagList implements OnInit {
 
     return roots;
   }
+
+  private insertChildTag(
+    nodes: EventTagNode[],
+    parentId: string,
+    newTag: EventTagNode
+  ): EventTagNode[] {
+
+    return nodes.map(node => {
+
+      // ✅ If this is the parent → add child here
+      if (node.id === parentId) {
+        return {
+          ...node,
+          children: [...(node.children ?? []), newTag]
+        };
+      }
+
+      // ✅ Otherwise recurse into children
+      if (node.children?.length) {
+        return {
+          ...node,
+          children: this.insertChildTag(node.children, parentId, newTag)
+        };
+      }
+
+      return node;
+    });
+  }
+
 }

@@ -32,13 +32,13 @@ export class EventTagService {
 
     constructor(private http: HttpClient) { }
 
-    create(owner: string, domainSlug: string, name: string, description: string, eventTagId: string | null): Observable<EventTagCreateResult> {
+    create(owner: string, domainSlug: string, name: string, description: string, parentEventTagId: string | null): Observable<EventTagCreateResult> {
         return this.http.post<EventTagCreateResponse>(
             `/domain/${owner}/${domainSlug}/eventTag/create`,
             {
                 name,
                 description,
-                eventTagId
+                parentEventTagId: parentEventTagId
             }).pipe(
                 map(response => ({
                     eventTag: this.mapEventTag(response.eventTagDTO)

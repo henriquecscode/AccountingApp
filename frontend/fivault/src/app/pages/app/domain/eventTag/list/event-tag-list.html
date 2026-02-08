@@ -24,7 +24,7 @@
 
     <!-- Tree -->
     @if (!vm.loading && vm.tags.length > 0) {
-    <app-event-tag-list-container [tags]="vm.tags" />
+    <app-event-tag-list-container [tags]="vm.tags" (addChild)="startCreate($event)" />
     }
 
     <!-- Empty -->
@@ -32,92 +32,106 @@
     <div class="text-muted mb-3">No tags yet</div>
     }
 
-    <!-- Create form -->
-    @if (creating) {
-    <div class="create-tag mt-3">
-
-        <form [formGroup]="createTagForm" (ngSubmit)="saveCreate()" novalidate>
-
-            <h5 i18n="event tag create title@@event-tag-create-title">Create tag</h5>
-
-            <!-- Tag Name -->
-            <div class="mb-3">
-                <label i18n="event tag create name@@event-tag-create-name" for="tagName" class="form-label">
-                    Tag name
-                </label>
-
-                <input i18n-placeholder="event tag create name placeholder@@event-tag-create-name-placeholder"
-                    type="text" id="tagName" class="form-control" formControlName="name" placeholder="Enter tag name"
-                    [class.is-valid]="name?.valid && name?.touched"
-                    [class.is-invalid]="name?.invalid && (name?.touched || submitted)">
-
-                @if (name?.invalid && (name?.touched || submitted)) {
-                <div class="invalid-feedback">
-                    @if (name?.errors?.['required']) {
-                    <div i18n="required field error@@event-tag-create-required-name-error">
-                        Tag name is required
-                    </div>
-                    }
-                    @if (name?.errors?.['maxlength']) {
-                    <div i18n="max length error@@event-tag-create-maxlength-name-error">
-                        Tag name cannot exceed {{ MAX_INPUT_LENGTH }} characters
-                    </div>
-                    }
-                </div>
-                }
-            </div>
-
-            <!-- Description -->
-            <div class="mb-3">
-                <label i18n="event tag create description@@event-tag-create-description" for="tagDescription"
-                    class="form-label">
-                    Description
-                </label>
-
-                <input
-                    i18n-placeholder="event tag create description placeholder@@event-tag-create-description-placeholder"
-                    type="text" id="tagDescription" class="form-control" formControlName="description"
-                    placeholder="Enter description"
-                    [class.is-invalid]="description?.invalid && (description?.touched || submitted)">
-
-                @if (description?.invalid && (description?.touched || submitted)) {
-                <div class="invalid-feedback">
-                    @if (description?.errors?.['maxlength']) {
-                    <div i18n="max length error@@event-tag-create-maxlength-description-error">
-                        Description cannot exceed {{ MAX_INPUT_LENGTH }} characters
-                    </div>
-                    }
-                </div>
-                }
-            </div>
-
-            <!-- Actions -->
-            <div class="d-grid gap-2">
-                <button i18n="event tag create submit@@event-tag-create-submit" type="submit" class="btn btn-primary"
-                    [disabled]="saving">
-                    @if (saving) {
-                    <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                    }
-                    Create
-                </button>
-
-                <button type="button" class="btn btn-secondary" [disabled]="saving" (click)="cancelCreate()">
-                    Cancel
-                </button>
-            </div>
-
-        </form>
-    </div>
-    }
-
-    <!-- Create button -->
+    <!-- Create button (when not creating) -->
     @if (!creating && !vm.loading) {
     <div class="mt-3">
-        <button class="btn btn-outline-primary" (click)="startCreate()">
-            + Create tag
+        <button class="btn btn-primary" (click)="startCreate()">
+            + Create Root Tag
         </button>
     </div>
     }
 
+    }
+
+    <!-- Fixed Create form at bottom -->
+    @if (creating) {
+    <div class="create-tag-fixed">
+        <div class="create-tag-content">
+            <!-- Backend Error Alert -->
+            @if (backendError) {
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                {{ backendError }}
+            </div>
+            }
+
+            <form [formGroup]="createTagForm" (ngSubmit)="saveCreate()" novalidate>
+
+                <h5 i18n="event tag create title@@event-tag-create-title">
+                    @if (parentEventTagId) {
+                    Create Child Tag
+                    } @else {
+                    Create Root Tag
+                    }
+                </h5>
+
+                <!-- Tag Name -->
+                <div class="mb-3">
+                    <label i18n="event tag create name@@event-tag-create-name" for="tagName" class="form-label">
+                        Tag name
+                    </label>
+
+                    <input i18n-placeholder="event tag create name placeholder@@event-tag-create-name-placeholder"
+                        type="text" id="tagName" class="form-control" formControlName="name"
+                        placeholder="Enter tag name" [class.is-valid]="name?.valid && name?.touched"
+                        [class.is-invalid]="name?.invalid && (name?.touched || submitted)">
+
+                    @if (name?.invalid && (name?.touched || submitted)) {
+                    <div class="invalid-feedback">
+                        @if (name?.errors?.['required']) {
+                        <div i18n="required field error@@event-tag-create-required-name-error">
+                            Tag name is required
+                        </div>
+                        }
+                        @if (name?.errors?.['maxlength']) {
+                        <div i18n="max length error@@event-tag-create-maxlength-name-error">
+                            Tag name cannot exceed {{ MAX_INPUT_LENGTH }} characters
+                        </div>
+                        }
+                    </div>
+                    }
+                </div>
+
+                <!-- Description -->
+                <div class="mb-3">
+                    <label i18n="event tag create description@@event-tag-create-description" for="tagDescription"
+                        class="form-label">
+                        Description
+                    </label>
+
+                    <input
+                        i18n-placeholder="event tag create description placeholder@@event-tag-create-description-placeholder"
+                        type="text" id="tagDescription" class="form-control" formControlName="description"
+                        placeholder="Enter description"
+                        [class.is-invalid]="description?.invalid && (description?.touched || submitted)">
+
+                    @if (description?.invalid && (description?.touched || submitted)) {
+                    <div class="invalid-feedback">
+                        @if (description?.errors?.['maxlength']) {
+                        <div i18n="max length error@@event-tag-create-maxlength-description-error">
+                            Description cannot exceed {{ MAX_INPUT_LENGTH }} characters
+                        </div>
+                        }
+                    </div>
+                    }
+                </div>
+
+                <!-- Actions -->
+                <div class="d-grid gap-2">
+                    <button i18n="event tag create submit@@event-tag-create-submit" type="submit"
+                        class="btn btn-primary" [disabled]="saving">
+                        @if (saving) {
+                        <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                        }
+                        Create
+                    </button>
+
+                    <button type="button" class="btn btn-secondary" [disabled]="saving" (click)="cancelCreate()">
+                        Cancel
+                    </button>
+                </div>
+
+            </form>
+        </div>
+    </div>
     }
 </div>

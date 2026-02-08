@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { EventTagNode } from '../eventTag.model';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -11,8 +11,9 @@ import { FormsModule } from '@angular/forms';
 })
 export class EventTagListNode {
   @Input({ required: true }) tag!: EventTagNode;
+  @Output() addChild = new EventEmitter<string>();
 
-  expanded = false;
+  expanded = true;
   editing = false;
 
   editName = '';
@@ -40,18 +41,10 @@ export class EventTagListNode {
     // TODO: call backend update
   }
 
-  addChild() {
-    const newChild: EventTagNode = {
-      id: crypto.randomUUID(),
-      name: 'New tag',
-      description: '',
-      children: []
-    };
-
-    this.tag.children.push(newChild);
-    this.expanded = true;
-
-    // TODO: call backend create
+    onAddChild(childId?: string) {
+    // If childId is provided (from nested child), bubble it up
+    // Otherwise emit this tag's ID
+    this.addChild.emit(childId || this.tag.id);
   }
 
   remove() {
