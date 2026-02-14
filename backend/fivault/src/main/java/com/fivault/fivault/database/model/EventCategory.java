@@ -10,17 +10,17 @@ import java.util.UUID;
 @Entity
 @DynamicInsert
 @Table(
-        name = "domain_event_tags",
+        name = "domain_event_categories",
         indexes = {
-                @Index(name = "idx_event_tags_parent_event_tag", columnList = "parent_event_tag_id"),
-                @Index(name = "idx_event_tags_domain", columnList = "domain_id")
+                @Index(name = "idx_event_categories_parent_event_category", columnList = "parent_event_category_id"),
+                @Index(name = "idx_event_categories_domain", columnList = "domain_id")
         }
 )
-public class EventTag {
+public class EventCategory {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "event_tag_id")
-    private UUID eventTagId;
+    @Column(name = "event_category_id")
+    private UUID eventCategoryId;
 
     @Column(name = "name", nullable = false)
     private String name;
@@ -33,8 +33,8 @@ public class EventTag {
     private Domain domain;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "parent_event_tag_id", nullable = true)
-    private EventTag parentEventTag;
+    @JoinColumn(name = "parent_event_category_id", nullable = true)
+    private EventCategory parentEventCategory;
 
     @Column(name = "is_removed")
     @ColumnDefault("false")
@@ -49,12 +49,12 @@ public class EventTag {
         createdAt = LocalDateTime.now();
     }
 
-    public UUID getEventTagId() {
-        return eventTagId;
+    public UUID getEventCategoryId() {
+        return eventCategoryId;
     }
 
-    public void setEventTagId(UUID eventTagId) {
-        this.eventTagId = eventTagId;
+    public void setEventCategoryId(UUID eventCategoryId) {
+        this.eventCategoryId = eventCategoryId;
     }
 
     public String getName() {
@@ -81,12 +81,12 @@ public class EventTag {
         this.domain = domain;
     }
 
-    public EventTag getParentEventTag() {
-        return parentEventTag;
+    public EventCategory getParentEventCategory() {
+        return parentEventCategory;
     }
 
-    public void setParentEventTag(EventTag parentEventTag) {
-        this.parentEventTag = parentEventTag;
+    public void setParentEventCategory(EventCategory parentEventCategory) {
+        this.parentEventCategory = parentEventCategory;
     }
 
     public Boolean getRemoved() {

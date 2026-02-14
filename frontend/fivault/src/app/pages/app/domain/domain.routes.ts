@@ -6,6 +6,7 @@ import { redirectToDetailGuard } from "../../../guards/domain-guard/domain-guard
 import { DomainLayout } from "./domain-layout/domain-layout/domain-layout";
 import { AppLayout } from "../app-layout/app-layout";
 import { EventTagList } from "./eventTag/list/event-tag-list";
+import { EventCategoryList } from "./eventCategory/event-category-list/event-category-list";
 
 export const routes: Routes = [
     {
@@ -32,6 +33,10 @@ export const routes: Routes = [
             {
                 path: 'eventTags',
                 component: EventTagList
+            },
+            {
+                path: 'eventCategories',
+                component: EventCategoryList
             },
             {
                 path: '**',

@@ -1,0 +1,38 @@
+<div class="category-node">
+  <div class="category-header" (click)="toggle()">
+    <div class="category-main">
+
+      <div class="category-name">
+        <span class="accordion-arrow">
+          {{ expanded ? '▼' : '▶' }}
+        </span>
+        {{ category.name }}
+      </div>
+      @if (category.description) {
+      <div class="description">{{ category.description }}</div>
+      }
+    </div>
+    <div class="category-actions">
+      <button class="btn btn-sm btn-outline-primary" (click)="onClickAddChild(); $event.stopPropagation()"
+        title="Add child category">
+        + Child
+      </button>
+      <button class="btn btn-sm btn-outline-secondary" (click)="onClickEditNode(); $event.stopPropagation()" title="Edit">
+        Edit
+      </button>
+      @if(!category.children || category.children.length == 0){
+      <button class="btn btn-sm btn-outline-danger" (click)="onClickDeleteNode(); $event.stopPropagation()" title="Delete">
+        Delete
+      </button>
+      }
+    </div>
+  </div>
+
+  @if (expanded && category.children && category.children.length > 0) {
+  <div class="category-children">
+    @for (child of category.children; track child.id) {
+    <app-event-category-list-node [category]="child" (addChild)="onAddChild($event)" (editNode)="onEditNode($event)" (deleteNode)="onDeleteNode($event)"/>
+    }
+  </div>
+  }
+</div>

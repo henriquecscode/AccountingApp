@@ -1,0 +1,5 @@
+<div class="category-tree mt-3">
+  @for (category of categories; track category.id) {
+  <app-event-category-list-node [category]="category" (addChild)="onAddChild($event)" (editNode)="onEditNode($event)" (deleteNode)="onDeleteNode($event)"/>
+  }
+</div>

@@ -1,0 +1,160 @@
+<div class="event-category-list">
+    @if (viewModel$ | async; as vm) {
+
+    <h2 i18n="event category list title@@event-category-list-title">Event Categories</h2>
+
+    <!-- Backend Error Alert -->
+    @if (backendError) {
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        {{ backendError }}
+    </div>
+    }
+
+    <!-- General Error Alert -->
+    @if (vm.error) {
+    <div class="alert alert-danger" role="alert">
+        {{ vm.error }}
+    </div>
+    }
+
+    <!-- Loading -->
+    @if (vm.loading) {
+    <div class="text-muted">Loading categories…</div>
+    }
+
+    <!-- Create button (when not creating) -->
+    @if (!creating && !vm.loading) {
+    <div class="mt-3">
+        <button class="btn btn-primary" (click)="startCreate()">
+            + Create Root Category
+        </button>
+    </div>
+    }
+
+    <!-- Tree -->
+    @if (!vm.loading && vm.categories.length > 0) {
+    <app-event-category-list-container [categories]="vm.categories" (addChild)="startCreate($event)" (editNode)="startEdit($event)"
+        (deleteNode)="deleteNode($event)" />
+    }
+
+    <!-- Empty -->
+    @if (!vm.loading && vm.categories.length === 0 && !vm.error) {
+    <div class="text-muted mb-3">No categories yet</div>
+    }
+
+
+
+    }
+
+    <!-- Fixed Create form at bottom -->
+    @if (creating || editing) {
+    <div class="create-category-fixed">
+        <div class="create-category-content">
+
+            <form [formGroup]="createCategoryForm" (ngSubmit)="saveForms()" novalidate>
+
+                <h5>
+
+                    @if (creating && parentEventCategoryId) {
+                    <span i18n="event category create child title@@event-category-create-child-title">
+                        Create Child Category
+                    </span>
+                    }
+
+                    @if (creating && !parentEventCategoryId) {
+                    <span i18n="event category create root title@@event-category-create-root-title">
+                        Create Root Category
+                    </span>
+                    }
+
+                    @if (editing) {
+                    <span i18n="event category edit title@@event-category-edit-title">
+                        Editing Node
+                    </span>
+                    }
+
+                </h5>
+
+
+                <!-- Category Name -->
+                <div class="mb-3">
+                    <label i18n="event category create name@@event-category-create-name" for="categoryName" class="form-label">
+                        Category name
+                    </label>
+
+                    <input i18n-placeholder="event category create name placeholder@@event-category-create-name-placeholder"
+                        type="text" id="categoryName" class="form-control" formControlName="name"
+                        placeholder="Enter category name" [class.is-valid]="name?.valid && name?.touched"
+                        [class.is-invalid]="name?.invalid && (name?.touched || submitted)">
+
+                    @if (name?.invalid && (name?.touched || submitted)) {
+                    <div class="invalid-feedback">
+                        @if (name?.errors?.['required']) {
+                        <div i18n="required field error@@event-category-create-required-name-error">
+                            Category name is required
+                        </div>
+                        }
+                        @if (name?.errors?.['maxlength']) {
+                        <div i18n="max length error@@event-category-create-maxlength-name-error">
+                            Category name cannot exceed {{ MAX_INPUT_LENGTH }} characters
+                        </div>
+                        }
+                    </div>
+                    }
+                </div>
+
+                <!-- Description -->
+                <div class="mb-3">
+                    <label i18n="event category create description@@event-category-create-description" for="categoryDescription"
+                        class="form-label">
+                        Description
+                    </label>
+
+                    <input
+                        i18n-placeholder="event category create description placeholder@@event-category-create-description-placeholder"
+                        type="text" id="categoryDescription" class="form-control" formControlName="description"
+                        placeholder="Enter description"
+                        [class.is-invalid]="description?.invalid && (description?.touched || submitted)">
+
+                    @if (description?.invalid && (description?.touched || submitted)) {
+                    <div class="invalid-feedback">
+                        @if (description?.errors?.['maxlength']) {
+                        <div i18n="max length error@@event-category-create-maxlength-description-error">
+                            Description cannot exceed {{ MAX_INPUT_LENGTH }} characters
+                        </div>
+                        }
+                    </div>
+                    }
+                </div>
+
+                <!-- Actions -->
+                <div class="d-grid gap-2">
+
+                    <button type="submit" class="btn btn-primary" [disabled]="saving">
+                        @if (saving) {
+                        <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                        }
+                        @if (creating) {
+                        <span i18n="event category create submit@@event-category-create-submit">
+                            Create
+                        </span>
+                        }
+                        @if (editing) {
+                        <span i18n="event category edit submit@@event-category-edit-submit">
+                            Save Changes
+                        </span>
+                        }
+                    </button>
+
+                    <button type="button" class="btn btn-secondary" [disabled]="saving" (click)="cancelCreate()">
+                        <span i18n="event category cancel@@event-category-cancel">
+                            Cancel
+                        </span>
+                    </button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+    }
+</div>

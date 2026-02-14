@@ -1,15 +1,11 @@
-package com.fivault.fivault.controller.request.eventTag;
+package com.fivault.fivault.controller.request.eventCategory;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
 import java.util.UUID;
 
-public class EventTagUpdateRequest {
-
-    @NotBlank
-    private UUID eventTagId;
-
+public class EventCategoryCreateUpdateRequest {
     @NotBlank
     @Size(max = 255)
     private String name;
@@ -17,11 +13,7 @@ public class EventTagUpdateRequest {
     @Size(max = 255)
     private String description;
 
-    private UUID parentEventTagId; //Can be null for parent tags
-
-    public UUID getEventTagId() {
-        return eventTagId;
-    }
+    private UUID parentEventCategoryId; //Can be null for parent categories
 
     public String getName() {
         return name;
@@ -31,7 +23,7 @@ public class EventTagUpdateRequest {
         return description;
     }
 
-    public UUID getParentEventTagId() {
-        return parentEventTagId;
+    public UUID getParentEventCategoryId() {
+        return parentEventCategoryId;
     }
 }

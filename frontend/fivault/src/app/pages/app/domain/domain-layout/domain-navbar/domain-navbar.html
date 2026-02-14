@@ -1,12 +1,18 @@
 <nav class="bg-secondary text-white py-2">
     <div class="container">
         <div class="d-flex justify-content-end gap-2">
-            <p>
+            <p i18n="domain navbar title@@domain-navbar-title">
                 DOMAIN NAVBAR
             </p>
-            <a class="nav-button" [routerLink]="['/app/domain', owner, domainSlug]" routerLinkActive="active">Home</a>
-            <a class="nav-button" [routerLink]="['/app/domain', owner, domainSlug, 'eventTags']" routerLinkActive="active">Event Tags</a>
-            <button class="btn btn-outline-danger" (click)="leaveDomain()">
+            <a class="nav-button" [routerLink]="['/app/domain', owner, domainSlug]" routerLinkActive="active"
+                i18n="domain navbar home link@@domain-navbar-home">Home</a>
+            <a class="nav-button" [routerLink]="['/app/domain', owner, domainSlug, 'eventTags']"
+                routerLinkActive="active" i18n="domain navbar event tags link@@domain-navbar-event-tags">Event Tags</a>
+            <a class="nav-button" [routerLink]="['/app/domain', owner, domainSlug, 'eventCategories']"
+                routerLinkActive="active"
+                i18n="domain navbar event categories link@@domain-navbar-event-categories">Event Categories</a>
+            <button class="btn btn-outline-danger" (click)="leaveDomain()"
+                i18n="domain navbar leave button@@domain-navbar-leave">
                 Leave domain
             </button>
         </div>
